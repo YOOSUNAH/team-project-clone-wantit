@@ -2,6 +2,7 @@ package io.dcns.wantitauction.global.exception;
 
 import io.dcns.wantitauction.global.dto.ExceptionDto;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -16,8 +17,11 @@ public class ExceptionController {
         return createResponse(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
-    @ExceptionHandler({NullPointerException.class, NoSuchElementException.class,
-        UserNotFoundException.class})
+    @ExceptionHandler({
+        NullPointerException.class,
+        NoSuchElementException.class,
+        UserNotFoundException.class
+    })
     public ResponseEntity<ExceptionDto> handleNotFoundException(Exception e) {
         return createResponse(HttpStatus.NOT_FOUND, e.getMessage());
     }
@@ -27,7 +31,7 @@ public class ExceptionController {
         MethodArgumentNotValidException e
     ) {
         return createResponse(HttpStatus.BAD_REQUEST,
-            e.getBindingResult().getFieldError().getDefaultMessage());
+            Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage());
     }
 
     private ResponseEntity<ExceptionDto> createResponse(HttpStatus status, String message) {
