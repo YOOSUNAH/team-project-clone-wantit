@@ -3,6 +3,7 @@ package io.dcns.wantitauction.domain.auctionItem.service;
 import io.dcns.wantitauction.domain.auctionItem.dto.AuctionItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItem;
 import io.dcns.wantitauction.domain.auctionItem.repository.AuctionItemRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,5 +19,10 @@ public class AuctionItemService {
         );
 
         return new AuctionItemResponseDto(auctionItem);
+    }
+
+    public List<AuctionItemResponseDto> getProducts() {
+        List<AuctionItem> auctionItemList = auctionItemRepository.findAll();
+        return auctionItemList.stream().map(AuctionItemResponseDto::new).toList();
     }
 }

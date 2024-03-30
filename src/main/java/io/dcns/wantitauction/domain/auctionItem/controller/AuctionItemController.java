@@ -3,6 +3,7 @@ package io.dcns.wantitauction.domain.auctionItem.controller;
 import io.dcns.wantitauction.domain.auctionItem.dto.AuctionItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.service.AuctionItemService;
 import io.dcns.wantitauction.global.dto.ResponseDto;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,5 +25,11 @@ public class AuctionItemController {
     ) {
         AuctionItemResponseDto responseDto = auctionItemService.getProduct(auctionItemId);
         return ResponseDto.of(HttpStatus.OK, responseDto);
+    }
+
+    @GetMapping
+    public ResponseEntity<ResponseDto<List<AuctionItemResponseDto>>> getProducts() {
+        List<AuctionItemResponseDto> responseDtoList = auctionItemService.getProducts();
+        return ResponseDto.of(HttpStatus.OK, responseDtoList);
     }
 }
