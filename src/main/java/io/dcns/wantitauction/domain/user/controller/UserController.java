@@ -32,7 +32,7 @@ public class UserController {
         HttpServletResponse response
     ) {
         LoginResponseDto responseDto = userService.login(request);
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, responseDto.getEmail());
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, responseDto.getToken());
     }
 
 //    @PostMapping("/logout")
