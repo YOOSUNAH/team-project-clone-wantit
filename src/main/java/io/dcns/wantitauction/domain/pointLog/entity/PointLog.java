@@ -42,8 +42,14 @@ public class PointLog {
     @JoinColumn(name = "point_id")
     private Point point;
 
-    public PointLog(Point point, PointRequestDto pointRequestDto) {
-        this.changedPoint = pointRequestDto.getChangedPoint();
+    public PointLog(Point point, PointRequestDto pointRequestDto, Long minusPoint) {
+        this.changedPoint = minusPoint;
+        this.details = pointRequestDto.getDetails();
+        this.point = point;
+    }
+
+    public PointLog(Long plusPoint, Point point, PointRequestDto pointRequestDto) {
+        this.changedPoint = plusPoint;
         this.details = pointRequestDto.getDetails();
         this.point = point;
     }

@@ -34,6 +34,11 @@ public class Point {
     }
 
     public void putPoint(Long changedPoint) {
+        this.point = this.point + changedPoint;
+        this.availablePoint = this.availablePoint + changedPoint;
+    }
+
+    public void withdrawPoint(Long changedPoint) {
         this.point = this.point - changedPoint;
         this.availablePoint = this.availablePoint - changedPoint;
     }

@@ -8,5 +8,4 @@ public class PointRequestDto {
     private Long changedPoint;
 
     private String details;
-
 }
