@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class MyAuctionItemController {
 
-    MyAuctionItemService myAuctionItemService;
+    private final MyAuctionItemService myAuctionItemService;
 
     @PostMapping("/v1/auction-items")
     public ResponseEntity<ResponseDto<Void>> createProduct(

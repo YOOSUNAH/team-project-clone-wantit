@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MyAuctionItemService {
 
-    AuctionItemRepository auctionItemRepository;
+    private final AuctionItemRepository auctionItemRepository;
 
     public void createProduct(CreateProductRequestDto request, User user) {
         auctionItemRepository.save(new AuctionItem(request, user));
