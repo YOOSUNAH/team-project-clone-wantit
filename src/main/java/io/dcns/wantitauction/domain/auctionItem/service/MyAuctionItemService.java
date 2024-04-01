@@ -58,8 +58,14 @@ public class MyAuctionItemService {
 
     public MyAuctionItemsResponseDto getWinningAuctionItem(Long auctionItemId, Long userId) {
 
-        AuctionItem auctionItem = getItem(auctionItemId, userId);
+        validateItem(auctionItemId, userId);
         return auctionItemQueryRepository.findWinningAuctionItem(auctionItemId, userId);
+    }
+
+    private void validateItem(Long auctionItemId, Long userId) {
+        if (!auctionItemRepository.existsByAuctionItemIdAndUserId(auctionItemId, userId)) {
+            throw new EntityNotFoundException("해당 경매 상품이 존재하지 않습니다.");
+        }
     }
 
     private AuctionItem getItem(Long auctionItemId, Long userId) {

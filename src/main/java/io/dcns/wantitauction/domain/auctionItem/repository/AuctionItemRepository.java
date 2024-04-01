@@ -11,4 +11,6 @@ public interface AuctionItemRepository extends JpaRepository<AuctionItem, Long> 
 
     Optional<AuctionItem> findByAuctionItemIdAndUserId(Long auctionItemId, Long userId);
 
+    boolean existsByAuctionItemIdAndUserId(Long auctionItemId, Long userId);
+
 }
