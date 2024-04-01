@@ -11,6 +11,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return new UserDetailsImpl(new User());
+        return null;
+    }
+
+    public UserDetails getUser(Long userId) throws UsernameNotFoundException {
+        User user = new User();
+        user.setUserId(userId);
+        return new UserDetailsImpl(user);
     }
 }
