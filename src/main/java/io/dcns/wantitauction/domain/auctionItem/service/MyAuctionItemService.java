@@ -10,9 +10,11 @@ import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class MyAuctionItemService {
 
     private final AuctionItemRepository auctionItemRepository;
@@ -21,6 +23,7 @@ public class MyAuctionItemService {
         auctionItemRepository.save(new AuctionItem(request, user));
     }
 
+    @Transactional(readOnly = true)
     public List<MyAuctionItemsResponseDto> getAuctionItems(Long userId) {
 
         List<AuctionItem> auctionItems = auctionItemRepository.findAllByUserId(userId);
@@ -29,6 +32,7 @@ public class MyAuctionItemService {
             .toList();
     }
 
+    @Transactional(readOnly = true)
     public MyAuctionItemsResponseDto getAuctionItem(Long auctionItemId, Long userId) {
 
         AuctionItem auctionItem = getItem(auctionItemId, userId);
