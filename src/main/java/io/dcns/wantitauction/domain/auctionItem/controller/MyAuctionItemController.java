@@ -77,11 +77,21 @@ public class MyAuctionItemController {
     }
 
     @GetMapping("/finished")
-    public ResponseEntity<ResponseDto<List<MyAuctionItemsResponseDto>>> getFinishedAuctionItems(
+    public ResponseEntity<ResponseDto<List<MyAuctionItemsResponseDto>>> getWinningAuctionItems(
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        List<MyAuctionItemsResponseDto> finishedAuction = myAuctionItemService.getFinishedAuctionItems(
-            userDetails.getUser());
+        List<MyAuctionItemsResponseDto> finishedAuction = myAuctionItemService
+            .getWinningAuctionItems(userDetails.getUser().getUserId());
+        return ResponseDto.of(HttpStatus.OK, finishedAuction);
+    }
+
+    @GetMapping("/{auctionItemId}/finished")
+    public ResponseEntity<ResponseDto<MyAuctionItemsResponseDto>> getWinningAuctionItem(
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @PathVariable Long auctionItemId
+    ) {
+        MyAuctionItemsResponseDto finishedAuction = myAuctionItemService
+            .getWinningAuctionItem(auctionItemId, userDetails.getUser().getUserId());
         return ResponseDto.of(HttpStatus.OK, finishedAuction);
     }
 }
