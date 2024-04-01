@@ -18,17 +18,17 @@ import org.hibernate.annotations.SQLRestriction;
 @Entity
 @Getter
 @Table(name = "auction_items")
-@SQLDelete(sql = "update auction_items set deleted_at = NOW() where auction_id = ?")
+@SQLDelete(sql = "update auction_items set deleted_at = NOW() where auction_item_id = ?")
 @SQLRestriction(value = "deleted_at is NULL")
 @NoArgsConstructor
 public class AuctionItem extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long auctionId;
+    private Long auctionItemId;
 
     @Column(nullable = false)
-    private String userId;
+    private Long userId;
 
     @Column(nullable = false)
     private String itemName;
