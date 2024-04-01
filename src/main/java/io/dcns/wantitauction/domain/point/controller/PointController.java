@@ -13,15 +13,17 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/v1/points")
 public class PointController {
 
     private final PointService pointService;
 
-    @PostMapping("/v1/points")
+    @PostMapping
     public ResponseEntity<ResponseDto<PointChangedResponseDto>> putPoint(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @RequestBody PointRequestDto pointRequestDto
@@ -32,7 +34,7 @@ public class PointController {
         return ResponseDto.of(HttpStatus.OK, pointRecordResponseDto);
     }
 
-    @PostMapping("/v1/points/withdrawal")
+    @PostMapping("/withdrawal")
     public ResponseEntity<ResponseDto<PointChangedResponseDto>> withdrawPoint(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @RequestBody PointRequestDto pointRequestDto
@@ -43,7 +45,7 @@ public class PointController {
         return ResponseDto.of(HttpStatus.OK, pointChangedResponseDto);
     }
 
-    @GetMapping("/v1/points")
+    @GetMapping
     public ResponseEntity<ResponseDto<PointResponseDto>> getPoint(
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
