@@ -19,9 +19,9 @@ public class AuctionItemQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<MyAuctionItemsResponseDto> findWinningAuctionItems(Long userId) {
+    public List<FinishedItemResponseDto> findWinningAuctionItems(Long userId) {
         return jpaQueryFactory
-            .select(Projections.fields(MyAuctionItemsResponseDto.class,
+            .select(Projections.fields(FinishedItemResponseDto.class,
                 auctionItem.auctionItemId,
                 auctionItem.winnerId,
                 auctionItem.itemName,
@@ -37,9 +37,9 @@ public class AuctionItemQueryRepository {
             .fetch();
     }
 
-    public MyAuctionItemsResponseDto findWinningAuctionItem(Long auctionItemId, Long userId) {
+    public FinishedItemResponseDto findWinningAuctionItem(Long auctionItemId, Long userId) {
         return jpaQueryFactory
-            .select(Projections.fields(MyAuctionItemsResponseDto.class,
+            .select(Projections.fields(FinishedItemResponseDto.class,
                 auctionItem.auctionItemId,
                 auctionItem.itemName,
                 auctionItem.productDescription,
