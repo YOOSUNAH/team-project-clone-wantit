@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
 @Getter
-public class UserSignupRequestDto extends Timestamped {
+public class SignupRequestDto extends Timestamped {
 
     @NotBlank
     @Email(message = "이메일 형식을 지켜주세요.")
@@ -15,7 +15,7 @@ public class UserSignupRequestDto extends Timestamped {
     @NotBlank
     private String password;
 
-    public UserSignupRequestDto(String email, String password) {
+    public SignupRequestDto(String email, String password) {
         this.email = email;
         this.password = password;
     }

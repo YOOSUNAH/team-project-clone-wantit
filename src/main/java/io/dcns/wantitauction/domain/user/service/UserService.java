@@ -2,7 +2,7 @@ package io.dcns.wantitauction.domain.user.service;
 
 import io.dcns.wantitauction.domain.user.dto.LoginRequestDto;
 import io.dcns.wantitauction.domain.user.dto.LoginResponseDto;
-import io.dcns.wantitauction.domain.user.dto.UserSignupRequestDto;
+import io.dcns.wantitauction.domain.user.dto.SignupRequestDto;
 import io.dcns.wantitauction.domain.user.entity.User;
 import io.dcns.wantitauction.domain.user.repository.UserRepository;
 import io.dcns.wantitauction.global.exception.NotMatchException;
@@ -25,11 +25,12 @@ public class UserService {
     private final JwtUtil jwtUtil;
     private final TokenRepository tokenRepository;
 
-    public void signup(UserSignupRequestDto request) {
+    public void signup(SignupRequestDto request) {
         if (userRepository.checkEmail(request.getEmail())) {
             throw new EntityExistsException("해당 이메일이 존재합니다.");
         }
-        UserSignupRequestDto signupDto = new UserSignupRequestDto(request.getEmail(), request.getPassword());
+        SignupRequestDto signupDto = new SignupRequestDto(request.getEmail(),
+            request.getPassword());
         userRepository.signup(signupDto);
     }
 

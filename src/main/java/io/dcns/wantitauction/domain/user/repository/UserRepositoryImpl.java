@@ -1,6 +1,6 @@
 package io.dcns.wantitauction.domain.user.repository;
 
-import io.dcns.wantitauction.domain.user.dto.UserSignupRequestDto;
+import io.dcns.wantitauction.domain.user.dto.SignupRequestDto;
 import io.dcns.wantitauction.domain.user.entity.User;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void signup(UserSignupRequestDto dto) {
+    public void signup(SignupRequestDto dto) {
         userJpaRepository.save(
         User.of(dto.getEmail(), passwordEncoder.encode(dto.getPassword()))
         );
