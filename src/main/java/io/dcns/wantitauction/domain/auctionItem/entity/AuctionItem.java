@@ -52,7 +52,7 @@ public class AuctionItem extends Timestamped {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private final AuctionItemEnum status = AuctionItemEnum.READY;
+    private AuctionItemEnum status = AuctionItemEnum.READY;
 
     @Column
     private LocalDateTime deletedAt;
