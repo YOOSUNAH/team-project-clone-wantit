@@ -33,6 +33,9 @@ public class AuctionItem extends Timestamped {
     @Column(nullable = false)
     private Long userId;
 
+    @Column
+    private Long winnerId;
+
     @Column(nullable = false)
     private String itemName;
 
