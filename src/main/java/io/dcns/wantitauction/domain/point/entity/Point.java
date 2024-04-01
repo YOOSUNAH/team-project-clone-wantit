@@ -33,13 +33,8 @@ public class Point {
         this.userId = user.getUserId();
     }
 
-    public void putPoint(Long changedPoint) {
+    public void changePoint(Long changedPoint) {
         this.point = this.point + changedPoint;
         this.availablePoint = this.availablePoint + changedPoint;
-    }
-
-    public void withdrawPoint(Long changedPoint) {
-        this.point = this.point - changedPoint;
-        this.availablePoint = this.availablePoint - changedPoint;
     }
 }

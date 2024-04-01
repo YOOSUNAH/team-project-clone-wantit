@@ -1,7 +1,9 @@
 package io.dcns.wantitauction.domain.pointLog.dto;
 
 import java.time.LocalDateTime;
+import lombok.Getter;
 
+@Getter
 public class PointLogResponseDto {
 
     private Long userId;
@@ -15,3 +17,5 @@ public class PointLogResponseDto {
     private LocalDateTime changedDate;
 
 }
+
+

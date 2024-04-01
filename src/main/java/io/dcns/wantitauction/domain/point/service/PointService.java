@@ -23,30 +23,34 @@ public class PointService {
     @Transactional
     public PointChangedResponseDto putPoint(User user, PointRequestDto pointRequestDto) {
         // 포인트 엔티티가 없을때
+        if (!checkSymbol(pointRequestDto)) {
+            throw new IllegalArgumentException("포인트를 0 이상의 값으로 입력해주세요.");
+        }
         if (findPoint(user) == null) {
             Point point = new Point(user);
-            point.putPoint(pointRequestDto.getChangedPoint());
-            Long plusPoint = plusPoint(pointRequestDto);
-            PointLog pointLog = new PointLog(plusPoint, point, pointRequestDto);
+            point.changePoint(pointRequestDto.getChangedPoint());
+            PointLog pointLog = new PointLog(point, pointRequestDto);
             pointRepository.save(point);
             pointLogRepository.save(pointLog);
             return new PointChangedResponseDto(user, point, pointLog);
         } else { // 포인트 엔티티가 있을 때
             Point point = findPoint(user);
-            point.putPoint(pointRequestDto.getChangedPoint());
-            Long plusPoint = plusPoint(pointRequestDto);
-            PointLog pointLog = new PointLog(plusPoint, point, pointRequestDto);
+            point.changePoint(pointRequestDto.getChangedPoint());
+            PointLog pointLog = new PointLog(point, pointRequestDto);
             pointLogRepository.save(pointLog);
             return new PointChangedResponseDto(user, point, pointLog);
         }
     }
 
+    @Transactional
     public PointChangedResponseDto withdrawPoint(User user, PointRequestDto pointRequestDto) {
+        if (checkSymbol(pointRequestDto)) {
+            throw new IllegalArgumentException("포인트를 0 이하의 값으로 입력해주세요.");
+        }
         Point point = findPoint(user);
         checkPoint(point, pointRequestDto);
-        point.withdrawPoint(pointRequestDto.getChangedPoint());
-        Long minusPoint = minusPoint(pointRequestDto);
-        PointLog pointLog = new PointLog(point, pointRequestDto, minusPoint);
+        point.changePoint(pointRequestDto.getChangedPoint());
+        PointLog pointLog = new PointLog(point, pointRequestDto);
         pointLogRepository.save(pointLog);
         return new PointChangedResponseDto(user, point, pointLog);
     }
@@ -68,11 +72,13 @@ public class PointService {
         );
     }
 
-    private Long plusPoint(PointRequestDto pointRequestDto) {
-        return +pointRequestDto.getChangedPoint();
-    }
-
-    private Long minusPoint(PointRequestDto pointRequestDto) {
-        return -pointRequestDto.getChangedPoint();
+    private boolean checkSymbol(PointRequestDto pointRequestDto) {
+        if (pointRequestDto.getChangedPoint() < 0) {
+            return false;
+        } else if (pointRequestDto.getChangedPoint() > 0) {
+            return true;
+        } else {
+            throw new IllegalArgumentException("포인트를 입력해주세요.");
+        }
     }
 }

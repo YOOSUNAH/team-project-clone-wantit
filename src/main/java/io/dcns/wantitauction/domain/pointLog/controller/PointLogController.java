@@ -27,5 +27,4 @@ public class PointLogController {
 
         return ResponseDto.of(HttpStatus.OK, pointLogResponseDtoList);
     }
-
 }
