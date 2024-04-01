@@ -14,16 +14,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class MyAuctionItemService {
 
     private final AuctionItemRepository auctionItemRepository;
 
+    @Transactional
     public void createProduct(CreateProductRequestDto request, User user) {
         auctionItemRepository.save(new AuctionItem(request, user));
     }
 
-    @Transactional(readOnly = true)
     public List<MyAuctionItemsResponseDto> getAuctionItems(Long userId) {
 
         List<AuctionItem> auctionItems = auctionItemRepository.findAllByUserId(userId);
@@ -32,13 +32,13 @@ public class MyAuctionItemService {
             .toList();
     }
 
-    @Transactional(readOnly = true)
     public MyAuctionItemsResponseDto getAuctionItem(Long auctionItemId, Long userId) {
 
         AuctionItem auctionItem = getItem(auctionItemId, userId);
         return new MyAuctionItemsResponseDto(auctionItem);
     }
 
+    @Transactional
     public MyAuctionItemsResponseDto updateAuctionItem(
         UpdateMyItemRequestDto request, Long auctionItemId, Long userId
     ) {
