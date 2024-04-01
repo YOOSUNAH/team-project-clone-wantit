@@ -27,7 +27,7 @@ public class MyAuctionItemService {
     }
 
     public List<MyAuctionItemsResponseDto> getAuctionItems(Long userId) {
-        return auctionItemQueryRepository.findAll(userId);
+        return auctionItemQueryRepository.findAllMyAuctionItems(userId);
     }
 
     public MyAuctionItemsResponseDto getAuctionItem(Long auctionItemId, Long userId) {

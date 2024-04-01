@@ -6,7 +6,6 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.dcns.wantitauction.domain.auctionItem.dto.AuctionItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.FinishedItemResponseDto;
-import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItemEnum;
 import io.dcns.wantitauction.domain.auctionItem.dto.MyAuctionItemsResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItemEnum;
 import java.util.List;
@@ -56,7 +55,7 @@ public class AuctionItemQueryRepository {
             .fetchOne();
     }
 
-    public List<MyAuctionItemsResponseDto> findAllMine(Long userId) {
+    public List<MyAuctionItemsResponseDto> findAllMyAuctionItems(Long userId) {
         return jpaQueryFactory
             .select(Projections.fields(MyAuctionItemsResponseDto.class,
                 auctionItem.auctionItemId,
