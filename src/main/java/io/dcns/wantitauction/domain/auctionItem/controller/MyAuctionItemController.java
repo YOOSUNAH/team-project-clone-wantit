@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,7 +34,7 @@ public class MyAuctionItemController {
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         myAuctionItemService.createProduct(request, userDetails.getUser());
-        return ResponseDto.of(HttpStatus.OK, null);
+        return ResponseDto.of(HttpStatus.CREATED, null);
     }
 
     @GetMapping
@@ -64,5 +65,23 @@ public class MyAuctionItemController {
         MyAuctionItemsResponseDto updateItem = myAuctionItemService.updateAuctionItem(
             request, auctionItemId, userDetails.getUser().getUserId());
         return ResponseDto.of(HttpStatus.OK, updateItem);
+    }
+
+    @DeleteMapping("/{auctionItemId}")
+    public ResponseEntity<ResponseDto<Void>> deleteAuctionItem(
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @PathVariable Long auctionItemId
+    ) {
+        myAuctionItemService.deleteAuctionItem(auctionItemId, userDetails.getUser().getUserId());
+        return ResponseDto.of(HttpStatus.OK, null);
+    }
+
+    @GetMapping("/finished")
+    public ResponseEntity<ResponseDto<List<MyAuctionItemsResponseDto>>> getFinishedAuctionItems(
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        List<MyAuctionItemsResponseDto> finishedAuction = myAuctionItemService.getFinishedAuctionItems(
+            userDetails.getUser());
+        return ResponseDto.of(HttpStatus.OK, finishedAuction);
     }
 }
