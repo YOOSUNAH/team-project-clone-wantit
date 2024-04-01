@@ -8,10 +8,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
@@ -35,16 +33,16 @@ public class User extends Timestamped {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String username;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String nickname;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String phoneNumber;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String address;
 
     @Column
@@ -54,5 +52,9 @@ public class User extends Timestamped {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
+    }
+
+    public static User of(String email, String password) {
+        return new User(email, password, null);
     }
 }
