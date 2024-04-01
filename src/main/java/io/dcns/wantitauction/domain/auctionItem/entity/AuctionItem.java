@@ -27,7 +27,7 @@ public class AuctionItem extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long auctionId;
+    private Long auctionItemId;
 
     @Column(nullable = false)
     private Long userId;
