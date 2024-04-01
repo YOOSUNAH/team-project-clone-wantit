@@ -79,7 +79,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 
     // 인증 객체 생성
     private Authentication createAuthentication(String userId) {
-        UserDetails userDetails = userDetailsService.getUser(Long.valueOf(userId));
+        UserDetails userDetails = userDetailsService.getUser(Long.parseLong(userId));
         return new UsernamePasswordAuthenticationToken(userDetails, null,
             userDetails.getAuthorities());
     }

@@ -2,7 +2,6 @@ package io.dcns.wantitauction.domain.user.controller;
 
 import io.dcns.wantitauction.domain.user.dto.LoginRequestDto;
 import io.dcns.wantitauction.domain.user.dto.PasswordRequestDto;
-import io.dcns.wantitauction.domain.user.dto.PasswordResponseDto;
 import io.dcns.wantitauction.domain.user.dto.SignupRequestDto;
 import io.dcns.wantitauction.domain.user.dto.UserRequestDto;
 import io.dcns.wantitauction.domain.user.dto.UserResponseDto;
@@ -64,7 +63,7 @@ public class UserController {
     }
 
     @PatchMapping("/password")
-    public ResponseEntity<ResponseDto<PasswordResponseDto>> updatePassword(
+    public ResponseEntity<ResponseDto<Void>> updatePassword(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @RequestBody PasswordRequestDto passwordRequestDto) {
         userService.updatePassword(userDetails.getUser().getUserId(), passwordRequestDto);

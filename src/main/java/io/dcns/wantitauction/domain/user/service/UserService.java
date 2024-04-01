@@ -2,7 +2,6 @@ package io.dcns.wantitauction.domain.user.service;
 
 import io.dcns.wantitauction.domain.user.dto.LoginRequestDto;
 import io.dcns.wantitauction.domain.user.dto.PasswordRequestDto;
-import io.dcns.wantitauction.domain.user.dto.PasswordResponseDto;
 import io.dcns.wantitauction.domain.user.dto.SignupRequestDto;
 import io.dcns.wantitauction.domain.user.dto.UserRequestDto;
 import io.dcns.wantitauction.domain.user.dto.UserResponseDto;
@@ -83,10 +82,9 @@ public class UserService {
         if (!passwordEncoder.matches(passwordRequestDto.getPassword(), user.getPassword())) {
             throw new NotMatchException("비밀번호가 일치하지 않습니다.");
         }
-        PasswordResponseDto passwordResponseDto = new PasswordResponseDto(
-            passwordRequestDto);
-        passwordResponseDto.checkChangePasswordEquals();
-        user.updatePassword(passwordEncoder.encode(passwordResponseDto.getChangePassword()));
+        checkChangePasswordEquals(passwordRequestDto.getChangePassword(),
+            passwordRequestDto.getRechangePassword());
+        user.updatePassword(passwordEncoder.encode(passwordRequestDto.getChangePassword()));
     }
 
     @Transactional
@@ -111,6 +109,12 @@ public class UserService {
     private void validateNicknameDuplicate(String nickname) {
         if (userRepository.existsByNickname(nickname)) {
             throw new EntityExistsException("중복된 닉네임입니다.");
+        }
+    }
+
+    private void checkChangePasswordEquals(String changePassword, String rechangePassword) {
+        if (!changePassword.equals(rechangePassword)) {
+            throw new NotMatchException("바꿀 비밀번호가 일치하지 않습니다.");
         }
     }
 }
