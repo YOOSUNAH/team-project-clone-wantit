@@ -37,11 +37,12 @@ public class AuthorizationFilter extends OncePerRequestFilter {
     ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+    protected void doFilterInternal(HttpServletRequest httpServletRequest,
+        HttpServletResponse httpServletResponse,
         FilterChain filterChain) throws ServletException, IOException {
-        String tokenValue = jwtUtil.getAccessTokenFromRequest(request);
+        String tokenValue = jwtUtil.getAccessTokenFromRequest(httpServletRequest);
         if (!StringUtils.hasText(tokenValue)) {
-            filterChain.doFilter(request, response);
+            filterChain.doFilter(httpServletRequest, httpServletResponse);
             return;
         }
         TokenState state = jwtUtil.isValidateToken(tokenValue);
@@ -54,7 +55,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 
         // 토큰이 만료된 경우
         if (state.equals(TokenState.EXPIRED)) {
-            refreshTokenAndHandleException(tokenValue, response);
+            refreshTokenAndHandleException(tokenValue, httpServletResponse);
             return;
         }
 
@@ -65,20 +66,20 @@ public class AuthorizationFilter extends OncePerRequestFilter {
             log.error(e.getMessage());
             return;
         }
-        filterChain.doFilter(request, response);
+        filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 
     // 인증 처리
-    public void setAuthentication(String memberId) {
+    public void setAuthentication(String userId) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
-        Authentication authentication = createAuthentication(memberId);
+        Authentication authentication = createAuthentication(userId);
         context.setAuthentication(authentication);
         SecurityContextHolder.setContext(context);
     }
 
     // 인증 객체 생성
-    private Authentication createAuthentication(String memberId) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(memberId);
+    private Authentication createAuthentication(String userId) {
+        UserDetails userDetails = userDetailsService.getUser(Long.parseLong(userId));
         return new UsernamePasswordAuthenticationToken(userDetails, null,
             userDetails.getAuthorities());
     }
@@ -101,7 +102,6 @@ public class AuthorizationFilter extends OncePerRequestFilter {
         }
     }
 
-    // 이미 토큰 저장소에 있는 토큰이 없을 경우
     private void handleExpiredToken(HttpServletResponse response, RefreshTokenEntity refreshToken)
         throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -114,7 +114,6 @@ public class AuthorizationFilter extends OncePerRequestFilter {
         response.getWriter().write(jsonResponse);
     }
 
-    // 토큰 저장소에 토큰이 남아 있을 경우
     private void refreshAccessToken(HttpServletResponse response, RefreshTokenEntity refreshToken)
         throws IOException {
         String newToken = refreshToken.getToken();
