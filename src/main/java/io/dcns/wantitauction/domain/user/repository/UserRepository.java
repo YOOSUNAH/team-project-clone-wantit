@@ -1,14 +1,18 @@
 package io.dcns.wantitauction.domain.user.repository;
 
+import io.dcns.wantitauction.domain.user.dto.SignupRequestDto;
 import io.dcns.wantitauction.domain.user.entity.User;
 import java.util.Optional;
-import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository {
+
+    boolean checkEmail(String email);
+
+    void signup(SignupRequestDto dto);
 
     Optional<User> findByEmail(String email);
 
-    boolean existsByEmail(String request);
+    Optional<User> findByUserId(Long userId);
 
-    boolean existsByNickname(String request);
+    Optional<User> findById(Long userId);
 }
