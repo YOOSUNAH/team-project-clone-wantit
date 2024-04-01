@@ -34,7 +34,7 @@ public class MyAuctionItemController {
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         myAuctionItemService.createProduct(request, userDetails.getUser());
-        return ResponseDto.of(HttpStatus.OK, null);
+        return ResponseDto.of(HttpStatus.CREATED, null);
     }
 
     @GetMapping
@@ -43,7 +43,7 @@ public class MyAuctionItemController {
     ) {
         List<MyAuctionItemsResponseDto> auctionItems = myAuctionItemService.getAuctionItems(
             userDetails.getUser().getUserId());
-        return ResponseDto.of(HttpStatus.CREATED, auctionItems);
+        return ResponseDto.of(HttpStatus.OK, auctionItems);
     }
 
     @GetMapping("/{auctionItemId}")
@@ -82,6 +82,6 @@ public class MyAuctionItemController {
     ) {
         List<MyAuctionItemsResponseDto> finishedAuction = myAuctionItemService.getFinishedAuctionItems(
             userDetails.getUser());
-        return ResponseDto.of(HttpStatus.CREATED, finishedAuction);
+        return ResponseDto.of(HttpStatus.OK, finishedAuction);
     }
 }
