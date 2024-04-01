@@ -25,11 +25,7 @@ public class AuctionItemService {
     }
 
     public List<AuctionItemResponseDto> getProducts() {
-        List<AuctionItem> auctionItemList = auctionItemRepository.findAll();
-        return auctionItemList
-            .stream()
-            .map(AuctionItemResponseDto::new)
-            .toList();
+        return auctionItemQueryRepository.findAll();
     }
 
     public List<FinishedItemResponseDto> getFinishedProducts() {

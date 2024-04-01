@@ -4,6 +4,7 @@ import static io.dcns.wantitauction.domain.auctionItem.entity.QAuctionItem.aucti
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import io.dcns.wantitauction.domain.auctionItem.dto.AuctionItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.FinishedItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItemEnum;
 import java.util.List;
@@ -52,5 +53,21 @@ public class AuctionItemQueryRepository {
                     .and(auctionItem.status.eq(AuctionItemEnum.FINISHED)))
                 .fetchFirst()
         );
+    }
+
+    public List<AuctionItemResponseDto> findAll() {
+        return jpaQueryFactory
+            .select(Projections.fields(AuctionItemResponseDto.class,
+                auctionItem.auctionItemId,
+                auctionItem.userId,
+                auctionItem.itemName,
+                auctionItem.productDescription,
+                auctionItem.minPrice,
+                auctionItem.maxPrice,
+                auctionItem.startDate,
+                auctionItem.endDate,
+                auctionItem.status))
+            .from(auctionItem)
+            .fetch();
     }
 }
