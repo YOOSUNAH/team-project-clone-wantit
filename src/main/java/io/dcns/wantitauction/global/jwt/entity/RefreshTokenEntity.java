@@ -15,22 +15,18 @@ public class RefreshTokenEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private Long userId;
-
     private String token;
 
-    protected RefreshTokenEntity(){
-
+    protected RefreshTokenEntity() {
     }
 
-    private RefreshTokenEntity(Long userId, String token){
+    private RefreshTokenEntity(Long userId, String token) {
         this.userId = userId;
         this.token = token;
     }
 
-    public static RefreshTokenEntity of(Long userId, String token){
+    public static RefreshTokenEntity of(Long userId, String token) {
         return new RefreshTokenEntity(userId, token);
     }
-
 }

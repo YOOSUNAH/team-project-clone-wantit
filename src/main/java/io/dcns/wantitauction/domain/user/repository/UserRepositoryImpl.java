@@ -22,7 +22,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void signup(SignupRequestDto dto) {
         userJpaRepository.save(
-        User.of(dto.getEmail(), passwordEncoder.encode(dto.getPassword()))
+            User.of(dto.getEmail(), passwordEncoder.encode(dto.getPassword()))
         );
     }
 
@@ -41,19 +41,5 @@ public class UserRepositoryImpl implements UserRepository {
         return userJpaRepository.findById(userId);
     }
 
-//    @Override
-//    public void deleteById(Long userId) {
-//
-//    }
-//
-//    @Override
-//    public boolean existsByEmail(String request) {
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean existsByNickname(String request) {
-//        return false;
-//    }
 }
 

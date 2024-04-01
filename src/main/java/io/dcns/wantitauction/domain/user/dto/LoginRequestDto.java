@@ -13,5 +13,4 @@ public class LoginRequestDto extends Timestamped {
 
     @NotBlank
     private String password;
-
 }

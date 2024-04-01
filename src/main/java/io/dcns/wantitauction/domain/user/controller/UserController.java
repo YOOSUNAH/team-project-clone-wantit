@@ -1,7 +1,6 @@
 package io.dcns.wantitauction.domain.user.controller;
 
 import io.dcns.wantitauction.domain.user.dto.LoginRequestDto;
-import io.dcns.wantitauction.domain.user.dto.LoginResponseDto;
 import io.dcns.wantitauction.domain.user.dto.SignupRequestDto;
 import io.dcns.wantitauction.domain.user.service.UserService;
 import io.dcns.wantitauction.global.dto.ResponseDto;
@@ -11,7 +10,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,10 +29,12 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ResponseDto<Void>> login(@Validated @RequestBody LoginRequestDto request,
-        HttpServletResponse response) {
-        LoginResponseDto responseDto = userService.login(request);
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, responseDto.getToken());
+    public ResponseEntity<ResponseDto<Void>> login(
+        @Valid @RequestBody LoginRequestDto request, HttpServletResponse response
+    ) {
+        String token = userService.login(request);
+
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
         return ResponseDto.of(HttpStatus.OK, null);
     }
 }

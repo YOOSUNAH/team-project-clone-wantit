@@ -1,7 +1,6 @@
 package io.dcns.wantitauction.domain.user.service;
 
 import io.dcns.wantitauction.domain.user.dto.LoginRequestDto;
-import io.dcns.wantitauction.domain.user.dto.LoginResponseDto;
 import io.dcns.wantitauction.domain.user.dto.SignupRequestDto;
 import io.dcns.wantitauction.domain.user.entity.User;
 import io.dcns.wantitauction.domain.user.repository.UserRepository;
@@ -34,7 +33,7 @@ public class UserService {
         userRepository.signup(signupDto);
     }
 
-    public LoginResponseDto login(LoginRequestDto dto) {
+    public String login(LoginRequestDto dto) {
         User user = userRepository.findByEmail(dto.getEmail()).orElseThrow(
             () -> new UserNotFoundException("해당 유저가 존재하지 않습니다."));
 
@@ -43,7 +42,7 @@ public class UserService {
         }
 
         String token = generateToken(user.getUserId());
-        return new LoginResponseDto(user.getEmail(), token);
+        return token;
     }
 
     private String generateToken(Long userId) {
@@ -53,5 +52,4 @@ public class UserService {
 
         return jwtUtil.generateAccessToken(userId, "User");
     }
-
 }

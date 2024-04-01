@@ -44,12 +44,12 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(bytes);
     }
 
-    public String generateAccessToken(final Long userId, final String role){
+    public String generateAccessToken(final Long userId, final String role) {
         return generateToken(String.valueOf(userId), role, ACCESS_TOKEN_VALID_TIME);
     }
 
     @Transactional
-    public String generateRefreshToken(final Long userId, final String role){
+    public String generateRefreshToken(final Long userId, final String role) {
         return generateRefreshToken(String.valueOf(userId), role, REFRESH_TOKEN_VALID_TIME);
     }
 
@@ -65,7 +65,7 @@ public class JwtUtil {
                 .compact();
     }
 
-    public String generateRefreshToken(final String id, final String role, Long time){
+    public String generateRefreshToken(final String id, final String role, Long time) {
         Date date = new Date();
         return BEARER_PREFIX +
             Jwts.builder()
@@ -77,15 +77,15 @@ public class JwtUtil {
                 .compact();
     }
 
-    public String substringToken(final String tokenValue){
-        if(!StringUtils.hasText(tokenValue) || !tokenValue.startsWith(BEARER_PREFIX)){
+    public String substringToken(final String tokenValue) {
+        if (!StringUtils.hasText(tokenValue) || !tokenValue.startsWith(BEARER_PREFIX)) {
             throw new IllegalArgumentException("해당 토큰에 접근할 수 없습니다."); // Todo: CustionException 하기
         }
         return tokenValue.substring(BEARER_PREFIX_LENGTH);
     }
 
     public String getAccessTokenFromRequest(HttpServletRequest httpServletRequest) {
-            return getTokenFromRequest(httpServletRequest);
+        return getTokenFromRequest(httpServletRequest);
     }
 
     public TokenState isValidateToken(String token) {
@@ -110,27 +110,25 @@ public class JwtUtil {
         }
     }
 
-    public Claims getUserInfoFromToken(String token){
+    public Claims getUserInfoFromToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
-
 
     // 만료된 토큰으로부터 정보를 가져오기
     public Claims getUserInfoFromExpiredToken(String token) {
         try {
             return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
-        }catch (ExpiredJwtException e){
+        } catch (ExpiredJwtException e) {
             return e.getClaims();
         }
     }
 
-    private String getTokenFromRequest(final HttpServletRequest httpServletRequest){
+    private String getTokenFromRequest(final HttpServletRequest httpServletRequest) {
         String bearerToken = httpServletRequest.getHeader(AUTHORIZATION_HEADER);
 
-        if(StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)){
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
             return bearerToken.substring(BEARER_PREFIX_LENGTH);
         }
         return null;
     }
-
 }

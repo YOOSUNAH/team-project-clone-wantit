@@ -48,7 +48,6 @@ public class User extends Timestamped {
     @Column
     private LocalDateTime deletedAt;
 
-
     public User(String email, String password, String nickname) {
         this.email = email;
         this.password = password;
@@ -58,6 +57,4 @@ public class User extends Timestamped {
     public static User of(String email, String password) {
         return new User(email, password, null); // nickname은 여기서 null로 처리하거나, 다른 기본값을 할당
     }
-
-
 }

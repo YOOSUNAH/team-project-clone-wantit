@@ -11,7 +11,6 @@ public class TokenRepositoryImpl implements TokenRepository {
 
     private final RefreshTokenJpaRepository refreshTokenJpaRepository;
 
-
     @Override
     public void register(Long userId, String token) {
         RefreshTokenEntity entity = RefreshTokenEntity.of(userId, token);

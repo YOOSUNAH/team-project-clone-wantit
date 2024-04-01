@@ -20,15 +20,14 @@ public class UserDetailsImpl implements UserDetails {
         return user;
     }
 
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("User");
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(simpleGrantedAuthority);
-
         return authorities;
     }
+
     @Override
     public String getPassword() {
         return null;
@@ -38,7 +37,6 @@ public class UserDetailsImpl implements UserDetails {
     public String getUsername() {
         return null;
     }
-
 
     @Override
     public boolean isAccountNonExpired() {

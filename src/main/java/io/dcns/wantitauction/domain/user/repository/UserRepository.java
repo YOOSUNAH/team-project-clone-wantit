@@ -9,8 +9,10 @@ public interface UserRepository {
     boolean checkEmail(String email);
 
     void signup(SignupRequestDto dto);
-    Optional<User> findByEmail(String email);
-    Optional<User> findByUserId(Long userId);
-    Optional<User> findById(Long userId);
 
+    Optional<User> findByEmail(String email);
+
+    Optional<User> findByUserId(Long userId);
+
+    Optional<User> findById(Long userId);
 }
