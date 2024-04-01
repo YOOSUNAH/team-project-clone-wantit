@@ -10,23 +10,24 @@ public class FinishedItemResponseDto {
 
     private final Long auctionItemId;
     private final Long userId;
+    private final Long winnerId;
     private final String itemName;
     private final String productDescription;
     private final Long minPrice;
     private final Long maxPrice;
     private final LocalDateTime startDate;
     private final LocalDateTime endDate;
-    private final AuctionItemEnum status;
+    private final AuctionItemEnum status = AuctionItemEnum.FINISHED;
 
     public FinishedItemResponseDto(AuctionItem auctionItem) {
         this.auctionItemId = auctionItem.getAuctionItemId();
         this.userId = auctionItem.getUserId();
+        this.winnerId = auctionItem.getWinnerId();
         this.itemName = auctionItem.getItemName();
         this.productDescription = auctionItem.getProductDescription();
         this.minPrice = auctionItem.getMinPrice();
         this.maxPrice = auctionItem.getMaxPrice();
         this.startDate = auctionItem.getStartDate();
         this.endDate = auctionItem.getEndDate();
-        this.status = auctionItem.getStatus();
     }
 }
