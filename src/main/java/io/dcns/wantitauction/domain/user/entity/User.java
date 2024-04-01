@@ -1,5 +1,8 @@
 package io.dcns.wantitauction.domain.user.entity;
 
+import io.dcns.wantitauction.domain.user.dto.SignupRequestDto;
+import io.dcns.wantitauction.domain.user.dto.UserRequestDto;
+import io.dcns.wantitauction.global.exception.NotMatchException;
 import io.dcns.wantitauction.global.timestamp.Timestamped;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,28 +36,44 @@ public class User extends Timestamped {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private String username;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private String nickname;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private String phoneNumber;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private String address;
 
     @Column
     private LocalDateTime deletedAt;
 
-    public User(String email, String password, String nickname) {
-        this.email = email;
-        this.password = password;
-        this.nickname = nickname;
+    public User(SignupRequestDto signupRequestDto) {
+        this.email = signupRequestDto.getEmail();
+        this.password = signupRequestDto.getPassword();
+        this.username = signupRequestDto.getUsername();
+        this.nickname = signupRequestDto.getNickname();
+        this.phoneNumber = signupRequestDto.getPhoneNumber();
+        this.address = signupRequestDto.getAddress();
     }
 
-    public static User of(String email, String password) {
-        return new User(email, password, null);
+//    public static User of(String email, String password) {
+//        return new User(email, password, null);
+//    }
+
+    public void update(UserRequestDto userRequestDto) {
+        this.nickname = userRequestDto.getNickname();
+        this.phoneNumber = userRequestDto.getPhoneNumber();
+        this.address = userRequestDto.getAddress();
+    }
+
+    public void updatePassword(String password) {
+        if (password.equals(this.password)) {
+            throw new NotMatchException("비밀번호가 일치하지 않습니다.");
+        }
+        this.password = password;
     }
 }

@@ -4,7 +4,6 @@ import io.dcns.wantitauction.domain.user.dto.SignupRequestDto;
 import io.dcns.wantitauction.domain.user.entity.User;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 
 @RequiredArgsConstructor
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Repository;
 public class UserRepositoryImpl implements UserRepository {
 
     private final UserJpaRepository userJpaRepository;
-    private final PasswordEncoder passwordEncoder;
 
     @Override
     public boolean checkEmail(String email) {
@@ -20,10 +18,9 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void signup(SignupRequestDto dto) {
-        userJpaRepository.save(
-            User.of(dto.getEmail(), passwordEncoder.encode(dto.getPassword()))
-        );
+    public void signup(SignupRequestDto signupRequestDto) {
+        User user = new User(signupRequestDto);
+        userJpaRepository.save(user);
     }
 
     @Override
@@ -39,6 +36,16 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Optional<User> findById(Long userId) {
         return userJpaRepository.findById(userId);
+    }
+
+    @Override
+    public void delete(User user) {
+        userJpaRepository.delete(user);
+    }
+
+    @Override
+    public boolean existsByNickname(String nickname) {
+        return userJpaRepository.existsByNickname(nickname);
     }
 
 }

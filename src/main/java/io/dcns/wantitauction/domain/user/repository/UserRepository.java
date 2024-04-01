@@ -8,11 +8,16 @@ public interface UserRepository {
 
     boolean checkEmail(String email);
 
-    void signup(SignupRequestDto dto);
+    void signup(SignupRequestDto signupRequestDto);
 
     Optional<User> findByEmail(String email);
 
     Optional<User> findByUserId(Long userId);
 
     Optional<User> findById(Long userId);
+
+    void delete(User user);
+
+    boolean existsByNickname(String nickname);
+
 }
