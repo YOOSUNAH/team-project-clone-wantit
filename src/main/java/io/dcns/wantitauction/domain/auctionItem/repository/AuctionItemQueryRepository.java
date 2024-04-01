@@ -7,7 +7,9 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.dcns.wantitauction.domain.auctionItem.dto.AuctionItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.FinishedItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.MyAuctionItemsResponseDto;
+import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItem;
 import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItemEnum;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -122,6 +124,15 @@ public class AuctionItemQueryRepository {
                 auctionItem.endDate,
                 auctionItem.status))
             .from(auctionItem)
+            .fetch();
+    }
+
+    public List<AuctionItem> findAllEndAuctionItems() {
+        return jpaQueryFactory
+            .selectFrom(auctionItem)
+            .where(
+                auctionItem.status.eq(AuctionItemEnum.IN_PROGRESS)
+                    .and(auctionItem.endDate.lt(LocalDateTime.now())))
             .fetch();
     }
 }

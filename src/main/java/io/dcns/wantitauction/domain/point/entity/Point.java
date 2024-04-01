@@ -47,4 +47,8 @@ public class Point {
     public void subtractPoint(Long availablePoint) {
         this.availablePoint = this.availablePoint - availablePoint;
     }
+
+    public void winBidSettlement(Long bidPrice) {
+        this.point = this.point - bidPrice;
+    }
 }
