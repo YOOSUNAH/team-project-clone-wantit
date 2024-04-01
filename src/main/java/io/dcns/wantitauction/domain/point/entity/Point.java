@@ -31,6 +31,8 @@ public class Point {
 
     public Point(User user) {
         this.userId = user.getUserId();
+        this.point = 0L;
+        this.availablePoint = 0L;
     }
 
     public void changePoint(Long changedPoint) {

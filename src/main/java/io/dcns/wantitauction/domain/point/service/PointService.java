@@ -25,16 +25,16 @@ public class PointService {
         if (!checkSymbol(pointRequestDto)) {
             throw new IllegalArgumentException("포인트를 0 이상의 값으로 입력해주세요.");
         }
+        Point point = pointRepository.findByUserId(user.getUserId()).orElse(null);
         // 포인트 엔티티가 없을때
-        if (findPoint(user) == null) {
-            Point point = new Point(user);
-            point.changePoint(pointRequestDto.getChangedPoint());
-            PointLog pointLog = new PointLog(point, pointRequestDto);
-            pointRepository.save(point);
+        if (point == null) {
+            Point newPoint = new Point(user);
+            newPoint.changePoint(pointRequestDto.getChangedPoint());
+            PointLog pointLog = new PointLog(newPoint, pointRequestDto);
+            pointRepository.save(newPoint);
             pointLogRepository.save(pointLog);
-            return new PointChangedResponseDto(user, point, pointLog);
+            return new PointChangedResponseDto(user, newPoint, pointLog);
         } else { // 포인트 엔티티가 있을 때
-            Point point = findPoint(user);
             point.changePoint(pointRequestDto.getChangedPoint());
             PointLog pointLog = new PointLog(point, pointRequestDto);
             pointLogRepository.save(pointLog);
@@ -61,7 +61,7 @@ public class PointService {
     }
 
     private void checkPoint(Point point, PointRequestDto pointRequestDto) {
-        if (point.getPoint() < pointRequestDto.getChangedPoint()) {
+        if (point.getPoint() < Math.abs(pointRequestDto.getChangedPoint())) {
             throw new IllegalArgumentException("잔여 포인트가 부족합니다.");
         }
     }

@@ -9,17 +9,17 @@ import lombok.Getter;
 @Getter
 public class PointChangedResponseDto {
 
-    private Long pointId;
+    private final Long pointId;
 
-    private Long pointLogId;
+    private final Long pointLogId;
 
-    private Long userId;
+    private final Long userId;
 
-    private Long changedPoint;
+    private final Long changedPoint;
 
-    private LocalDateTime changedDate;
+    private final LocalDateTime changedDate;
 
-    private String details;
+    private final String details;
 
     public PointChangedResponseDto(User user, Point point, PointLog pointLog) {
         this.pointId = point.getPointId();

@@ -6,13 +6,13 @@ import lombok.Getter;
 @Getter
 public class PointResponseDto {
 
-    private Long pointId;
+    private final Long pointId;
 
-    private Long userId;
+    private final Long userId;
 
-    private Long point;
+    private final Long point;
 
-    private Long availablePoint;
+    private final Long availablePoint;
 
     public PointResponseDto(Point point) {
         this.pointId = point.getPointId();

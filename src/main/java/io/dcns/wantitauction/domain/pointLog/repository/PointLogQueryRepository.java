@@ -25,7 +25,7 @@ public class PointLogQueryRepository {
                 pointLog.changedPoint,
                 pointLog.details,
                 pointLog.changedDate))
-            .from(pointLog, point1)
+            .from(pointLog)
             .leftJoin(pointLog.point, point1)
             .where(point1.userId.eq(user.getUserId()))
             .fetch();
