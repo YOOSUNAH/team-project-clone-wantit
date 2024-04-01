@@ -19,7 +19,7 @@ public class MyAuctionItemsResponseDto {
     private final AuctionItemEnum status;
 
     public MyAuctionItemsResponseDto(AuctionItem auctionItems) {
-        this.auctionItemId = auctionItems.getAuctionId();
+        this.auctionItemId = auctionItems.getAuctionItemId();
         this.userId = auctionItems.getUserId();
         this.itemName = auctionItems.getItemName();
         this.productDescription = auctionItems.getProductDescription();
