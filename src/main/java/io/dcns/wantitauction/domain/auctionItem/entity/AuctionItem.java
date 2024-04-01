@@ -1,6 +1,7 @@
 package io.dcns.wantitauction.domain.auctionItem.entity;
 
 import io.dcns.wantitauction.domain.auctionItem.dto.CreateProductRequestDto;
+import io.dcns.wantitauction.domain.auctionItem.dto.UpdateMyItemRequestDto;
 import io.dcns.wantitauction.domain.user.entity.User;
 import io.dcns.wantitauction.global.timestamp.Timestamped;
 import jakarta.persistence.Column;
@@ -59,6 +60,15 @@ public class AuctionItem extends Timestamped {
 
     public AuctionItem(CreateProductRequestDto request, User user) {
         this.userId = user.getUserId();
+        this.itemName = request.getItemName();
+        this.productDescription = request.getProductDescription();
+        this.minPrice = request.getMinPrice();
+        this.maxPrice = request.getMaxPrice();
+        this.startDate = request.getStartDate();
+        this.endDate = request.getEndDate();
+    }
+
+    public void update(UpdateMyItemRequestDto request) {
         this.itemName = request.getItemName();
         this.productDescription = request.getProductDescription();
         this.minPrice = request.getMinPrice();
