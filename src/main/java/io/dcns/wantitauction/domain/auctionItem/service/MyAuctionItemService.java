@@ -2,6 +2,7 @@ package io.dcns.wantitauction.domain.auctionItem.service;
 
 import io.dcns.wantitauction.domain.auctionItem.dto.CreateProductRequestDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.MyAuctionItemsResponseDto;
+import io.dcns.wantitauction.domain.auctionItem.dto.UpdateMyItemRequestDto;
 import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItem;
 import io.dcns.wantitauction.domain.auctionItem.repository.AuctionItemRepository;
 import io.dcns.wantitauction.domain.user.entity.User;
@@ -31,6 +32,14 @@ public class MyAuctionItemService {
     public MyAuctionItemsResponseDto getAuctionItem(Long auctionItemId, Long userId) {
 
         AuctionItem auctionItem = getItem(auctionItemId, userId);
+        return new MyAuctionItemsResponseDto(auctionItem);
+    }
+
+    public MyAuctionItemsResponseDto updateAuctionItem(
+        UpdateMyItemRequestDto request, Long auctionItemId, Long userId
+    ) {
+        AuctionItem auctionItem = getItem(auctionItemId, userId);
+        auctionItem.update(request);
         return new MyAuctionItemsResponseDto(auctionItem);
     }
 
