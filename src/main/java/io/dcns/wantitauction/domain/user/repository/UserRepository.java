@@ -14,10 +14,5 @@ public interface UserRepository {
     Optional<User> findByUserId(Long userId);
 
     Optional<User> findById(Long userId);
-//
-//    void deleteById(Long userId);
-//
-//    boolean existsByEmail(String request);
-//
-//    boolean existsByNickname(String request);
+
 }

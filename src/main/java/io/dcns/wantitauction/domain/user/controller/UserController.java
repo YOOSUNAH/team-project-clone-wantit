@@ -35,26 +35,5 @@ public class UserController {
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, responseDto.getToken());
     }
 
-//    @PostMapping("/logout")
-//    public void logout(HttpServletRequest request, HttpServletResponse response) {
-//        new SecurityContextLogoutHandler().logout(request, response,
-//            SecurityContextHolder.getContext().getAuthentication());
-//    }
-//
-//    @PatchMapping("/updates/password")
-//    public void updatePassword(@Valid @RequestBody PasswordUpdateRequest request,
-//        @AuthenticationPrincipal UserDetailsImpl userDetails) {
-//        userService.updatePassword(request, userDetails.getUser());
-//    }
-//
-//    @PatchMapping("/updates/nickname")
-//    public void updateNickname(@Valid @RequestBody NicknameUpdateRequest request,
-//        @AuthenticationPrincipal UserDetailsImpl userDetails) {
-//        userService.updateNickname(request, userDetails.getUser());
-//    }
-//
-//    @DeleteMapping("/delete")
-//    public void delete(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-//        userService.delete(userDetails.getUser());
-//    }
+
 }

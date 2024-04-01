@@ -9,12 +9,11 @@ import org.springframework.http.ResponseEntity;
 @AllArgsConstructor
 public class ExceptionDto {
 
-    private HttpStatus status;
     private String message;
 
     public static ResponseEntity<ExceptionDto> of(
         HttpStatus status, String message
     ) {
-        return ResponseEntity.status(status).body(new ExceptionDto(status, message));
+        return ResponseEntity.status(status).body(new ExceptionDto(message));
     }
 }
