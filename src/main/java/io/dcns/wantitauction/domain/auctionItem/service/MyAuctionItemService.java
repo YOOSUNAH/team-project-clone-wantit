@@ -27,11 +27,7 @@ public class MyAuctionItemService {
     }
 
     public List<MyAuctionItemsResponseDto> getAuctionItems(Long userId) {
-
-        List<AuctionItem> auctionItems = auctionItemRepository.findAllByUserId(userId);
-        return auctionItems.stream()
-            .map(MyAuctionItemsResponseDto::new)
-            .toList();
+        return auctionItemQueryRepository.findAllMyAuctionItems(userId);
     }
 
     public MyAuctionItemsResponseDto getAuctionItem(Long auctionItemId, Long userId) {
@@ -55,14 +51,25 @@ public class MyAuctionItemService {
         auctionItemRepository.deleteById(auctionItem.getAuctionItemId());
     }
 
+    public List<MyAuctionItemsResponseDto> getWinningAuctionItems(Long userId) {
+
+        return auctionItemQueryRepository.findWinningAuctionItems(userId);
+    }
+
+    public MyAuctionItemsResponseDto getWinningAuctionItem(Long auctionItemId, Long userId) {
+
+        validateItem(auctionItemId, userId);
+        return auctionItemQueryRepository.findWinningAuctionItem(auctionItemId, userId);
+    }
+
+    private void validateItem(Long auctionItemId, Long userId) {
+        if (!auctionItemRepository.existsByAuctionItemIdAndUserId(auctionItemId, userId)) {
+            throw new EntityNotFoundException("해당 경매 상품이 존재하지 않습니다.");
+        }
+    }
+
     private AuctionItem getItem(Long auctionItemId, Long userId) {
         return auctionItemRepository.findByAuctionItemIdAndUserId(auctionItemId, userId)
             .orElseThrow(() -> new EntityNotFoundException("해당 경매 상품이 존재하지 않습니다."));
-    }
-
-    public List<MyAuctionItemsResponseDto> getFinishedAuctionItems(User user) {
-        // TODO : 쿼리로 FINISHED 상태의 경매 상품을 조회하는 로직을 작성.
-
-        return null;
     }
 }
