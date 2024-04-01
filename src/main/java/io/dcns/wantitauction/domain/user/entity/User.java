@@ -54,7 +54,7 @@ public class User extends Timestamped {
         this.nickname = nickname;
     }
 
-    public static User of(String email, String password) {
-        return new User(email, password, null); // nickname은 여기서 null로 처리하거나, 다른 기본값을 할당
+    public User of(String email, String password) {
+        return new User(email, password, null);
     }
 }
