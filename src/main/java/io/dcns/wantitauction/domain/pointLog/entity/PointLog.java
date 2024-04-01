@@ -1,5 +1,6 @@
 package io.dcns.wantitauction.domain.pointLog.entity;
 
+import io.dcns.wantitauction.domain.point.dto.PointRequestDto;
 import io.dcns.wantitauction.domain.point.entity.Point;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -40,4 +41,10 @@ public class PointLog {
     @ManyToOne
     @JoinColumn(name = "point_id")
     private Point point;
+
+    public PointLog(Point point, PointRequestDto pointRequestDto) {
+        this.changedPoint = pointRequestDto.getChangedPoint();
+        this.details = pointRequestDto.getDetails();
+        this.point = point;
+    }
 }
