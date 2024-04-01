@@ -7,8 +7,10 @@ import io.dcns.wantitauction.domain.user.repository.UserRepository;
 import io.dcns.wantitauction.global.exception.NotMatchException;
 import io.dcns.wantitauction.global.exception.UserNotFoundException;
 import io.dcns.wantitauction.global.jwt.JwtUtil;
+import io.dcns.wantitauction.global.jwt.entity.RefreshTokenEntity;
 import io.dcns.wantitauction.global.jwt.repository.TokenRepository;
 import jakarta.persistence.EntityExistsException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -52,4 +54,13 @@ public class UserService {
 
         return jwtUtil.generateAccessToken(userId, "User");
     }
+
+    @Transactional
+    public void logout(Long userId) {
+        List<RefreshTokenEntity> refreshTokenEntityList = tokenRepository.findAllByUserId(userId);
+        refreshTokenEntityList.forEach(tokenRepository::deleteToken);
+    }
+
+
+
 }
