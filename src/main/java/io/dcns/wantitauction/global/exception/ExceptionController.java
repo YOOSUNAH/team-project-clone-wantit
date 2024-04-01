@@ -1,6 +1,7 @@
 package io.dcns.wantitauction.global.exception;
 
 import io.dcns.wantitauction.global.dto.ExceptionDto;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,8 @@ public class ExceptionController {
     @ExceptionHandler({
         NullPointerException.class,
         NoSuchElementException.class,
-        UserNotFoundException.class
+        UserNotFoundException.class,
+        EntityNotFoundException.class
     })
     public ResponseEntity<ExceptionDto> handleNotFoundException(Exception e) {
         return createResponse(HttpStatus.NOT_FOUND, e.getMessage());
