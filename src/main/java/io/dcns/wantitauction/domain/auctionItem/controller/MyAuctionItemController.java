@@ -14,15 +14,17 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/v1/my/auction-items")
 public class MyAuctionItemController {
 
     private final MyAuctionItemService myAuctionItemService;
 
-    @PostMapping("/v1/auction-items")
+    @PostMapping
     public ResponseEntity<ResponseDto<Void>> createProduct(
         @Valid @RequestBody CreateProductRequestDto request,
         @AuthenticationPrincipal UserDetailsImpl userDetails
@@ -31,7 +33,7 @@ public class MyAuctionItemController {
         return ResponseDto.of(HttpStatus.OK, null);
     }
 
-    @GetMapping("/v1/users/auction-items")
+    @GetMapping
     public ResponseEntity<ResponseDto<List<MyAuctionItemsResponseDto>>> getAuctionItems(
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
