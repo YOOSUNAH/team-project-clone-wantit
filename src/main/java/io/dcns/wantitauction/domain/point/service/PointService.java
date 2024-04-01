@@ -22,10 +22,10 @@ public class PointService {
 
     @Transactional
     public PointChangedResponseDto putPoint(User user, PointRequestDto pointRequestDto) {
-        // 포인트 엔티티가 없을때
         if (!checkSymbol(pointRequestDto)) {
             throw new IllegalArgumentException("포인트를 0 이상의 값으로 입력해주세요.");
         }
+        // 포인트 엔티티가 없을때
         if (findPoint(user) == null) {
             Point point = new Point(user);
             point.changePoint(pointRequestDto.getChangedPoint());
