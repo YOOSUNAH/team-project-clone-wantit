@@ -33,16 +33,16 @@ public class User extends Timestamped {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String username;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String nickname;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String phoneNumber;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String address;
 
     @Column
@@ -54,7 +54,7 @@ public class User extends Timestamped {
         this.nickname = nickname;
     }
 
-    public User of(String email, String password) {
+    public static User of(String email, String password) {
         return new User(email, password, null);
     }
 }
