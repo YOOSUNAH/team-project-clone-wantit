@@ -1,6 +1,7 @@
 package io.dcns.wantitauction.domain.auctionItem.service;
 
 import io.dcns.wantitauction.domain.auctionItem.dto.CreateProductRequestDto;
+import io.dcns.wantitauction.domain.auctionItem.dto.FinishedItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.MyAuctionItemsResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.UpdateMyItemRequestDto;
 import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItem;
@@ -51,12 +52,12 @@ public class MyAuctionItemService {
         auctionItemRepository.deleteById(auctionItem.getAuctionItemId());
     }
 
-    public List<MyAuctionItemsResponseDto> getWinningAuctionItems(Long userId) {
+    public List<FinishedItemResponseDto> getWinningAuctionItems(Long userId) {
 
         return auctionItemQueryRepository.findWinningAuctionItems(userId);
     }
 
-    public MyAuctionItemsResponseDto getWinningAuctionItem(Long auctionItemId, Long userId) {
+    public FinishedItemResponseDto getWinningAuctionItem(Long auctionItemId, Long userId) {
 
         validateItem(auctionItemId, userId);
         return auctionItemQueryRepository.findWinningAuctionItem(auctionItemId, userId);
