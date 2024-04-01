@@ -2,6 +2,7 @@ package io.dcns.wantitauction.global.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dcns.wantitauction.global.dto.ResponseDto;
+import io.dcns.wantitauction.global.exception.UserNotFoundException;
 import io.dcns.wantitauction.global.impl.UserDetailsServiceImpl;
 import io.dcns.wantitauction.global.jwt.JwtUtil;
 import io.dcns.wantitauction.global.jwt.TokenState;
@@ -15,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -79,7 +81,12 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 
     // 인증 객체 생성
     private Authentication createAuthentication(String userId) {
-        UserDetails userDetails = userDetailsService.getUser(Long.parseLong(userId));
+        Long userIdFromToken = NumberUtils.toLong(userId);
+        if (userIdFromToken.equals(0L)) {
+            throw new UserNotFoundException("존재하지 않는 유저입니다.");
+        }
+
+        UserDetails userDetails = userDetailsService.getUser(userIdFromToken);
         return new UsernamePasswordAuthenticationToken(userDetails, null,
             userDetails.getAuthorities());
     }
