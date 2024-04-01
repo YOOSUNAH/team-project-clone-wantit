@@ -1,6 +1,5 @@
 package io.dcns.wantitauction.domain.user.repository;
 
-import io.dcns.wantitauction.domain.user.dto.SignupRequestDto;
 import io.dcns.wantitauction.domain.user.entity.User;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +17,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void signup(SignupRequestDto signupRequestDto) {
-        User user = new User(signupRequestDto);
+    public void save(User user) {
         userJpaRepository.save(user);
     }
 
@@ -34,11 +32,6 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<User> findById(Long userId) {
-        return userJpaRepository.findById(userId);
-    }
-
-    @Override
     public void delete(User user) {
         userJpaRepository.delete(user);
     }
@@ -47,6 +40,5 @@ public class UserRepositoryImpl implements UserRepository {
     public boolean existsByNickname(String nickname) {
         return userJpaRepository.existsByNickname(nickname);
     }
-
 }
 

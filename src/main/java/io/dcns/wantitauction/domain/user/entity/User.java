@@ -60,10 +60,6 @@ public class User extends Timestamped {
         this.address = signupRequestDto.getAddress();
     }
 
-//    public static User of(String email, String password) {
-//        return new User(email, password, null);
-//    }
-
     public void update(UserRequestDto userRequestDto) {
         this.nickname = userRequestDto.getNickname();
         this.phoneNumber = userRequestDto.getPhoneNumber();

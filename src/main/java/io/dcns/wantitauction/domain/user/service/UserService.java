@@ -36,7 +36,11 @@ public class UserService {
         if (userRepository.checkEmail(signupRequestDto.getEmail())) {
             throw new EntityExistsException("해당 이메일이 존재합니다.");
         }
-        userRepository.signup(signupRequestDto);
+
+        String password = passwordEncoder.encode(signupRequestDto.getPassword());
+        User user = new User(signupRequestDto);
+        user.setPassword(password);
+        userRepository.save(user);
     }
 
     @Transactional

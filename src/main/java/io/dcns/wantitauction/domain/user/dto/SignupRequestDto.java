@@ -28,5 +28,4 @@ public class SignupRequestDto extends Timestamped {
 
     @NotBlank
     private String address;
-
 }
