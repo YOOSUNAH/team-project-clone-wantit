@@ -7,6 +7,7 @@ import java.util.Optional;
 public interface UserRepository {
 
     boolean checkEmail(String email);
+  
     void signup(UserSignupRequestDto dto);
 
     Optional<User> findByEmail(String email);
@@ -14,10 +15,4 @@ public interface UserRepository {
     Optional<User> findByUserId(Long userId);
 
     Optional<User> findById(Long userId);
-//
-//    void deleteById(Long userId);
-//
-//    boolean existsByEmail(String request);
-//
-//    boolean existsByNickname(String request);
 }

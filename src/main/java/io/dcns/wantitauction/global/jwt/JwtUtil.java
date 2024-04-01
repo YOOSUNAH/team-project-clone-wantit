@@ -38,9 +38,6 @@ public class JwtUtil {
     private String secretKey;
     private Key key;
 
-    // 삭제할지 말지
-//    private final Set<String> tokenBlackList = new HashSet<>();
-
     @PostConstruct
     public void init() {
         byte[] bytes = Base64.getDecoder().decode(secretKey);
