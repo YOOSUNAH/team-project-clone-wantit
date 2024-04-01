@@ -101,7 +101,6 @@ public class AuthorizationFilter extends OncePerRequestFilter {
         }
     }
 
-    // 이미 토큰 저장소에 있는 토큰이 없을 경우
     private void handleExpiredToken(HttpServletResponse response, RefreshTokenEntity refreshToken)
         throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -114,7 +113,6 @@ public class AuthorizationFilter extends OncePerRequestFilter {
         response.getWriter().write(jsonResponse);
     }
 
-    // 토큰 저장소에 토큰이 남아 있을 경우
     private void refreshAccessToken(HttpServletResponse response, RefreshTokenEntity refreshToken)
         throws IOException {
         String newToken = refreshToken.getToken();
