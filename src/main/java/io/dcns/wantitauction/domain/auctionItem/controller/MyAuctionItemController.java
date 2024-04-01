@@ -20,7 +20,7 @@ public class MyAuctionItemController {
 
     MyAuctionItemService myAuctionItemService;
 
-    @PostMapping("/v1/products")
+    @PostMapping("/v1/auction-items")
     public ResponseEntity<ResponseDto<CreateProductResponseDto>> createProduct(
         @Valid @RequestBody CreateProductRequestDto request,
         @AuthenticationPrincipal UserDetailsImpl userDetails
@@ -29,7 +29,7 @@ public class MyAuctionItemController {
             request,
             userDetails.getUser()
         );
-        return ResponseDto.of(HttpStatus.OK, null);
+        return ResponseDto.of(HttpStatus.OK, responseDto);
     }
 
 }
