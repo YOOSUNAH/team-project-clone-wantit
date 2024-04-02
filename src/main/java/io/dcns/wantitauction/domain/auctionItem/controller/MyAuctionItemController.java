@@ -1,6 +1,7 @@
 package io.dcns.wantitauction.domain.auctionItem.controller;
 
 import io.dcns.wantitauction.domain.auctionItem.dto.CreateProductRequestDto;
+import io.dcns.wantitauction.domain.auctionItem.dto.FinishedItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.MyAuctionItemsResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.UpdateMyItemRequestDto;
 import io.dcns.wantitauction.domain.auctionItem.service.MyAuctionItemService;
@@ -77,20 +78,20 @@ public class MyAuctionItemController {
     }
 
     @GetMapping("/finished")
-    public ResponseEntity<ResponseDto<List<MyAuctionItemsResponseDto>>> getWinningAuctionItems(
+    public ResponseEntity<ResponseDto<List<FinishedItemResponseDto>>> getWinningAuctionItems(
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        List<MyAuctionItemsResponseDto> finishedAuction = myAuctionItemService
+        List<FinishedItemResponseDto> finishedAuction = myAuctionItemService
             .getWinningAuctionItems(userDetails.getUser().getUserId());
         return ResponseDto.of(HttpStatus.OK, finishedAuction);
     }
 
     @GetMapping("/{auctionItemId}/finished")
-    public ResponseEntity<ResponseDto<MyAuctionItemsResponseDto>> getWinningAuctionItem(
+    public ResponseEntity<ResponseDto<FinishedItemResponseDto>> getWinningAuctionItem(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @PathVariable Long auctionItemId
     ) {
-        MyAuctionItemsResponseDto finishedAuction = myAuctionItemService
+        FinishedItemResponseDto finishedAuction = myAuctionItemService
             .getWinningAuctionItem(auctionItemId, userDetails.getUser().getUserId());
         return ResponseDto.of(HttpStatus.OK, finishedAuction);
     }
