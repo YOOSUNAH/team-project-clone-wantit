@@ -8,6 +8,7 @@ import io.dcns.wantitauction.domain.user.dto.SignupRequestDto;
 import io.dcns.wantitauction.domain.user.dto.UserRequestDto;
 import io.dcns.wantitauction.domain.user.dto.UserResponseDto;
 import io.dcns.wantitauction.domain.user.entity.User;
+import io.dcns.wantitauction.domain.user.entity.UserMapper;
 import io.dcns.wantitauction.domain.user.repository.UserRepository;
 import io.dcns.wantitauction.global.exception.NotMatchException;
 import io.dcns.wantitauction.global.exception.UserNotFoundException;
@@ -28,19 +29,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final TokenRepository tokenRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public void signup(SignupRequestDto requestDto) {
         if (userRepository.checkEmail(requestDto.getEmail())) {
             throw new EntityExistsException("해당 이메일이 존재합니다.");
         }
-
-        String password = passwordEncoder.encode(requestDto.getPassword());
-        User user = generateUser(requestDto);
-        user.setPassword(password);
+        String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
+        User user = UserMapper.SignupRequestDtoToUser(requestDto, encodedPassword);
         userRepository.save(user);
     }
 
@@ -118,15 +117,5 @@ public class UserService {
         if (!changePassword.equals(rechangePassword)) {
             throw new NotMatchException("바꿀 비밀번호가 일치하지 않습니다.");
         }
-    }
-
-    private User generateUser(SignupRequestDto requestDto) {
-        return new User(
-            requestDto.getEmail(),
-            requestDto.getPassword(),
-            requestDto.getUsername(),
-            requestDto.getNickname(),
-            requestDto.getPhoneNumber(),
-            requestDto.getAddress());
     }
 }
