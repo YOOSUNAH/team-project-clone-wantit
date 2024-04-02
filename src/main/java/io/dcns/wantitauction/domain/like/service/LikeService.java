@@ -6,6 +6,7 @@ import io.dcns.wantitauction.domain.like.entity.Like;
 import io.dcns.wantitauction.domain.like.repository.LikeQueryRepository;
 import io.dcns.wantitauction.domain.like.repository.LikeRepository;
 import io.dcns.wantitauction.domain.user.entity.User;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +18,9 @@ public class LikeService {
 
     private final LikeRepository likeRepository;
     private final AuctionItemRepository auctionItemRepository;
-    private final LikeQueryRepository likeQueryRepositor;
+    private final LikeQueryRepository likeQueryRepository;
 
+    @Transactional
     public LikeResponseDto likeAuctionItem(Long auctionItemId, User user) {
         validateAuctionItem(auctionItemId);
         Like liked = findByAuctionItemIdAndUserId(auctionItemId, user.getUserId());
@@ -33,9 +35,7 @@ public class LikeService {
     }
 
     public List<LikeResponseDto> getLikedAuctionItem(Long userId) {
-        List<Like> likedAuctionItemList = likeQueryRepositor.findAllByUserId(userId);
-        return likedAuctionItemList.stream().map(
-            like -> new LikeResponseDto(userId, like.getAuctionItemId(), true)).toList();
+        return likeQueryRepository.findAllByUserId(userId);
     }
 
     private void validateAuctionItem(Long auctionItemId) {
