@@ -23,8 +23,11 @@ public class PointLogQueryRepository {
                 point1.userId,
                 pointLog.pointLogId,
                 pointLog.changedPoint,
+                pointLog.status,
                 pointLog.details,
-                pointLog.changedDate))
+                pointLog.auctionItemId,
+                pointLog.createdAt,
+                pointLog.updatedAt))
             .from(pointLog)
             .leftJoin(pointLog.point, point1)
             .where(point1.userId.eq(user.getUserId()))

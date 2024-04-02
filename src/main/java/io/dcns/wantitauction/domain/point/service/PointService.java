@@ -6,6 +6,7 @@ import io.dcns.wantitauction.domain.point.dto.PointResponseDto;
 import io.dcns.wantitauction.domain.point.entity.Point;
 import io.dcns.wantitauction.domain.point.repository.PointRepository;
 import io.dcns.wantitauction.domain.pointLog.entity.PointLog;
+import io.dcns.wantitauction.domain.pointLog.entity.PointLogStatus;
 import io.dcns.wantitauction.domain.pointLog.repository.PointLogRepository;
 import io.dcns.wantitauction.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class PointService {
 
     @Transactional
     public PointChangedResponseDto putPoint(User user, PointRequestDto pointRequestDto) {
+        PointLogStatus pointLogStatus = PointLogStatus.CHARGE;
         if (!checkSymbol(pointRequestDto)) {
             throw new IllegalArgumentException("포인트를 0 이상의 값으로 입력해주세요.");
         }
@@ -30,13 +32,13 @@ public class PointService {
         if (point == null) {
             Point newPoint = new Point(user);
             newPoint.changePoint(pointRequestDto.getChangedPoint());
-            PointLog pointLog = new PointLog(newPoint, pointRequestDto);
+            PointLog pointLog = new PointLog(newPoint, pointRequestDto, pointLogStatus);
             pointRepository.save(newPoint);
             pointLogRepository.save(pointLog);
             return new PointChangedResponseDto(user, newPoint, pointLog);
         } else { // 포인트 엔티티가 있을 때
             point.changePoint(pointRequestDto.getChangedPoint());
-            PointLog pointLog = new PointLog(point, pointRequestDto);
+            PointLog pointLog = new PointLog(point, pointRequestDto, pointLogStatus);
             pointLogRepository.save(pointLog);
             return new PointChangedResponseDto(user, point, pointLog);
         }
@@ -44,13 +46,14 @@ public class PointService {
 
     @Transactional
     public PointChangedResponseDto withdrawPoint(User user, PointRequestDto pointRequestDto) {
+        PointLogStatus pointLogStatus = PointLogStatus.WITHDRAWAL;
         if (checkSymbol(pointRequestDto)) {
             throw new IllegalArgumentException("포인트를 0 이하의 값으로 입력해주세요.");
         }
         Point point = findPoint(user);
         checkPoint(point, pointRequestDto);
         point.changePoint(pointRequestDto.getChangedPoint());
-        PointLog pointLog = new PointLog(point, pointRequestDto);
+        PointLog pointLog = new PointLog(point, pointRequestDto, pointLogStatus);
         pointLogRepository.save(pointLog);
         return new PointChangedResponseDto(user, point, pointLog);
     }
