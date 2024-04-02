@@ -4,6 +4,8 @@ import io.dcns.wantitauction.global.exception.NotMatchException;
 import io.dcns.wantitauction.global.timestamp.Timestamped;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -45,6 +47,10 @@ public class User extends Timestamped {
 
     @Column(nullable = false)
     private String address;
+
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private UserRoleEnum role;
 
     @Column
     private LocalDateTime deletedAt;
