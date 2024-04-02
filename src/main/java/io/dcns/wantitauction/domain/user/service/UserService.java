@@ -1,6 +1,5 @@
 package io.dcns.wantitauction.domain.user.service;
 
-import static io.dcns.wantitauction.domain.user.entity.UserRoleEnum.Authority.USER;
 
 import io.dcns.wantitauction.domain.user.dto.LoginRequestDto;
 import io.dcns.wantitauction.domain.user.dto.PasswordRequestDto;
@@ -8,6 +7,7 @@ import io.dcns.wantitauction.domain.user.dto.SignupRequestDto;
 import io.dcns.wantitauction.domain.user.dto.UserRequestDto;
 import io.dcns.wantitauction.domain.user.dto.UserResponseDto;
 import io.dcns.wantitauction.domain.user.entity.User;
+import io.dcns.wantitauction.domain.user.entity.UserMapper;
 import io.dcns.wantitauction.domain.user.repository.UserRepository;
 import io.dcns.wantitauction.global.exception.NotMatchException;
 import io.dcns.wantitauction.global.exception.UserNotFoundException;
@@ -28,19 +28,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final TokenRepository tokenRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public void signup(SignupRequestDto requestDto) {
         if (userRepository.checkEmail(requestDto.getEmail())) {
             throw new EntityExistsException("해당 이메일이 존재합니다.");
         }
-
-        String password = passwordEncoder.encode(requestDto.getPassword());
-        User user = generateUser(requestDto);
-        user.setPassword(password);
+        String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
+        User user = UserMapper.SignupRequestDtoToUser(requestDto, encodedPassword);
         userRepository.save(user);
     }
 
@@ -96,11 +94,11 @@ public class UserService {
     }
 
     private String generateToken(Long userId) {
-        String refreshToken = jwtUtil.generateRefreshToken(userId, USER);
+        String refreshToken = jwtUtil.generateRefreshToken(userId, "USER");
         refreshToken = jwtUtil.substringToken(refreshToken);
         tokenRepository.register(userId, refreshToken);
 
-        return jwtUtil.generateAccessToken(userId, USER);
+        return jwtUtil.generateAccessToken(userId, "USER");
     }
 
     private User getUser(Long userId) {
@@ -118,15 +116,5 @@ public class UserService {
         if (!changePassword.equals(rechangePassword)) {
             throw new NotMatchException("바꿀 비밀번호가 일치하지 않습니다.");
         }
-    }
-
-    private User generateUser(SignupRequestDto requestDto) {
-        return new User(
-            requestDto.getEmail(),
-            requestDto.getPassword(),
-            requestDto.getUsername(),
-            requestDto.getNickname(),
-            requestDto.getPhoneNumber(),
-            requestDto.getAddress());
     }
 }
