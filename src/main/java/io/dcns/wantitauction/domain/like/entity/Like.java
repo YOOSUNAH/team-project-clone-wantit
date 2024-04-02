@@ -26,6 +26,9 @@ public class Like {
     @Column(nullable = false)
     private Long auctionItemId;
 
+    @Column
+    private boolean liked;
+
     public Like(User user, Long auctionItemId) {
         this.userId = user.getUserId();
         this.auctionItemId = auctionItemId;
