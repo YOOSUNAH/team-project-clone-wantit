@@ -5,15 +5,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dcns.wantitauction.domain.user.dto.KakaoUserInfoDto;
-import io.dcns.wantitauction.domain.user.repository.UserRepository;
-import io.dcns.wantitauction.global.jwt.JwtUtil;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -25,10 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RequiredArgsConstructor
 public class KakaoService {
 
-    private final PasswordEncoder passwordEncoder;
-    private final UserRepository userRepository;
     private final RestTemplate restTemplate;
-    private final JwtUtil jwtUtil;
 
     public String kakaoLogin(String code) throws JsonProcessingException {
         // 1. "인가 코드"로 "액세스 토큰" 요청
@@ -41,6 +35,7 @@ public class KakaoService {
     }
 
     private String getToken(String code) throws JsonProcessingException {
+        // 확인하기
         log.info("인가코드 : " + code);
         // 요청 URL 만들기
         URI uri = UriComponentsBuilder
@@ -73,11 +68,15 @@ public class KakaoService {
         );
 
         // HTTP 응답 (JSON) -> 액세스 토큰 파싱
-        JsonNode jsonNode = new ObjectMapper().readTree(response.getBody());
+        JsonNode jsonNode = new ObjectMapper().readTree(
+            response.getBody());  // 발급받아온 엑세스 토큰이 body에 들어있다.
         return jsonNode.get("access_token").asText();
     }
 
+
+    // 사용자 정보 요청
     private KakaoUserInfoDto getKakaoUserInfo(String accessToken) throws JsonProcessingException {
+        // 확인하기
         log.info("인가코드 (accessToken): " + accessToken);
         // 요청 URL 만들기
         URI uri = UriComponentsBuilder
@@ -110,6 +109,7 @@ public class KakaoService {
         String email = jsonNode.get("kakao_account")
             .get("email").asText();
 
+        // 확인하기
         log.info("카카오 사용자 정보: " + id + ", " + nickname + ", " + email);
         return new KakaoUserInfoDto(id, nickname, email);
     }
