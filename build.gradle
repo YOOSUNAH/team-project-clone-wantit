@@ -65,11 +65,12 @@ dependencies {
     // For NumberUtils
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.14.0'
 
+    // Thymeleaf
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
     // Redis
 //    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 //    implementation 'org.redisson:redisson-spring-boot-starter:3.27.2'
-
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
 }
 
