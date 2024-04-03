@@ -78,4 +78,10 @@ public class AuctionItem extends Timestamped {
         this.startDate = request.getStartDate();
         this.endDate = request.getEndDate();
     }
+
+    public void finishAuction(Long winnerId, Long maxPrice) {
+        this.maxPrice = maxPrice;
+        this.status = AuctionItemEnum.FINISHED;
+        this.winnerId = winnerId;
+    }
 }

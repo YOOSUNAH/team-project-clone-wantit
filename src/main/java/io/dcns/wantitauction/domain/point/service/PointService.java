@@ -1,5 +1,6 @@
 package io.dcns.wantitauction.domain.point.service;
 
+import io.dcns.wantitauction.domain.event.WinningBidEvent;
 import io.dcns.wantitauction.domain.point.dto.PointChangedResponseDto;
 import io.dcns.wantitauction.domain.point.dto.PointRequestDto;
 import io.dcns.wantitauction.domain.point.dto.PointResponseDto;
@@ -10,6 +11,7 @@ import io.dcns.wantitauction.domain.pointLog.entity.PointLogStatus;
 import io.dcns.wantitauction.domain.pointLog.repository.PointLogRepository;
 import io.dcns.wantitauction.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -93,5 +95,22 @@ public class PointService {
         } else {
             throw new IllegalArgumentException("포인트를 입력해주세요.");
         }
+    }
+
+    @EventListener(classes = {WinningBidEvent.class})
+    public void winningBidEventListenerInPoint(WinningBidEvent winningBidEvent) {
+        // 포인트 정산
+        Long winnerId = winningBidEvent.getWinnerId();
+        Long winnerPrice = winningBidEvent.getBidPrice();
+        Long auctionItemId = winningBidEvent.getAuctionItemId();
+
+        Point point = pointRepository.findByUserId(winnerId).orElseThrow(
+            () -> new IllegalArgumentException("포인트가 존재하지 않습니다.")
+        );
+        point.winBidSettlement(winnerPrice);
+
+        PointLog pointLog = new PointLog((-1) * winnerPrice, PointLogStatus.SUCCESSFUL_BID, "낙찰",
+            point, auctionItemId);
+        pointLogRepository.save(pointLog);
     }
 }
