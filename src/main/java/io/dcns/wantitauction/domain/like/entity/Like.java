@@ -26,7 +26,7 @@ public class Like {
     @Column(nullable = false)
     private Long auctionItemId;
 
-    @Column
+    @Column(nullable = false)
     private boolean liked;
 
     public Like(User user, Long auctionItemId) {

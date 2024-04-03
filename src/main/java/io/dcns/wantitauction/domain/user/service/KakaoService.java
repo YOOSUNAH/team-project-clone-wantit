@@ -116,21 +116,21 @@ public class KakaoService {
         );
 
         JsonNode jsonNode = new ObjectMapper().readTree(response.getBody());
-        Long id = jsonNode.get("id").asLong();
+        Long kakaoId = jsonNode.get("id").asLong();
         String nickname = jsonNode.get("properties")
             .get("nickname").asText();
         String email = jsonNode.get("kakao_account")
             .get("email").asText();
 
         // 확인하기
-        log.info("카카오 사용자 정보: " + id + ", " + nickname + ", " + email);
-        return new KakaoUserInfoDto(id, nickname, email);
+        log.info("카카오 사용자 정보: " + kakaoId + ", " + nickname + ", " + email);
+        return new KakaoUserInfoDto(kakaoId, nickname, email);
     }
 
     // 회원가입 처리
     private User registerKakaoUserIfNeeded(KakaoUserInfoDto kakaoUserInfo) {
         // DB 에 중복된 Kakao Id 가 있는지 확인
-        Long kakaoId = kakaoUserInfo.getId();
+        Long kakaoId = kakaoUserInfo.getKakaoId();
         User kakaoUser = userRepository.findByKakaoId(kakaoId).orElse(null);
 
         if (kakaoUser == null) {

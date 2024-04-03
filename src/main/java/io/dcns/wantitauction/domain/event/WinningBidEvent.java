@@ -9,5 +9,5 @@ public class WinningBidEvent {
 
     private final Long auctionItemId;
     private final Long winnerId;
-    private final Long bidPrice;
+    private final Long winPrice;
 }

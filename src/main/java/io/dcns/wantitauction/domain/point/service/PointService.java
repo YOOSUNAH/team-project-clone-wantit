@@ -101,15 +101,15 @@ public class PointService {
     public void winningBidEventListenerInPoint(WinningBidEvent winningBidEvent) {
         // 포인트 정산
         Long winnerId = winningBidEvent.getWinnerId();
-        Long winnerPrice = winningBidEvent.getBidPrice();
+        Long winPrice = winningBidEvent.getWinPrice();
         Long auctionItemId = winningBidEvent.getAuctionItemId();
 
         Point point = pointRepository.findByUserId(winnerId).orElseThrow(
             () -> new IllegalArgumentException("포인트가 존재하지 않습니다.")
         );
-        point.winBidSettlement(winnerPrice);
+        point.winBidSettlement(winPrice);
 
-        PointLog pointLog = new PointLog((-1) * winnerPrice, PointLogStatus.SUCCESSFUL_BID, "낙찰",
+        PointLog pointLog = new PointLog((-1) * winPrice, PointLogStatus.SUCCESSFUL_BID, "낙찰",
             point, auctionItemId);
         pointLogRepository.save(pointLog);
     }
