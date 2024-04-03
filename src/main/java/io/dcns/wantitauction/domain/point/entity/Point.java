@@ -39,4 +39,12 @@ public class Point {
         this.point = this.point + changedPoint;
         this.availablePoint = this.availablePoint + changedPoint;
     }
+
+    public void returnBidPoint(Long maxPrice) {
+        this.availablePoint = this.availablePoint + maxPrice;
+    }
+
+    public void subtractPoint(Long availablePoint) {
+        this.availablePoint = this.availablePoint - availablePoint;
+    }
 }

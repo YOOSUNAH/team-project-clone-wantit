@@ -38,4 +38,10 @@ public class AuctionItemService {
                 () -> new IllegalArgumentException("존재하지 않는 상품 ID 입니다.")
             );
     }
+
+    public AuctionItem findById(Long auctionItemId) {
+        return auctionItemRepository.findById(auctionItemId).orElseThrow(
+            () -> new IllegalArgumentException("해당 상품을 찾을 수 없습니다.")
+        );
+    }
 }
