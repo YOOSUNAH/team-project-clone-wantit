@@ -114,5 +114,5 @@
 ---
 
 <div align="center">
-    <img src="https://github.com/dbfjru/CodeKata/assets/57518992/7cb11cd4-331c-4e51-85e5-701aeedfaf43"  width="80%">
+    <img src="https://github.com/DCNsProjects/WantIt/assets/57518992/5d067765-d317-4bd0-b650-aff93f9dd43f"  width="80%">
 </div>
