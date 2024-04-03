@@ -33,7 +33,7 @@ public class Bid extends Timestamped {
     private Long bidPrice;
 
     @ManyToOne
-    @JoinColumn(name = "auction_id")
+    @JoinColumn(name = "auctionItem_id")
     private AuctionItem auctionItem;
 
     public Bid(User user, BidRequestDto bidRequestDto, AuctionItem auctionItem) {
