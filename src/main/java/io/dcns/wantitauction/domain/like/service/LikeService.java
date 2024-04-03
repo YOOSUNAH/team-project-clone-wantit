@@ -30,7 +30,6 @@ public class LikeService {
             likeRepository.save(like);
         } else {
             like.updateLikedStatus();
-            likeRepository.save(like);
         }
         return new LikeResponseDto(like.getUserId(), like.getAuctionItemId(), like.isLiked());
     }
