@@ -13,7 +13,7 @@ public class AuctionItemResponseDto {
     private final String itemName;
     private final String productDescription;
     private final Long minPrice;
-    private final Long maxPrice;
+    private final Long winPrice;
     private final LocalDateTime startDate;
     private final LocalDateTime endDate;
     private final AuctionItemEnum status;
@@ -24,7 +24,7 @@ public class AuctionItemResponseDto {
         this.itemName = auctionItem.getItemName();
         this.productDescription = auctionItem.getProductDescription();
         this.minPrice = auctionItem.getMinPrice();
-        this.maxPrice = auctionItem.getMaxPrice();
+        this.winPrice = auctionItem.getWinPrice();
         this.startDate = auctionItem.getStartDate();
         this.endDate = auctionItem.getEndDate();
         this.status = auctionItem.getStatus();

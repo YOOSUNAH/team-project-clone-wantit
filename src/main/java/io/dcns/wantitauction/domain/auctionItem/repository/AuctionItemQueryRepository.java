@@ -29,7 +29,7 @@ public class AuctionItemQueryRepository {
                 auctionItem.itemName,
                 auctionItem.productDescription,
                 auctionItem.minPrice,
-                auctionItem.maxPrice,
+                auctionItem.winPrice,
                 auctionItem.startDate,
                 auctionItem.endDate,
                 auctionItem.status))
@@ -46,7 +46,7 @@ public class AuctionItemQueryRepository {
                 auctionItem.itemName,
                 auctionItem.productDescription,
                 auctionItem.minPrice,
-                auctionItem.maxPrice,
+                auctionItem.winPrice,
                 auctionItem.startDate,
                 auctionItem.endDate,
                 auctionItem.status))
@@ -64,7 +64,7 @@ public class AuctionItemQueryRepository {
                 auctionItem.itemName,
                 auctionItem.productDescription,
                 auctionItem.minPrice,
-                auctionItem.maxPrice,
+                auctionItem.winPrice,
                 auctionItem.startDate,
                 auctionItem.endDate,
                 auctionItem.status))
@@ -83,7 +83,7 @@ public class AuctionItemQueryRepository {
                 auctionItem.itemName,
                 auctionItem.productDescription,
                 auctionItem.minPrice,
-                auctionItem.maxPrice,
+                auctionItem.winPrice,
                 auctionItem.startDate,
                 auctionItem.endDate))
             .from(auctionItem)
@@ -101,7 +101,7 @@ public class AuctionItemQueryRepository {
                     auctionItem.itemName,
                     auctionItem.productDescription,
                     auctionItem.minPrice,
-                    auctionItem.maxPrice,
+                    auctionItem.winPrice,
                     auctionItem.startDate,
                     auctionItem.endDate))
                 .from(auctionItem)
@@ -119,7 +119,7 @@ public class AuctionItemQueryRepository {
                 auctionItem.itemName,
                 auctionItem.productDescription,
                 auctionItem.minPrice,
-                auctionItem.maxPrice,
+                auctionItem.winPrice,
                 auctionItem.startDate,
                 auctionItem.endDate,
                 auctionItem.status))

@@ -48,7 +48,7 @@ public class Point {
         this.availablePoint = this.availablePoint - availablePoint;
     }
 
-    public void winBidSettlement(Long bidPrice) {
-        this.point = this.point - bidPrice;
+    public void winBidSettlement(Long winPrice) {
+        this.point = this.point - winPrice;
     }
 }
