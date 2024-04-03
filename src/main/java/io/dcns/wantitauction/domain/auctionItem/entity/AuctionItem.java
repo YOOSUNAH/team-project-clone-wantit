@@ -45,7 +45,7 @@ public class AuctionItem extends Timestamped {
     @Column(nullable = false)
     private Long minPrice;
 
-    @Column(nullable = false)
+    @Column
     private Long maxPrice;
 
     @Column(nullable = false)
@@ -66,7 +66,6 @@ public class AuctionItem extends Timestamped {
         this.itemName = request.getItemName();
         this.productDescription = request.getProductDescription();
         this.minPrice = request.getMinPrice();
-        this.maxPrice = request.getMaxPrice();
         this.startDate = request.getStartDate();
         this.endDate = request.getEndDate();
     }
