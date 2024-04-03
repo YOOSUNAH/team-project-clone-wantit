@@ -50,7 +50,7 @@ public class PointService {
         if (checkSymbol(pointRequestDto)) {
             throw new IllegalArgumentException("포인트를 0 이하의 값으로 입력해주세요.");
         }
-        Point point = findPoint(user);
+        Point point = findPoint(user.getUserId());
         checkPoint(point, pointRequestDto);
         point.changePoint(pointRequestDto.getChangedPoint());
         PointLog pointLog = new PointLog(point, pointRequestDto, pointLogStatus);
@@ -59,20 +59,30 @@ public class PointService {
     }
 
     public PointResponseDto getPoint(User user) {
-        final Point point = findPoint(user);
+        final Point point = findPoint(user.getUserId());
         return new PointResponseDto(point);
+    }
+
+    public void returnBidPoint(Long userId, Long availablePoint) {
+        Point point = findPoint(userId);
+        point.returnBidPoint(availablePoint);
+    }
+
+    public void subtractPoint(Long userId, Long availablePoint) {
+        Point point = findPoint(userId);
+        point.subtractPoint(availablePoint);
+    }
+
+    public Point findPoint(Long userId) {
+        return pointRepository.findByUserId(userId).orElseThrow(
+            () -> new IllegalArgumentException("포인트가 존재하지 않습니다.")
+        );
     }
 
     private void checkPoint(Point point, PointRequestDto pointRequestDto) {
         if (point.getPoint() < Math.abs(pointRequestDto.getChangedPoint())) {
             throw new IllegalArgumentException("잔여 포인트가 부족합니다.");
         }
-    }
-
-    private Point findPoint(User user) {
-        return pointRepository.findByUserId(user.getUserId()).orElseThrow(
-            () -> new IllegalArgumentException("포인트가 존재하지 않습니다.")
-        );
     }
 
     private boolean checkSymbol(PointRequestDto pointRequestDto) {
