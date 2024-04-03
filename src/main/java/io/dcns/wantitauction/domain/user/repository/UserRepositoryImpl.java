@@ -40,5 +40,10 @@ public class UserRepositoryImpl implements UserRepository {
     public boolean existsByNickname(String nickname) {
         return userJpaRepository.existsByNickname(nickname);
     }
+
+    @Override
+    public Optional<User> findByKakaoId(Long kakaoId) {
+        return userJpaRepository.findByKakaoId(kakaoId);
+    }
 }
 
