@@ -22,7 +22,8 @@ public class LikeQueryRepository {
                 like.auctionItemId,
                 like.liked))
             .from(like)
-            .where(like.userId.eq(userId))
+            .where(like.userId.eq(userId)
+                .and(like.liked.isTrue()))
             .fetch();
     }
 }

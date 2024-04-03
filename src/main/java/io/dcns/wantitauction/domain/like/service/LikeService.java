@@ -23,15 +23,16 @@ public class LikeService {
     @Transactional
     public LikeResponseDto likeAuctionItem(Long auctionItemId, User user) {
         validateAuctionItem(auctionItemId);
-        Like liked = findByAuctionItemIdAndUserId(auctionItemId, user.getUserId());
+        Like like = findByAuctionItemIdAndUserId(auctionItemId, user.getUserId());
 
-        if (liked != null) {
-            likeRepository.delete(liked);
-            return new LikeResponseDto(user.getUserId(), auctionItemId, false);
+        if (like == null) {
+            like = new Like(user, auctionItemId);
+            likeRepository.save(like);
         } else {
-            likeRepository.save(new Like(user, auctionItemId));
-            return new LikeResponseDto(user.getUserId(), auctionItemId, true);
+            like.updateLikedStatus();
+            likeRepository.save(like);
         }
+        return new LikeResponseDto(like.getUserId(), like.getAuctionItemId(), like.isLiked());
     }
 
     public List<LikeResponseDto> getLikedAuctionItem(Long userId) {
