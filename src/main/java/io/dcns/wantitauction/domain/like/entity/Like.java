@@ -32,5 +32,10 @@ public class Like {
     public Like(User user, Long auctionItemId) {
         this.userId = user.getUserId();
         this.auctionItemId = auctionItemId;
+        this.liked = true;  // 처음에는 true (좋아요)로 저장한다.
+    }
+
+    public void updateLikedStatus() {
+        this.liked = !this.liked;  //update시 좋아요 상태를 변경해준다.
     }
 }
