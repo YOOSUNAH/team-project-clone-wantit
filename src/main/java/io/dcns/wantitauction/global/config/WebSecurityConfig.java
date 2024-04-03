@@ -50,7 +50,11 @@ public class WebSecurityConfig {
                 .permitAll() // resources 접근 허용 설정
                 .requestMatchers("/v1/users/signup").permitAll()
                 .requestMatchers("/v1/users/login").permitAll()
-                .requestMatchers("/api/**").permitAll()
+                // 카카오 로그인
+                .requestMatchers("/").permitAll()
+                .requestMatchers("/v1/users/kakao/callback").permitAll()
+                .requestMatchers("/v1/users/login-page").permitAll()
+                .requestMatchers("/v1/users/signup-page").permitAll()
                 .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 

@@ -16,4 +16,6 @@ public interface UserRepository {
     void delete(User user);
 
     boolean existsByNickname(String nickname);
+
+    Optional<User> findByKakaoId(Long kakaoId);
 }
