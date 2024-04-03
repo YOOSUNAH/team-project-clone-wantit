@@ -5,6 +5,7 @@ import io.dcns.wantitauction.domain.user.dto.SignupRequestDto;
 import io.dcns.wantitauction.domain.user.service.KakaoService;
 import io.dcns.wantitauction.domain.user.service.UserService;
 import io.dcns.wantitauction.global.jwt.JwtUtil;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -44,9 +45,13 @@ public class KaKaoController {
     @GetMapping("/user/kakao/callback")
     public String kakaoLogin(@RequestParam String code, HttpServletResponse response)
         throws JsonProcessingException {
-        
+
         String token = kaoKaoService.kakaoLogin(code);
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
+
+        // 쿠키에 넣어주기
+        Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, token.substring(7));
+        cookie.setPath("/");  //메인 페이지
+        response.addCookie(cookie);
 
         return "index";
     }

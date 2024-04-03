@@ -51,6 +51,8 @@ public class KakaoService {
     }
 
     private String getToken(String code) throws JsonProcessingException {
+        log.info("인가코드 : " + code);
+
         // 요청 URL 만들기
         URI uri = UriComponentsBuilder
             .fromUriString("https://kauth.kakao.com")
@@ -76,10 +78,7 @@ public class KakaoService {
             .body(body);
 
         // HTTP 요청 보내기
-        ResponseEntity<String> response = restTemplate.exchange(
-            requestEntity,
-            String.class
-        );
+        ResponseEntity<String> response = restTemplate.exchange(requestEntity, String.class);
 
         // HTTP 응답 (JSON) -> 액세스 토큰 파싱
         JsonNode jsonNode = new ObjectMapper().readTree(
@@ -90,6 +89,8 @@ public class KakaoService {
 
     // 사용자 정보 요청
     private KakaoUserInfoDto getKakaoUserInfo(String accessToken) throws JsonProcessingException {
+        log.info("인가코드 (accessToken): " + accessToken);
+
         // 요청 URL 만들기
         URI uri = UriComponentsBuilder
             .fromUriString("https://kapi.kakao.com")
