@@ -50,6 +50,7 @@ public class WebSecurityConfig {
                 .permitAll() // resources 접근 허용 설정
                 .requestMatchers("/v1/users/signup").permitAll()
                 .requestMatchers("/v1/users/login").permitAll()
+                .requestMatchers("/api/**").permitAll()
                 .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 

@@ -1,7 +1,5 @@
 package io.dcns.wantitauction.domain.user.entity;
 
-import io.dcns.wantitauction.domain.user.dto.SignupRequestDto;
-import io.dcns.wantitauction.domain.user.dto.UserRequestDto;
 import io.dcns.wantitauction.global.exception.NotMatchException;
 import io.dcns.wantitauction.global.timestamp.Timestamped;
 import jakarta.persistence.Column;
@@ -11,17 +9,17 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Getter
-@Setter
 @Table(name = "users")
 @NoArgsConstructor
+@AllArgsConstructor
 @SQLDelete(sql = "update users set deleted_at = NOW() where user_id = ?")
 @SQLRestriction(value = "deleted_at is NULL")
 public class User extends Timestamped {
@@ -51,19 +49,20 @@ public class User extends Timestamped {
     @Column
     private LocalDateTime deletedAt;
 
-    public User(SignupRequestDto signupRequestDto) {
-        this.email = signupRequestDto.getEmail();
-        this.password = signupRequestDto.getPassword();
-        this.username = signupRequestDto.getUsername();
-        this.nickname = signupRequestDto.getNickname();
-        this.phoneNumber = signupRequestDto.getPhoneNumber();
-        this.address = signupRequestDto.getAddress();
+    public User(String email, String password, String username, String nickname,
+        String phoneNumber, String address) {
+        this.email = email;
+        this.password = password;
+        this.username = username;
+        this.nickname = nickname;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
     }
 
-    public void update(UserRequestDto userRequestDto) {
-        this.nickname = userRequestDto.getNickname();
-        this.phoneNumber = userRequestDto.getPhoneNumber();
-        this.address = userRequestDto.getAddress();
+    public void update(String nickname, String phoneNumber, String address) {
+        this.nickname = nickname;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
     }
 
     public void updatePassword(String password) {
@@ -71,5 +70,9 @@ public class User extends Timestamped {
             throw new NotMatchException("비밀번호가 일치하지 않습니다.");
         }
         this.password = password;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }
