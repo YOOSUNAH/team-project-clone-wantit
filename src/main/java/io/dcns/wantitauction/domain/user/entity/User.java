@@ -40,14 +40,14 @@ public class User extends Timestamped {
     @Column(nullable = false)
     private String nickname;
 
-    @Column(nullable = false)
     private String phoneNumber;
 
-    @Column(nullable = false)
     private String address;
 
     @Column
     private LocalDateTime deletedAt;
+
+    private Long kakaoId;
 
     public User(String email, String password, String username, String nickname,
         String phoneNumber, String address) {
@@ -74,5 +74,18 @@ public class User extends Timestamped {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public User(String email, String password, String username, String nickname, Long kakaoId) {
+        this.email = email;
+        this.password = password;
+        this.username = username;
+        this.nickname = nickname;
+        this.kakaoId = kakaoId;
+    }
+
+    public User kakaoIdUpdate(Long kakaoId) {
+        this.kakaoId = kakaoId;
+        return this;
     }
 }

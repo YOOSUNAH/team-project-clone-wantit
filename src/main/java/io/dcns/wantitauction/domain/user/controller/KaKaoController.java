@@ -44,8 +44,8 @@ public class KaKaoController {
     @GetMapping("/user/kakao/callback")
     public String kakaoLogin(@RequestParam String code, HttpServletResponse response)
         throws JsonProcessingException {
+        
         String token = kaoKaoService.kakaoLogin(code);
-
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
 
         return "index";
