@@ -31,24 +31,6 @@ public class BidService {
     @Transactional
     public BidResponseDto createBid(User user, Long auctionItemId, BidRequestDto bidRequestDto) {
 
-        /*
-         * 리퀘스트랑 가용 포인트 비교해서 돈이 있나 확인
-         * 본인이 올린 상품인지 확인
-         *
-         * 상품에 입찰한 사람이 있다면
-         * -> 최대 입찰가보다 큰지 확인
-         * -> 리퀘스트가 호가 단위(Max Price)랑 맞는지 확인
-         * -> 이전 입찰자 가용 포인트 반환
-         * -> 가용 포인트 차감
-         * -> 비드 생성 (save)
-         *
-         * 상품에 입찰한 사람이 없다면
-         * -> 시작 입찰가보다 큰지 확인
-         * -> 리퀘스트가 호가 단위(Min Price)랑 맞는지 확인
-         * -> 가용 포인트 차감
-         * -> 비드 생성 (save)
-         */
-
         Point point = pointService.findPoint(user.getUserId());
         AuctionItem auctionItem = auctionItemService.findById(auctionItemId);
         checkUser(auctionItem, user);
