@@ -30,11 +30,11 @@ public class MyAuctionItemController {
     private final MyAuctionItemService myAuctionItemService;
 
     @PostMapping
-    public ResponseEntity<ResponseDto<Void>> createProduct(
+    public ResponseEntity<ResponseDto<Void>> createAuctionItem(
         @Valid @RequestBody CreateProductRequestDto request,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        myAuctionItemService.createProduct(request, userDetails.getUser());
+        myAuctionItemService.createAuctionItem(request, userDetails.getUser());
         return ResponseDto.of(HttpStatus.CREATED, null);
     }
 

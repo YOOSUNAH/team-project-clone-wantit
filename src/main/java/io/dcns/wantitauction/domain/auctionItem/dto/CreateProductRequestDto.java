@@ -10,7 +10,7 @@ import lombok.Getter;
 public class CreateProductRequestDto {
 
     private String itemName;
-    private String productDescription;
+    private String itemDescription;
     private Long minPrice;
 
     @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")

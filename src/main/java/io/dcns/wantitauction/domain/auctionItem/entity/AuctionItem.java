@@ -40,7 +40,7 @@ public class AuctionItem extends Timestamped {
     private String itemName;
 
     @Column(nullable = false)
-    private String productDescription;
+    private String itemDescription;
 
     @Column(nullable = false)
     private Long minPrice;
@@ -64,7 +64,7 @@ public class AuctionItem extends Timestamped {
     public AuctionItem(CreateProductRequestDto request, User user) {
         this.userId = user.getUserId();
         this.itemName = request.getItemName();
-        this.productDescription = request.getProductDescription();
+        this.itemDescription = request.getItemDescription();
         this.minPrice = request.getMinPrice();
         this.startDate = request.getStartDate();
         this.endDate = request.getEndDate();
@@ -72,7 +72,7 @@ public class AuctionItem extends Timestamped {
 
     public void update(UpdateMyItemRequestDto request) {
         this.itemName = request.getItemName();
-        this.productDescription = request.getProductDescription();
+        this.itemDescription = request.getItemDescription();
         this.minPrice = request.getMinPrice();
         this.startDate = request.getStartDate();
         this.endDate = request.getEndDate();

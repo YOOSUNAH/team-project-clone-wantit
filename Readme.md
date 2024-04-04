@@ -46,7 +46,9 @@
   <details>
     <summary>경매상품 관리 기능</summary>
     <ul>
-      <li>상품 생성</li>
+      <li>경매상품 생성</li>
+      <li>경매상품 조회</li>
+      <li>경매상품 수정</li>
     </ul>
   </details>
   <details>
@@ -114,5 +116,5 @@
 ---
 
 <div align="center">
-    <img src="https://github.com/DCNsProjects/WantIt/assets/57518992/5d067765-d317-4bd0-b650-aff93f9dd43f"  width="80%">
+    <img src="https://github.com/DCNsProjects/WantIt/assets/57518992/25a0bf9a-2032-4649-b99b-5c25ebe63800"  width="80%">
 </div>

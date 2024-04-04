@@ -9,7 +9,7 @@ import lombok.Getter;
 public class UpdateMyItemRequestDto {
 
     private String itemName;
-    private String productDescription;
+    private String itemDescription;
     private Long minPrice;
 
     @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")

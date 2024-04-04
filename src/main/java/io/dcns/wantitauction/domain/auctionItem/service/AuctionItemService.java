@@ -16,7 +16,7 @@ public class AuctionItemService {
     private final AuctionItemRepository auctionItemRepository;
     private final AuctionItemQueryRepository auctionItemQueryRepository;
 
-    public AuctionItemResponseDto getProduct(Long auctionItemId) {
+    public AuctionItemResponseDto getAuctionItem(Long auctionItemId) {
         AuctionItem auctionItem = auctionItemRepository.findById(auctionItemId).orElseThrow(
             () -> new IllegalArgumentException("존재하지 않는 경매상품 입니다.")
         );
@@ -24,15 +24,15 @@ public class AuctionItemService {
         return new AuctionItemResponseDto(auctionItem);
     }
 
-    public List<AuctionItemResponseDto> getProducts() {
+    public List<AuctionItemResponseDto> getAuctionItems() {
         return auctionItemQueryRepository.findAll();
     }
 
-    public List<FinishedItemResponseDto> getFinishedProducts() {
+    public List<FinishedItemResponseDto> getFinishedAuctionItems() {
         return auctionItemQueryRepository.findAllByFinished();
     }
 
-    public FinishedItemResponseDto getFinishedProduct(Long auctionItemId) {
+    public FinishedItemResponseDto getFinishedAuctionItem(Long auctionItemId) {
         return auctionItemQueryRepository.findByIdAndFinished(auctionItemId)
             .orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 상품 ID 입니다.")
