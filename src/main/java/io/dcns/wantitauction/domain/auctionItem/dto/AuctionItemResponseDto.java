@@ -11,7 +11,7 @@ public class AuctionItemResponseDto {
     private final Long auctionItemId;
     private final Long userId;
     private final String itemName;
-    private final String productDescription;
+    private final String itemDescription;
     private final Long minPrice;
     private final Long winPrice;
     private final LocalDateTime startDate;
@@ -22,7 +22,7 @@ public class AuctionItemResponseDto {
         this.auctionItemId = auctionItem.getAuctionItemId();
         this.userId = auctionItem.getUserId();
         this.itemName = auctionItem.getItemName();
-        this.productDescription = auctionItem.getProductDescription();
+        this.itemDescription = auctionItem.getItemDescription();
         this.minPrice = auctionItem.getMinPrice();
         this.winPrice = auctionItem.getWinPrice();
         this.startDate = auctionItem.getStartDate();
