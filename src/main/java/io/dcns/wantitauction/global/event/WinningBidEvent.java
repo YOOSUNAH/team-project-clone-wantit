@@ -1,4 +1,4 @@
-package io.dcns.wantitauction.domain.event;
+package io.dcns.wantitauction.global.event;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

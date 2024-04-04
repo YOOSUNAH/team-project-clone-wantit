@@ -1,10 +1,10 @@
-package io.dcns.wantitauction.domain.scheduler;
+package io.dcns.wantitauction.global.scheduler;
 
 import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItem;
 import io.dcns.wantitauction.domain.auctionItem.repository.AuctionItemQueryRepository;
 import io.dcns.wantitauction.domain.bid.entity.Bid;
 import io.dcns.wantitauction.domain.bid.repository.BidRepository;
-import io.dcns.wantitauction.domain.event.WinningBidEvent;
+import io.dcns.wantitauction.global.event.WinningBidEvent;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
