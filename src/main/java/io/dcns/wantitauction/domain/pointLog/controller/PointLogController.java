@@ -6,11 +6,11 @@ import io.dcns.wantitauction.global.dto.ResponseDto;
 import io.dcns.wantitauction.global.impl.UserDetailsImpl;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -22,10 +22,11 @@ public class PointLogController {
     @GetMapping("/v1/points/log")
     public ResponseEntity<ResponseDto<List<PointLogResponseDto>>> getPointLogs(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
-        Pageable pageable
+        @RequestParam("page") int page,
+        @RequestParam("size") int size
     ) {
         List<PointLogResponseDto> pointLogResponseDtoList = pointLogService
-            .getPointLogs(userDetails.getUser(), pageable);
+            .getPointLogs(userDetails.getUser(), page - 1, size);
 
         return ResponseDto.of(HttpStatus.OK, pointLogResponseDtoList);
     }
