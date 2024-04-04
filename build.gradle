@@ -66,12 +66,19 @@ dependencies {
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.14.0'
 
     // Thymeleaf
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    // implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.thymeleaf:thymeleaf:3.0.15.RELEASE'
 
     // Redis
-//    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-//    implementation 'org.redisson:redisson-spring-boot-starter:3.27.2'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.redisson:redisson-spring-boot-starter:3.27.1'
 
+    // Redis와 Spring을 통신할 수 있게 해줌.
+    implementation 'org.springframework.data:spring-data-redis:2.7.5'
+    // email
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    implementation 'io.lettuce:lettuce-core:6.2.1.RELEASE'
 }
 
 test {

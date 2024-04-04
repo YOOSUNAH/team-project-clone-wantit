@@ -3,21 +3,23 @@ package io.dcns.wantitauction.domain.bid.dto;
 import io.dcns.wantitauction.domain.bid.entity.Bid;
 import java.time.LocalDateTime;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class BidResponseDto {
 
-    private final Long bidId;
+    private Long bidId;
 
-    private final Long auctionItemId;
+    private Long auctionItemId;
 
-    private final Long userId;
+    private Long userId;
 
-    private final Long bidPrice;
+    private Long bidPrice;
 
-    private final LocalDateTime createdAt;
+    private LocalDateTime createdAt;
 
-    private final LocalDateTime updatedAt;
+    private LocalDateTime updatedAt;
 
     public BidResponseDto(Bid bid) {
         this.bidId = bid.getBidId();

@@ -55,6 +55,8 @@ public class WebSecurityConfig {
                 .requestMatchers("/v1/users/kakao/callback").permitAll()
                 .requestMatchers("/v1/users/login-page").permitAll()
                 .requestMatchers("/v1/users/signup-page").permitAll()
+                // 이메일 인증
+                .requestMatchers("v1/users/emails/*").permitAll()
                 .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 
