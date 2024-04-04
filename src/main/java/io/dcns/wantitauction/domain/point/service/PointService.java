@@ -82,8 +82,8 @@ public class PointService {
     }
 
     private void checkPoint(Point point, PointRequestDto pointRequestDto) {
-        if (point.getPoint() < Math.abs(pointRequestDto.getChangedPoint())) {
-            throw new IllegalArgumentException("잔여 포인트가 부족합니다.");
+        if (point.getAvailablePoint() < Math.abs(pointRequestDto.getChangedPoint())) {
+            throw new IllegalArgumentException("잔여 가용 포인트가 부족합니다.");
         }
     }
 
