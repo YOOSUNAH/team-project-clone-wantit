@@ -5,6 +5,7 @@ import io.dcns.wantitauction.domain.auctionItem.service.AuctionItemService;
 import io.dcns.wantitauction.domain.bid.dto.BidRequestDto;
 import io.dcns.wantitauction.domain.bid.dto.BidResponseDto;
 import io.dcns.wantitauction.domain.bid.entity.Bid;
+import io.dcns.wantitauction.domain.bid.repository.BidQueryRepository;
 import io.dcns.wantitauction.domain.bid.repository.BidRepository;
 import io.dcns.wantitauction.domain.point.entity.Point;
 import io.dcns.wantitauction.domain.point.service.PointService;
@@ -27,6 +28,7 @@ public class BidService {
     private final PointService pointService;
     private final AuctionItemService auctionItemService;
     private final BidRepository bidRepository;
+    private final BidQueryRepository bidQueryRepository;
 
     @Transactional
     public BidResponseDto createBid(User user, Long auctionItemId, BidRequestDto bidRequestDto) {
@@ -53,6 +55,10 @@ public class BidService {
             bidRepository.save(newBid);
             return new BidResponseDto(newBid);
         }
+    }
+
+    public List<BidResponseDto> getAllBids(User user) {
+        return bidQueryRepository.findAllBids(user);
     }
 
     private void checkUser(AuctionItem auctionItem, User user) {

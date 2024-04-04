@@ -5,10 +5,12 @@ import io.dcns.wantitauction.domain.bid.dto.BidResponseDto;
 import io.dcns.wantitauction.domain.bid.service.BidService;
 import io.dcns.wantitauction.global.dto.ResponseDto;
 import io.dcns.wantitauction.global.impl.UserDetailsImpl;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,5 +34,14 @@ public class BidController {
             .createBid(userDetails.getUser(), auctionItemId, bidRequestDto);
 
         return ResponseDto.of(HttpStatus.OK, bidResponseDto);
+    }
+
+    @GetMapping("/bids")
+    public ResponseEntity<ResponseDto<List<BidResponseDto>>> getAllBids(
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        List<BidResponseDto> bidResponseDtoList = bidService
+            .getAllBids(userDetails.getUser());
+        return ResponseDto.of(HttpStatus.OK, bidResponseDtoList);
     }
 }
