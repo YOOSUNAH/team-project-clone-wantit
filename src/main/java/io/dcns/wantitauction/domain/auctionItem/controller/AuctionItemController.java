@@ -21,30 +21,31 @@ public class AuctionItemController {
     private final AuctionItemService auctionItemService;
 
     @GetMapping("/{auctionItemId}")
-    public ResponseEntity<ResponseDto<AuctionItemResponseDto>> getProduct(
+    public ResponseEntity<ResponseDto<AuctionItemResponseDto>> getAuctionItem(
         @PathVariable Long auctionItemId
     ) {
-        AuctionItemResponseDto responseDto = auctionItemService.getProduct(auctionItemId);
+        AuctionItemResponseDto responseDto = auctionItemService.getAuctionItem(auctionItemId);
         return ResponseDto.of(HttpStatus.OK, responseDto);
     }
 
     @GetMapping
-    public ResponseEntity<ResponseDto<List<AuctionItemResponseDto>>> getProducts() {
-        List<AuctionItemResponseDto> responseDtoList = auctionItemService.getProducts();
+    public ResponseEntity<ResponseDto<List<AuctionItemResponseDto>>> getAuctionItems() {
+        List<AuctionItemResponseDto> responseDtoList = auctionItemService.getAuctionItems();
         return ResponseDto.of(HttpStatus.OK, responseDtoList);
     }
 
     @GetMapping("/finished")
-    public ResponseEntity<ResponseDto<List<FinishedItemResponseDto>>> getFinishedProducts() {
-        List<FinishedItemResponseDto> responseDtoList = auctionItemService.getFinishedProducts();
+    public ResponseEntity<ResponseDto<List<FinishedItemResponseDto>>> getFinishedAuctionItems() {
+        List<FinishedItemResponseDto> responseDtoList = auctionItemService.getFinishedAuctionItems();
         return ResponseDto.of(HttpStatus.OK, responseDtoList);
     }
 
     @GetMapping("/{auctionItemId}/finished")
-    public ResponseEntity<ResponseDto<FinishedItemResponseDto>> getFinishedProduct(
+    public ResponseEntity<ResponseDto<FinishedItemResponseDto>> getFinishedAuctionItem(
         @PathVariable Long auctionItemId
     ) {
-        FinishedItemResponseDto responseDto = auctionItemService.getFinishedProduct(auctionItemId);
+        FinishedItemResponseDto responseDto = auctionItemService.getFinishedAuctionItem(
+            auctionItemId);
         return ResponseDto.of(HttpStatus.OK, responseDto);
     }
 }

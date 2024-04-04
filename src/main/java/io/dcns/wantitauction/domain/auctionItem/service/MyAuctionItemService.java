@@ -23,7 +23,7 @@ public class MyAuctionItemService {
     private final AuctionItemQueryRepository auctionItemQueryRepository;
 
     @Transactional
-    public void createProduct(CreateProductRequestDto request, User user) {
+    public void createAuctionItem(CreateProductRequestDto request, User user) {
         auctionItemRepository.save(new AuctionItem(request, user));
     }
 
