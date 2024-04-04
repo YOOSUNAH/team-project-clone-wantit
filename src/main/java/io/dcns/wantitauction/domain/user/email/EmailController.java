@@ -21,16 +21,16 @@ public class EmailController {
 
     @GetMapping("/authcode")
     public ResponseEntity<ResponseDto<String>> sendEmailPath(
-        @RequestBody EmailSignupRequestDto requestDto) // (@PathVariable String email)
+        @RequestBody EmailSignupRequestDto requestDto)
         throws MessagingException {
 
         emailService.sendEmail(requestDto.getEmail());
         return ResponseDto.of(HttpStatus.OK, "이메일을 확인하세요");
     }
 
-    @PostMapping("/authcode")  ///{email_address}
+    @PostMapping("/authcode")
     public ResponseEntity<ResponseDto<String>> sendEmailAndCode(
-        // @PathVariable String email_address,
+
         @RequestBody EmailRequestDto requestDto)
         throws NoSuchAlgorithmException {
 
