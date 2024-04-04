@@ -15,9 +15,9 @@ public class PointLogService {
 
     private final PointLogQueryRepository pointLogQueryRepository;
 
-    public List<PointLogResponseDto> getPointLogs(User user, int page, int size) {
+    public List<PointLogResponseDto> getPointLogs(User user, int page, int size, String status) {
         Pageable pageable = PageRequest.of(page, size);
         return pointLogQueryRepository
-            .findAllPointLogsPageable(user, pageable).getContent();
+            .findAllPointLogsPageable(user, pageable, status).getContent();
     }
 }
