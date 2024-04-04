@@ -6,6 +6,7 @@ import io.dcns.wantitauction.global.dto.ResponseDto;
 import io.dcns.wantitauction.global.impl.UserDetailsImpl;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,10 +21,11 @@ public class PointLogController {
 
     @GetMapping("/v1/points/log")
     public ResponseEntity<ResponseDto<List<PointLogResponseDto>>> getPointLogs(
-        @AuthenticationPrincipal UserDetailsImpl userDetail
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        Pageable pageable
     ) {
         List<PointLogResponseDto> pointLogResponseDtoList = pointLogService
-            .getPointLogs(userDetail.getUser());
+            .getPointLogs(userDetails.getUser(), pageable);
 
         return ResponseDto.of(HttpStatus.OK, pointLogResponseDtoList);
     }
