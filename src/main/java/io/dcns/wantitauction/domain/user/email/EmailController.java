@@ -21,22 +21,19 @@ public class EmailController {
 
     @GetMapping("/authcode")
     public ResponseEntity<ResponseDto<String>> sendEmailPath(
-        @RequestBody EmailSignupRequestDto requestDto) // (@PathVariable String email)
-        throws MessagingException {
+        @RequestBody EmailSignupRequestDto requestDto) throws MessagingException {
 
         emailService.sendEmail(requestDto.getEmail());
         return ResponseDto.of(HttpStatus.OK, "이메일을 확인하세요");
     }
 
-    @PostMapping("/authcode")  ///{email_address}
-    public ResponseEntity<ResponseDto<String>> sendEmailAndCode(
-        // @PathVariable String email_address,
-        @RequestBody EmailRequestDto requestDto)
-        throws NoSuchAlgorithmException {
+    @PostMapping("/authcode")
+    public ResponseEntity<ResponseDto<Boolean>> sendEmailAndCode(
+        @RequestBody EmailRequestDto requestDto) throws NoSuchAlgorithmException {
 
         if (emailService.verifyEmailCode(requestDto.getEmail(), requestDto.getCode())) {
-            return ResponseDto.of(HttpStatus.OK, emailService.makeMemberId(requestDto.getEmail()));
+            return ResponseDto.of(HttpStatus.OK, true);
         }
-        return ResponseDto.of(HttpStatus.NOT_FOUND, null);
+        return ResponseDto.of(HttpStatus.NOT_FOUND, false);
     }
 }
