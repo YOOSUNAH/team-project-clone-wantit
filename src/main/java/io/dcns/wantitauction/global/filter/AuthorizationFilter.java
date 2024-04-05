@@ -1,13 +1,10 @@
 package io.dcns.wantitauction.global.filter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.dcns.wantitauction.global.dto.ResponseDto;
-import io.dcns.wantitauction.global.exception.UserNotFoundException;
+import io.dcns.wantitauction.domain.user.entity.UserRoleEnum;
 import io.dcns.wantitauction.global.impl.UserDetailsServiceImpl;
 import io.dcns.wantitauction.global.jwt.JwtUtil;
+import io.dcns.wantitauction.global.jwt.RefreshTokenRepository;
 import io.dcns.wantitauction.global.jwt.TokenState;
-import io.dcns.wantitauction.global.jwt.entity.RefreshTokenEntity;
-import io.dcns.wantitauction.global.jwt.repository.TokenRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -16,15 +13,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Slf4j(topic = "JWT 인가")
@@ -33,107 +27,93 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class AuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-    private final TokenRepository tokenRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
+
     private final UserDetailsServiceImpl userDetailsService;
 
-    ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    protected void doFilterInternal(HttpServletRequest httpServletRequest,
-        HttpServletResponse httpServletResponse,
+    protected void doFilterInternal(
+        HttpServletRequest request, HttpServletResponse response,
         FilterChain filterChain) throws ServletException, IOException {
-        String tokenValue = jwtUtil.getAccessTokenFromRequest(httpServletRequest);
-        if (!StringUtils.hasText(tokenValue)) {
-            filterChain.doFilter(httpServletRequest, httpServletResponse);
+
+        String tokenValue = jwtUtil.getJwtFromHeader(request);
+
+        if (tokenValue == null) { // null 또는 empty인 경우
+            filterChain.doFilter(request, response);
             return;
         }
-        TokenState state = jwtUtil.isValidateToken(tokenValue);
+
+        handleTokenValidation(tokenValue, response);
+        filterChain.doFilter(request, response);
+    }
+
+    private void handleTokenValidation(String tokenValue, HttpServletResponse response) {
+        TokenState state = jwtUtil.validateToken(tokenValue);
 
         // 토큰이 불일치인 경우
         if (state.equals(TokenState.INVALID)) {
             log.error("Token Error");
-            return;
         }
-
         // 토큰이 만료된 경우
-        if (state.equals(TokenState.EXPIRED)) {
-            refreshTokenAndHandleException(tokenValue, httpServletResponse);
-            return;
+        else if (state.equals(TokenState.EXPIRED)) {
+            handleExpiredToken(tokenValue, response);
         }
-
-        Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
-        try {
-            setAuthentication(info.getSubject());
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return;
+        // 토큰이 유효한 경우
+        else {
+            handleValidToken(tokenValue);
         }
-        filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 
-    // 인증 처리
-    public void setAuthentication(String userId) {
-        SecurityContext context = SecurityContextHolder.createEmptyContext();
-        Authentication authentication = createAuthentication(userId);
-        context.setAuthentication(authentication);
-        SecurityContextHolder.setContext(context);
-    }
-
-    // 인증 객체 생성
-    private Authentication createAuthentication(String userId) {
-        Long userIdFromToken = NumberUtils.toLong(userId);
-        if (userIdFromToken.equals(0L)) {
-            throw new UserNotFoundException("존재하지 않는 유저입니다.");
-        }
-
-        UserDetails userDetails = userDetailsService.getUser(userIdFromToken);
-        return new UsernamePasswordAuthenticationToken(userDetails, null,
-            userDetails.getAuthorities());
-    }
-
-    // 토큰을 재발급 및 예외처리하는 메서드
-    private void refreshTokenAndHandleException(String tokenValue, HttpServletResponse response) {
+    private void handleExpiredToken(String tokenValue, HttpServletResponse response) {
         try {
             Claims info = jwtUtil.getUserInfoFromExpiredToken(tokenValue);
-            Long userId = Long.parseLong(info.getSubject());
-            RefreshTokenEntity refreshToken = tokenRepository.findByUserId(userId);
-            TokenState refreshState = jwtUtil.isValidateToken(refreshToken.getToken());
 
-            if (refreshState.equals(TokenState.VALID)) {
-                refreshAccessToken(response, refreshToken);
+            if (refreshTokenRepository.existsByUserId(info.get("userId", Long.class))) {
+                Long userId = Long.parseLong(info.getSubject());
+                UserRoleEnum role = info.get(JwtUtil.AUTHORIZATION_KEY)
+                    .equals("ROLE_ADMIN") ? UserRoleEnum.ADMIN : UserRoleEnum.USER;
+
+                String newToken = jwtUtil.regenerateAccessToken(userId, role);
+                response.addHeader(JwtUtil.AUTHORIZATION_HEADER, newToken);
+                response.setStatus(HttpServletResponse.SC_OK);
+                log.info("새로운 Acces Token이 발급되었습니다.");
+
             } else {
-                handleExpiredToken(response, refreshToken);
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                log.info("Acces Token, Refresh Token 모두 만료되었습니다.");
+                refreshTokenRepository.delete(info.getSubject());
             }
         } catch (Exception e) {
             log.error(e.getMessage());
         }
     }
 
-    private void handleExpiredToken(HttpServletResponse response, RefreshTokenEntity refreshToken)
-        throws IOException {
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        String jsonResponse = objectMapper.writeValueAsString(
-            ResponseDto.of(HttpStatus.UNAUTHORIZED, "모든 토큰이 만료되었습니다."));
-        tokenRepository.deleteToken(refreshToken);
+    private void handleValidToken(String tokenValue) {
+        Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
 
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(jsonResponse);
+        Long userId = Long.parseLong(info.getSubject());
+        UserRoleEnum role = info.get(JwtUtil.AUTHORIZATION_KEY)
+            .equals("ROLE_ADMIN") ? UserRoleEnum.ADMIN : UserRoleEnum.USER;
+
+        setAuthentication(userId, role);
     }
 
-    private void refreshAccessToken(HttpServletResponse response, RefreshTokenEntity refreshToken)
-        throws IOException {
-        String newToken = refreshToken.getToken();
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, newToken);
-        response.setStatus(HttpServletResponse.SC_OK);
+    // 인증 처리
+    public void setAuthentication(Long userId, UserRoleEnum role) {
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        Authentication authentication = createAuthentication(userId, role);
+        context.setAuthentication(authentication);
+        SecurityContextHolder.setContext(context);
+    }
 
-        String jsonResponse = objectMapper.writeValueAsString(
-            ResponseDto.of(HttpStatus.OK, "성공적으로 토큰을 발급하였습니다."));
-        tokenRepository.deleteToken(refreshToken);
+    // 인증 객체 생성
+    private Authentication createAuthentication(Long userId, UserRoleEnum role) {
 
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(jsonResponse);
+        UserDetails userDetails = userDetailsService.getUserDetails(userId, role);
+
+        return new UsernamePasswordAuthenticationToken(userDetails, null,
+            userDetails.getAuthorities());
     }
 }
 

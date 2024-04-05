@@ -3,7 +3,7 @@ package io.dcns.wantitauction.global.config;
 import io.dcns.wantitauction.global.filter.AuthorizationFilter;
 import io.dcns.wantitauction.global.impl.UserDetailsServiceImpl;
 import io.dcns.wantitauction.global.jwt.JwtUtil;
-import io.dcns.wantitauction.global.jwt.repository.TokenRepository;
+import io.dcns.wantitauction.global.jwt.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -23,7 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig {
 
     private final JwtUtil jwtUtil;
-    private final TokenRepository tokenRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final UserDetailsServiceImpl userDetailsService;
 
     @Bean
@@ -34,7 +34,7 @@ public class WebSecurityConfig {
 
     @Bean
     public AuthorizationFilter jwtAuthorizationFilter() {
-        return new AuthorizationFilter(jwtUtil, tokenRepository, userDetailsService);
+        return new AuthorizationFilter(jwtUtil, refreshTokenRepository, userDetailsService);
     }
 
     @Bean

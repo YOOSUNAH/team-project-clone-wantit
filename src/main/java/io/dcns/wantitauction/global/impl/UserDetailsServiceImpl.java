@@ -1,6 +1,7 @@
 package io.dcns.wantitauction.global.impl;
 
 import io.dcns.wantitauction.domain.user.entity.User;
+import io.dcns.wantitauction.domain.user.entity.UserRoleEnum;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,9 +15,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return null;
     }
 
-    public UserDetails getUser(Long userId) throws UsernameNotFoundException {
+    public UserDetails getUserDetails(Long userId, UserRoleEnum role)
+        throws UsernameNotFoundException {
         User user = new User();
-        user.setUserId(userId);
+        user.setForUserDetails(userId, role);
         return new UserDetailsImpl(user);
     }
 }

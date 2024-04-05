@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dcns.wantitauction.domain.user.dto.KakaoUserInfoDto;
 import io.dcns.wantitauction.domain.user.entity.User;
+import io.dcns.wantitauction.domain.user.entity.UserRoleEnum;
 import io.dcns.wantitauction.domain.user.repository.UserRepository;
 import io.dcns.wantitauction.global.jwt.JwtUtil;
 import java.net.URI;
@@ -44,8 +45,8 @@ public class KakaoService {
         User kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
 
         // 4. JWT 토큰 반환
-        String createToken = jwtUtil.generateAccessToken(kakaoUser.getUserId(),
-            "USER"); // Todo: 추후에 변경 예정 kakaoUser.getRole())
+        String createToken = jwtUtil.generateAccessAndRefreshToken(kakaoUser.getUserId(),
+            UserRoleEnum.USER);
 
         return createToken;
     }
@@ -149,12 +150,10 @@ public class KakaoService {
                 // email: kakao email
                 String email = kakaoUserInfo.getEmail();
                 kakaoUser = new User(email, encodedPassword, kakaoUserInfo.getNickname(),
-                    kakaoUserInfo.getNickname(), kakaoId);
+                    kakaoUserInfo.getNickname(), UserRoleEnum.USER, kakaoId);
             }
-
             userRepository.save(kakaoUser);
         }
-
         return kakaoUser;
     }
 }
