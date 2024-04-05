@@ -8,6 +8,7 @@ import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItem;
 import io.dcns.wantitauction.domain.auctionItem.repository.AuctionItemQueryRepository;
 import io.dcns.wantitauction.domain.auctionItem.repository.AuctionItemRepository;
 import io.dcns.wantitauction.domain.user.entity.User;
+import io.dcns.wantitauction.global.aop.ForbiddenKeyword;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class MyAuctionItemService {
     private final AuctionItemQueryRepository auctionItemQueryRepository;
 
     @Transactional
+    @ForbiddenKeyword
     public void createAuctionItem(CreateProductRequestDto request, User user) {
         auctionItemRepository.save(new AuctionItem(request, user));
     }
