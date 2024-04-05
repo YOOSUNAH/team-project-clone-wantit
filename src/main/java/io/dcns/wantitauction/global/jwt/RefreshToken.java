@@ -16,14 +16,11 @@ import org.springframework.data.redis.core.index.Indexed;
 public class RefreshToken {
 
         @Id
-        private Long id;
-
         @Indexed
-        private String accessToken;
+        private Long userId;
 
         private String refreshToken;
 
         @TimeToLive(unit = TimeUnit.MILLISECONDS) // 디폴트는 TimeUnit.SECONDS
         private long expiration;
-
 }

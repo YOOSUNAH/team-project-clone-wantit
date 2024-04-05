@@ -51,9 +51,7 @@ public class UserService {
 
         Long userId = user.getUserId();
         UserRoleEnum role = user.getRole();
-        String accessToken = jwtUtil.generateAccessAndRefreshToken(userId, role);
-        refreshTokenRepository.save(userId, accessToken);
-        return accessToken;
+        return jwtUtil.generateAccessAndRefreshToken(userId, role);
     }
 
 

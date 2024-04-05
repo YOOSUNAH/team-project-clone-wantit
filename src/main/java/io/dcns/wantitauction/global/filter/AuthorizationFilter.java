@@ -28,7 +28,6 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
-
     private final UserDetailsServiceImpl userDetailsService;
 
 
@@ -51,15 +50,15 @@ public class AuthorizationFilter extends OncePerRequestFilter {
     private void handleTokenValidation(String tokenValue, HttpServletResponse response) {
         TokenState state = jwtUtil.validateToken(tokenValue);
 
-        // 토큰이 불일치인 경우
+        // Access 토큰이 불일치인 경우
         if (state.equals(TokenState.INVALID)) {
             log.error("Token Error");
         }
-        // 토큰이 만료된 경우
+        // Access 토큰이 만료된 경우
         else if (state.equals(TokenState.EXPIRED)) {
             handleExpiredToken(tokenValue, response);
         }
-        // 토큰이 유효한 경우
+        // Access 토큰이 유효한 경우
         else {
             handleValidToken(tokenValue);
         }
@@ -67,8 +66,13 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 
     private void handleExpiredToken(String tokenValue, HttpServletResponse response) {
         try {
+            // 만료된 AccessToken으로 부터 정보 가지고 오기
             Claims info = jwtUtil.getUserInfoFromExpiredToken(tokenValue);
 
+            /*
+            repository(redis)에 같은 userId를 가진 RefresthToken이 있다면 = 유효하다면 , AccessToken을 재발급한다.
+            (만료기간이 끝나면 redis에서 사라지기 떄문에 존재하면 만료기간이 끝나지 않았다는 뜻)
+            */
             if (refreshTokenRepository.existsByUserId(info.get("userId", Long.class))) {
                 Long userId = Long.parseLong(info.getSubject());
                 UserRoleEnum role = info.get(JwtUtil.AUTHORIZATION_KEY)
@@ -80,9 +84,12 @@ public class AuthorizationFilter extends OncePerRequestFilter {
                 log.info("새로운 Acces Token이 발급되었습니다.");
 
             } else {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                /*
+                repository(redis)에 같은 userId를 가진 RefresthToken이 없다면 = 유효하지 않다면
+                (만료기간이 끝나면 redis에서 사라지기 떄문에 존재하지 않다면 만료기간이 끝났다는 뜻)
+                 */
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 토큰의 상태를 바꿔준다.
                 log.info("Acces Token, Refresh Token 모두 만료되었습니다.");
-                refreshTokenRepository.delete(info.getSubject());
             }
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -109,9 +116,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 
     // 인증 객체 생성
     private Authentication createAuthentication(Long userId, UserRoleEnum role) {
-
         UserDetails userDetails = userDetailsService.getUserDetails(userId, role);
-
         return new UsernamePasswordAuthenticationToken(userDetails, null,
             userDetails.getAuthorities());
     }

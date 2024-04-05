@@ -50,7 +50,6 @@ public class JwtUtil {
     private final RefreshTokenRepository refreshTokenRepository;
 
     public String generateAccessAndRefreshToken(final Long userId, final UserRoleEnum role) {
-
         String accessToken = generateAccessToken(userId, role.getAuthority());
         generateRefreshToken(userId, role.getAuthority());
         return accessToken;
@@ -58,7 +57,6 @@ public class JwtUtil {
 
     public String generateAccessToken(final Long userId, final String role) {
         Date date = new Date();
-
         return BEARER_PREFIX +
             Jwts.builder()
                 .setSubject(userId.toString())
@@ -72,7 +70,6 @@ public class JwtUtil {
     @Transactional
     public void generateRefreshToken(final Long userId, final String role) {
         Date date = new Date();
-
         String refreshToken = BEARER_PREFIX +
             Jwts.builder()
                 .setSubject(userId.toString())
@@ -81,11 +78,13 @@ public class JwtUtil {
                 .setIssuedAt(date)
                 .signWith(key, SIGNATURE_ALGORITHM)
                 .compact();
+
         refreshTokenRepository.save(Long.valueOf(userId), refreshToken);
     }
 
     public String getJwtFromHeader(HttpServletRequest httpServletRequest) {
         String bearerToken = httpServletRequest.getHeader(AUTHORIZATION_HEADER);
+
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
             return bearerToken.substring(BEARER_PREFIX_LENGTH);
         }

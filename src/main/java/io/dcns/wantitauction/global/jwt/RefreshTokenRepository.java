@@ -11,7 +11,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class RefreshTokenRepository {
 
-    private static final String TOKEN_PREFIX = "token_";
+    private static final String TOKEN_PREFIX = "token_";  // 식별하기 편하게 하기 위해서, redis에 저장할때 사용한다.
+
     private final RedisTemplate<String, String> redisTemplate;
     @Resource(name = "redisTemplate")
     private ValueOperations<String, String> valueOperations;
