@@ -1,10 +1,9 @@
 package io.dcns.wantitauction.domain.pointLog.controller;
 
-import io.dcns.wantitauction.domain.pointLog.dto.PointLogResponseDto;
+import io.dcns.wantitauction.domain.pointLog.dto.PointLogPageableResponseDto;
 import io.dcns.wantitauction.domain.pointLog.service.PointLogService;
 import io.dcns.wantitauction.global.dto.ResponseDto;
 import io.dcns.wantitauction.global.impl.UserDetailsImpl;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,15 +19,15 @@ public class PointLogController {
     private final PointLogService pointLogService;
 
     @GetMapping("/v1/points/log")
-    public ResponseEntity<ResponseDto<List<PointLogResponseDto>>> getPointLogs(
+    public ResponseEntity<ResponseDto<PointLogPageableResponseDto>> getPointLogs(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @RequestParam("page") int page,
         @RequestParam("size") int size,
         @RequestParam(value = "status", required = false) String status
     ) {
-        List<PointLogResponseDto> pointLogResponseDtoList = pointLogService
+        PointLogPageableResponseDto pointLogPageableResponseDto = pointLogService
             .getPointLogs(userDetails.getUser(), page - 1, size, status);
 
-        return ResponseDto.of(HttpStatus.OK, pointLogResponseDtoList);
+        return ResponseDto.of(HttpStatus.OK, pointLogPageableResponseDto);
     }
 }

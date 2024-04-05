@@ -25,6 +25,15 @@ public class PointLogQueryRepository {
 
     public Page<PointLogResponseDto> findAllPointLogsPageable(User user, Pageable pageable,
         String status) {
+
+        Long totalSize = jpaQueryFactory
+            .select(Wildcard.count)
+            .from(pointLog)
+            .leftJoin(pointLog.point, point1)
+            .where(point1.userId.eq(user.getUserId()),
+                pointLogStatusEq(status))
+            .fetch().get(0);
+
         List<PointLogResponseDto> pointLogs = jpaQueryFactory
             .select(Projections.fields(PointLogResponseDto.class,
                 point1.userId,
@@ -43,14 +52,6 @@ public class PointLogQueryRepository {
             .limit(pageable.getPageSize())
             .orderBy(pointLog.createdAt.desc())
             .fetch();
-
-        Long totalSize = jpaQueryFactory
-            .select(Wildcard.count)
-            .from(pointLog)
-            .leftJoin(pointLog.point, point1)
-            .where(point1.userId.eq(user.getUserId()),
-                pointLogStatusEq(status))
-            .fetch().get(0);
 
         return PageableExecutionUtils.getPage(pointLogs, pageable, () -> totalSize);
     }

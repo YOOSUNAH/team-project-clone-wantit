@@ -1,5 +1,6 @@
 package io.dcns.wantitauction.domain.pointLog.service;
 
+import io.dcns.wantitauction.domain.pointLog.dto.PointLogPageableResponseDto;
 import io.dcns.wantitauction.domain.pointLog.dto.PointLogResponseDto;
 import io.dcns.wantitauction.domain.pointLog.repository.PointLogQueryRepository;
 import io.dcns.wantitauction.domain.user.entity.User;
@@ -15,9 +16,12 @@ public class PointLogService {
 
     private final PointLogQueryRepository pointLogQueryRepository;
 
-    public List<PointLogResponseDto> getPointLogs(User user, int page, int size, String status) {
+    public PointLogPageableResponseDto getPointLogs(User user, int page, int size, String status) {
         Pageable pageable = PageRequest.of(page, size);
-        return pointLogQueryRepository
+        List<PointLogResponseDto> pointLogResponseDtoList = pointLogQueryRepository
             .findAllPointLogsPageable(user, pageable, status).getContent();
+        int totalPage = pointLogQueryRepository.findAllPointLogsPageable(user, pageable, status)
+            .getTotalPages();
+        return new PointLogPageableResponseDto(pointLogResponseDtoList, size, page + 1, totalPage);
     }
 }
