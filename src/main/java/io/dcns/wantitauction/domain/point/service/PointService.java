@@ -1,6 +1,5 @@
 package io.dcns.wantitauction.domain.point.service;
 
-import io.dcns.wantitauction.domain.event.WinningBidEvent;
 import io.dcns.wantitauction.domain.point.dto.PointChangedResponseDto;
 import io.dcns.wantitauction.domain.point.dto.PointRequestDto;
 import io.dcns.wantitauction.domain.point.dto.PointResponseDto;
@@ -10,6 +9,7 @@ import io.dcns.wantitauction.domain.pointLog.entity.PointLog;
 import io.dcns.wantitauction.domain.pointLog.entity.PointLogStatus;
 import io.dcns.wantitauction.domain.pointLog.repository.PointLogRepository;
 import io.dcns.wantitauction.domain.user.entity.User;
+import io.dcns.wantitauction.global.event.WinningBidEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
