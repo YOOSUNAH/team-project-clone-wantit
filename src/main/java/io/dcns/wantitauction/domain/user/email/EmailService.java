@@ -11,7 +11,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +18,7 @@ public class EmailService {
 
     private final JavaMailSender javaMailSender;
     private final RedisUtil redisUtil;
+    private final TemplateEngine templateEngine;
 
     @Value("${spring.mail.username}")  //yml에서 추출
     private String configEmail;
@@ -69,25 +69,10 @@ public class EmailService {
 
     // Thymeleaf 템플릿 엔진을 사용하여 HTML 이메일 본문을 생성
     private String setContext(String code) {
-        // ClassLoaderTemplateResolver, TemplateEngine를 통해서 email.html을 spring과 연결해준다.
         Context context = new Context();  // thymeleaf Context 객체를 생성 (템플릿 내에 데이터를 전달하는데 사용)
-        TemplateEngine templateEngine = new TemplateEngine(); // Thymeleaf의 TemplateEngine 객체를 생성 (템플릿을 처리하고 최종 결과물인 문자열을 생성하는 데 사용)
-        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver(); // ClassLoaderTemplateResolver 객체를 생성(템플릿 파일을 로드하는 데 사용)
-
         context.setVariable("code", code);  // createEmailForm에서 난수를 전달 받음.
-
-        templateResolver.setPrefix(
-            "templates/");  // 템플릿 파일을 찾을 때 사용할 경로의 접두사(prefix)로 "templates/"를 설정 (resources/templates/ 경로에 있는 파일을 찾음)
-        templateResolver.setSuffix(".html");       // 템플릿 파일의 확장자로 .html을 설정
-        templateResolver.setTemplateMode("HTML"); // 템플릿 파일의 형식으로 HTML으로 설정해서, HTML 문서로 해석되어야 한다고 설정
-        templateResolver.setCacheable(false);     // 캐싱을 (비활성화)사용하지 않도록 설정
-
-        templateEngine.setTemplateResolver(
-            templateResolver);  // 위에서 설정한 파일 찾는 방법으로 templateEngine이 템플릿이 찾고 로드한다.
-
         return templateEngine.process("mail",
             context);  // process메서드를 통해서, mail이라는 이름의 템플릿을, context객체를 전달한다.
-        // 처리된 템플릿은 문자열로 반환되고, 이 문자열은 이메일 본문으로 사용된다.
     }
 
     // 코드 검증 (보낸 이메일과 코드가 일치하는지 검증)
