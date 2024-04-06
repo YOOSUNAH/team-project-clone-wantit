@@ -135,4 +135,13 @@ public class AuctionItemQueryRepository {
                     .and(auctionItem.endDate.lt(LocalDateTime.now())))
             .fetch();
     }
+
+    public List<AuctionItem> findAllOpenAuctionItems() {
+        return jpaQueryFactory
+            .selectFrom(auctionItem)
+            .where(
+                auctionItem.status.eq(AuctionItemEnum.READY)
+                    .and(auctionItem.startDate.lt(LocalDateTime.now())))
+            .fetch();
+    }
 }

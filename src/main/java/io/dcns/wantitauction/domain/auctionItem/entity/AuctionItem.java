@@ -83,4 +83,8 @@ public class AuctionItem extends Timestamped {
         this.status = AuctionItemEnum.FINISHED;
         this.winnerId = winnerId;
     }
+
+    public void startAuction() {
+        this.status = AuctionItemEnum.IN_PROGRESS;
+    }
 }

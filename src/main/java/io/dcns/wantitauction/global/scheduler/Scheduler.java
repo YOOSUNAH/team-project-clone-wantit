@@ -4,6 +4,7 @@ import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItem;
 import io.dcns.wantitauction.domain.auctionItem.repository.AuctionItemQueryRepository;
 import io.dcns.wantitauction.domain.bid.entity.Bid;
 import io.dcns.wantitauction.domain.bid.repository.BidRepository;
+import io.dcns.wantitauction.global.event.StartAuctionEvent;
 import io.dcns.wantitauction.global.event.WinningBidEvent;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ public class Scheduler {
 
     // cron = "초, 분, 시, 일, 월, 주" 순서
     // cron official document : https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/scheduling/support/CronExpression.html
-//    @Scheduled(cron = "*/10 * * * * *") // 테스트용, 현재 매 10초 마다 동작
+//    @Scheduled(cron = "*/10 * * * * *") // 테스트용, 현재 매 10초 마다 동작, Todo : 경매 마감 시간 정해야함
     @Transactional
     public void decideBidWinner() throws InterruptedException {
         log.info("경매 낙찰 로직 시작");
@@ -37,5 +38,17 @@ public class Scheduler {
                 ));
         }
         log.info("경매 낙찰 로직 종료");
+    }
+
+    //    @Scheduled(cron = "*/10 * * * * *") // Todo : 경매 오픈 시간 정해야함
+    @Transactional
+    public void startAuction() throws InterruptedException {
+        log.info("경매 오픈 로직 시작");
+        List<AuctionItem> auctionItemList = auctionItemQueryRepository.findAllOpenAuctionItems();
+        for (AuctionItem auctionItem : auctionItemList) {
+            auctionItem.startAuction();
+            eventPublisher.publishEvent(new StartAuctionEvent(auctionItem.getAuctionItemId()));
+        }
+        log.info("경매 오픈 로직 종료");
     }
 }
