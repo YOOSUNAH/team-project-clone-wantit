@@ -78,6 +78,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     implementation 'io.lettuce:lettuce-core:6.2.1.RELEASE'
+    implementation group: 'org.glassfish.jaxb', name: 'jaxb-runtime', version: '2.3.2'
+
 }
 
 test {
