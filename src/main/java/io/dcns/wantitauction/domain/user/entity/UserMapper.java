@@ -13,7 +13,8 @@ public class UserMapper {
             signupRequestDto.getUsername(),
             signupRequestDto.getNickname(),
             signupRequestDto.getPhoneNumber(),
-            signupRequestDto.getAddress()
+            signupRequestDto.getAddress(),
+            signupRequestDto.isAdmin() ? UserRoleEnum.ADMIN : UserRoleEnum.USER
         );
     }
 }

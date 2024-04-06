@@ -4,6 +4,7 @@ import static io.dcns.wantitauction.global.jwt.TokenState.EXPIRED;
 import static io.dcns.wantitauction.global.jwt.TokenState.INVALID;
 import static io.dcns.wantitauction.global.jwt.TokenState.VALID;
 
+import io.dcns.wantitauction.domain.user.entity.UserRoleEnum;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -17,6 +18,7 @@ import jakarta.transaction.Transactional;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -24,6 +26,7 @@ import org.springframework.util.StringUtils;
 
 @Slf4j(topic = "JWT 토큰")
 @Component
+@RequiredArgsConstructor
 public class JwtUtil {
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
@@ -31,8 +34,8 @@ public class JwtUtil {
     public static final String BEARER_PREFIX = "Bearer ";
     private static final SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS256;
     private static final Integer BEARER_PREFIX_LENGTH = 7;
-    private static final Long ACCESS_TOKEN_VALID_TIME = (60 * 1000L) * 20;
-    private static final Long REFRESH_TOKEN_VALID_TIME = (60 * 1000L) * 60 * 24;
+    private static final Long ACCESS_TOKEN_VALID_TIME = (60 * 1000L) * 30;
+    private static final Long REFRESH_TOKEN_VALID_TIME = (60 * 1000L) * 60;
 
     @Value("${jwt.secret.key}")
     private String secretKey;
@@ -44,51 +47,51 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(bytes);
     }
 
+    private final RefreshTokenRepository refreshTokenRepository;
+
+    public String generateAccessAndRefreshToken(final Long userId, final UserRoleEnum role) {
+        String accessToken = generateAccessToken(userId, role.getAuthority());
+        generateRefreshToken(userId, role.getAuthority());
+        return accessToken;
+    }
+
     public String generateAccessToken(final Long userId, final String role) {
-        return generateToken(String.valueOf(userId), role, ACCESS_TOKEN_VALID_TIME);
+        Date date = new Date();
+        return BEARER_PREFIX +
+            Jwts.builder()
+                .setSubject(userId.toString())
+                .claim(AUTHORIZATION_KEY, role)  // 사용자 권한
+                .setExpiration(new Date(date.getTime() + ACCESS_TOKEN_VALID_TIME)) // 만료시간
+                .setIssuedAt(date)  // 발급일
+                .signWith(key, SIGNATURE_ALGORITHM) // 암호화 알고리즘
+                .compact();
     }
 
     @Transactional
-    public String generateRefreshToken(final Long userId, final String role) {
-        return generateRefreshToken(String.valueOf(userId), role, REFRESH_TOKEN_VALID_TIME);
-    }
-
-    public String generateToken(final String id, final String role, Long time) {
+    public void generateRefreshToken(final Long userId, final String role) {
         Date date = new Date();
-        return BEARER_PREFIX +
+        String refreshToken = BEARER_PREFIX +
             Jwts.builder()
-                .setSubject(id)
-                .claim(AUTHORIZATION_KEY, "user")
-                .setExpiration(new Date(date.getTime() + time))
+                .setSubject(userId.toString())
+                .claim(AUTHORIZATION_KEY, role)
+                .setExpiration(new Date(date.getTime() + REFRESH_TOKEN_VALID_TIME))
                 .setIssuedAt(date)
                 .signWith(key, SIGNATURE_ALGORITHM)
                 .compact();
+
+        refreshTokenRepository.save(Long.valueOf(userId), refreshToken);
     }
 
-    public String generateRefreshToken(final String id, final String role, Long time) {
-        Date date = new Date();
-        return BEARER_PREFIX +
-            Jwts.builder()
-                .setSubject(id)
-                .claim(AUTHORIZATION_KEY, "user")
-                .setExpiration(new Date(date.getTime() + time))
-                .setIssuedAt(date)
-                .signWith(key, SIGNATURE_ALGORITHM)
-                .compact();
-    }
+    public String getJwtFromHeader(HttpServletRequest httpServletRequest) {
+        String bearerToken = httpServletRequest.getHeader(AUTHORIZATION_HEADER);
 
-    public String substringToken(final String tokenValue) {
-        if (!StringUtils.hasText(tokenValue) || !tokenValue.startsWith(BEARER_PREFIX)) {
-            throw new IllegalArgumentException("해당 토큰에 접근할 수 없습니다."); // Todo: CustionException 하기
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+            return bearerToken.substring(BEARER_PREFIX_LENGTH);
         }
-        return tokenValue.substring(BEARER_PREFIX_LENGTH);
+        return null;
     }
 
-    public String getAccessTokenFromRequest(HttpServletRequest httpServletRequest) {
-        return getTokenFromRequest(httpServletRequest);
-    }
-
-    public TokenState isValidateToken(String token) {
+    public TokenState validateToken(final String token) {
         if (!StringUtils.hasText(token)) {
             return INVALID;
         }
@@ -110,25 +113,21 @@ public class JwtUtil {
         }
     }
 
-    public Claims getUserInfoFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
-    }
-
     // 만료된 토큰으로부터 정보를 가져오기
-    public Claims getUserInfoFromExpiredToken(String token) {
+    public Claims getUserInfoFromExpiredToken(final String token) {
         try {
-            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            return null;
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }
     }
 
-    private String getTokenFromRequest(final HttpServletRequest httpServletRequest) {
-        String bearerToken = httpServletRequest.getHeader(AUTHORIZATION_HEADER);
+    public Claims getUserInfoFromToken(final String token) {
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+    }
 
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
-            return bearerToken.substring(BEARER_PREFIX_LENGTH);
-        }
-        return null;
+    public String regenerateAccessToken(final Long userId, final UserRoleEnum role) {
+        return generateAccessToken(userId, role.getAuthority());
     }
 }

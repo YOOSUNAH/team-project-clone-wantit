@@ -40,9 +40,9 @@ public class UserController {
     public ResponseEntity<ResponseDto<Void>> login(
         @Valid @RequestBody LoginRequestDto request, HttpServletResponse response
     ) {
-        String token = userService.login(request);
+        String accessToken = userService.login(request);
 
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, accessToken);
         return ResponseDto.of(HttpStatus.OK, null);
     }
 

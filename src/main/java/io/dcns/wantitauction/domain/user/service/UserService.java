@@ -8,16 +8,15 @@ import io.dcns.wantitauction.domain.user.dto.UserRequestDto;
 import io.dcns.wantitauction.domain.user.dto.UserResponseDto;
 import io.dcns.wantitauction.domain.user.entity.User;
 import io.dcns.wantitauction.domain.user.entity.UserMapper;
+import io.dcns.wantitauction.domain.user.entity.UserRoleEnum;
 import io.dcns.wantitauction.domain.user.repository.UserRepository;
 import io.dcns.wantitauction.global.exception.NotMatchException;
 import io.dcns.wantitauction.global.exception.UserNotFoundException;
 import io.dcns.wantitauction.global.impl.UserDetailsImpl;
 import io.dcns.wantitauction.global.jwt.JwtUtil;
-import io.dcns.wantitauction.global.jwt.entity.RefreshTokenEntity;
-import io.dcns.wantitauction.global.jwt.repository.TokenRepository;
+import io.dcns.wantitauction.global.jwt.RefreshTokenRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,7 +28,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
-    private final TokenRepository tokenRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
@@ -50,14 +49,16 @@ public class UserService {
             throw new NotMatchException("비밀번호가 일치하지 않습니다.");
         }
 
-        String token = generateToken(user.getUserId());
-        return token;
+        Long userId = user.getUserId();
+        UserRoleEnum role = user.getRole();
+        return jwtUtil.generateAccessAndRefreshToken(userId, role);
     }
+
 
     @Transactional
     public void logout(Long userId) {
-        List<RefreshTokenEntity> refreshTokenEntityList = tokenRepository.findAllByUserId(userId);
-        refreshTokenEntityList.forEach(tokenRepository::deleteToken);
+        String refreshToken = refreshTokenRepository.findByUserId(userId);
+        refreshTokenRepository.delete(refreshToken);
     }
 
     @Transactional
@@ -93,13 +94,7 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    private String generateToken(Long userId) {
-        String refreshToken = jwtUtil.generateRefreshToken(userId, "USER");
-        refreshToken = jwtUtil.substringToken(refreshToken);
-        tokenRepository.register(userId, refreshToken);
 
-        return jwtUtil.generateAccessToken(userId, "USER");
-    }
 
     private User getUser(Long userId) {
         return userRepository.findByUserId(userId)
