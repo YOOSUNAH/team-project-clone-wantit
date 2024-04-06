@@ -10,6 +10,7 @@ import io.dcns.wantitauction.domain.bid.repository.BidRepository;
 import io.dcns.wantitauction.domain.point.entity.Point;
 import io.dcns.wantitauction.domain.point.service.PointService;
 import io.dcns.wantitauction.domain.user.entity.User;
+import io.dcns.wantitauction.global.event.TopBidChangeEvent;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +31,7 @@ public class BidService {
     private final AuctionItemService auctionItemService;
     private final BidRepository bidRepository;
     private final BidQueryRepository bidQueryRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public BidResponseDto createBid(User user, Long auctionItemId, BidRequestDto bidRequestDto) {
@@ -45,6 +48,9 @@ public class BidService {
             Bid newBid = new Bid(user, bidRequestDto, auctionItem);
             pointService.subtractPoint(user.getUserId(), bidRequestDto.getBidPrice());
             bidRepository.save(newBid);
+            eventPublisher.publishEvent(new TopBidChangeEvent(
+                auctionItem.getAuctionItemId(), newBid.getBidPrice()
+            ));
             return new BidResponseDto(newBid);
         } else {
             checkMaxPrice(bidRequestDto, recentBid.getBidPrice());
@@ -53,6 +59,9 @@ public class BidService {
             Bid newBid = new Bid(user, bidRequestDto, auctionItem);
             pointService.subtractPoint(user.getUserId(), bidRequestDto.getBidPrice());
             bidRepository.save(newBid);
+            eventPublisher.publishEvent(new TopBidChangeEvent(
+                auctionItem.getAuctionItemId(), newBid.getBidPrice()
+            ));
             return new BidResponseDto(newBid);
         }
     }

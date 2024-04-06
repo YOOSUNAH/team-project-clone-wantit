@@ -36,7 +36,7 @@ public class ExceptionController {
             Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage());
     }
 
-    @ExceptionHandler(InterruptedException.class)
+    @ExceptionHandler({InterruptedException.class, LiveBidException.class})
     public ResponseEntity<ExceptionDto> handleInterruptedException(InterruptedException e) {
         return createResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
     }
