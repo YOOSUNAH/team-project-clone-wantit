@@ -34,7 +34,8 @@ public class Scheduler {
             auctionItem.finishAuction(winBid.getUserId(), winBid.getBidPrice());
             eventPublisher.publishEvent(
                 new WinningBidEvent(
-                    auctionItem.getAuctionItemId(), winBid.getUserId(), winBid.getBidPrice()
+                    auctionItem.getAuctionItemId(), auctionItem.getItemName(),
+                    winBid.getUserId(), winBid.getBidPrice()
                 ));
         }
         log.info("경매 낙찰 로직 종료");

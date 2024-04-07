@@ -1,6 +1,7 @@
 package io.dcns.wantitauction.global.exception;
 
 import io.dcns.wantitauction.global.dto.ExceptionDto;
+import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -36,8 +37,9 @@ public class ExceptionController {
             Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage());
     }
 
-    @ExceptionHandler({InterruptedException.class, LiveBidException.class})
-    public ResponseEntity<ExceptionDto> handleInterruptedException(InterruptedException e) {
+    @ExceptionHandler({InterruptedException.class, LiveBidException.class,
+        MessagingException.class})
+    public ResponseEntity<ExceptionDto> handleInterruptedException(Exception e) {
         return createResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
     }
 
