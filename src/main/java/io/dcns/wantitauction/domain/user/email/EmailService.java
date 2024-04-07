@@ -3,7 +3,6 @@ package io.dcns.wantitauction.domain.user.email;
 import io.dcns.wantitauction.global.util.RedisUtil;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import jakarta.mail.internet.MimeMessage.RecipientType;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,54 +15,49 @@ import org.thymeleaf.context.Context;
 @RequiredArgsConstructor
 public class EmailService {
 
-    private final JavaMailSender javaMailSender;
+    private final JavaMailSender emailSender;
     private final RedisUtil redisUtil;
     private final TemplateEngine templateEngine;
 
     @Value("${spring.mail.username}")  //yml에서 추출
     private String configEmail;
 
-    // 난수 생성 : 0~9와 a~z까지의 숫자와 문자를 섞어서 6자리 난수 생성
-    private String createdCode() {
+    public String createdCode() {   // 난수 생성 : 0~9와 a~z까지의 숫자와 문자를 섞어서 6자리 난수 생성
         int leftLimit = 48;  // 숫자 0
         int rightLimit = 122; // 알파벳 Z
         int targetStringLength = 6; // 6자리
         Random random = new Random();
 
-        return random.ints(leftLimit, rightLimit + 1).filter(i -> (i <= 57 || i >= 65) && (i <= 90
+        return random
+            .ints(leftLimit, rightLimit + 1)
+            .filter(i -> (i <= 57 || i >= 65) && (i <= 90
                 || i >= 97))  // 정수 중 숫자(48-57)와 대문자 알파벳(65-90), 소문자 알파벳(97-122)만을 선택하기 위한 필터
             .limit(targetStringLength)  // max size
             .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
             .toString();
     }
 
-    // 메일 전송 (JavaMailSender를 이용하여)
-    public void sendEmail(String toEmail) throws MessagingException {
-        if (redisUtil.existData(toEmail)) {
-            redisUtil.deleteData(toEmail);
+    // 메일 전송
+    public void sendEmail(String email) throws MessagingException {
+        if (redisUtil.existData(email)) {
+            redisUtil.deleteData(email);
         }
-        MimeMessage emailForm = createEmailForm(toEmail);
-
-        javaMailSender.send(emailForm);
+        // 메일전송에 필요한 정보 설정
+        MimeMessage emailForm = createEmailForm(email);
+        emailSender.send(emailForm);
     }
 
-    // 메일 반환
-    private MimeMessage createEmailForm(String email) throws MessagingException {
-        // 난수 생성
+    // 메일 양식 작성
+    public MimeMessage createEmailForm(String email) throws MessagingException {
         String authCode = createdCode();
-
-        // MimeMessage 객체 안에, 코드, 송신 이메일, Context를 담아주고
-        MimeMessage message = javaMailSender.createMimeMessage();
-        message.addRecipients(RecipientType.TO, email);  // 이메일 수신자 설정  (수신자, 수신자 email주소)
+        MimeMessage message = emailSender.createMimeMessage();
+        message.addRecipients(MimeMessage.RecipientType.TO, email);    // 받는 사람 설정
         message.setSubject("Want It 회원가입 인증 번호 입니다.");  // 이메일 제목
-        message.setFrom(configEmail);  // 이메일 발신자 주소 (yml에서 추출한 configEmail)
+        message.setFrom(configEmail);        // 보내는 사람 설정
         message.setText(setContext(authCode), "utf-8",
             "html");  // 이메일 본문 설정 :  utf-8" 인코딩을 사용하며, 메시지 형식은 "html"
 
-        // redis에 난수와 수신 이메일을 저장한다.
-        redisUtil.setDataExpire(email, authCode,
-            60 * 30L); // key로 사용될 받는 이의 email주소, 난수, 만료기간(30분) redis에 저장
-
+        redisUtil.setDataExpire(email, authCode, 60 * 30L);
         return message;
     }
 
@@ -75,7 +69,6 @@ public class EmailService {
             context);  // process메서드를 통해서, mail이라는 이름의 템플릿을, context객체를 전달한다.
     }
 
-    // 코드 검증 (보낸 이메일과 코드가 일치하는지 검증)
     public Boolean verifyEmailCode(String email, String code) {
         String codeFoundByEmail = redisUtil.getData(email);
         if (codeFoundByEmail == null) {
