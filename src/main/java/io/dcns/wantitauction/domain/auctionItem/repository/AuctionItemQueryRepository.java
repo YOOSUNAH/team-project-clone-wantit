@@ -144,4 +144,15 @@ public class AuctionItemQueryRepository {
                     .and(auctionItem.startDate.lt(LocalDateTime.now())))
             .fetch();
     }
+
+    public List<AuctionItem> findAllTodayWinningAuctionItems() {
+        return jpaQueryFactory
+            .selectFrom(auctionItem)
+            .where(
+                auctionItem.status.eq(AuctionItemEnum.FINISHED)
+                    .and(auctionItem.endDate.between(
+                        LocalDateTime.now().withHour(0).withMinute(0).withSecond(0),
+                        LocalDateTime.now().withHour(23).withMinute(59).withSecond(59))))
+            .fetch();
+    }
 }
