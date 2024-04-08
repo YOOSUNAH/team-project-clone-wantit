@@ -56,9 +56,8 @@ public class Scheduler {
         log.info("경매 오픈 로직 종료");
     }
 
-    // @Scheduled(cron = "0 5 7 * * ?")
+    // @Scheduled(cron = "0 5 19 * * ?")
     public void sendNotification() throws ExecutionException, InterruptedException {
-        // 오늘 낙찰된 경매가 있는 지 확인
         if (auctionItemQueryRepository.findAllTodayWinningAuctionItems().isEmpty()) {
             log.info("오늘 낙찰된 경매가 없습니다.");
             return;
