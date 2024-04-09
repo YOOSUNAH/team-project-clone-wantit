@@ -20,7 +20,7 @@ public class FCMInitializer {
         try {
             GoogleCredentials googleCredentials = GoogleCredentials
                 .fromStream(new ClassPathResource(FIREBASE_CONFIG_PATH).getInputStream());
-            FirebaseOptions options = new FirebaseOptions.Builder()
+            FirebaseOptions options = FirebaseOptions.builder()
                 .setCredentials(googleCredentials)
                 .build();
             FirebaseApp.initializeApp(options);
