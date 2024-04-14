@@ -32,10 +32,10 @@ public class JwtUtil {
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String AUTHORIZATION_KEY = "auth";
     public static final String BEARER_PREFIX = "Bearer ";
+    public static final Long REFRESH_TOKEN_VALID_TIME = (60 * 1000L) * 60 * 24;
+    private static final Long ACCESS_TOKEN_VALID_TIME = (60 * 1000L) * 30 ;
     private static final SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS256;
     private static final Integer BEARER_PREFIX_LENGTH = 7;
-    private static final Long ACCESS_TOKEN_VALID_TIME = (60 * 1000L) * 30;
-    private static final Long REFRESH_TOKEN_VALID_TIME = (60 * 1000L) * 60;
 
     @Value("${jwt.secret.key}")
     private String secretKey;
@@ -52,6 +52,7 @@ public class JwtUtil {
     public String generateAccessAndRefreshToken(final Long userId, final UserRoleEnum role) {
         String accessToken = generateAccessToken(userId, role.getAuthority());
         generateRefreshToken(userId, role.getAuthority());
+        log.info("새로운 Access Token이 발급되었습니다.");
         return accessToken;
     }
 
@@ -79,7 +80,7 @@ public class JwtUtil {
                 .signWith(key, SIGNATURE_ALGORITHM)
                 .compact();
 
-        refreshTokenRepository.save(Long.valueOf(userId), refreshToken);
+        refreshTokenRepository.save(Long.valueOf(userId), refreshToken, REFRESH_TOKEN_VALID_TIME );
     }
 
     public String getJwtFromHeader(HttpServletRequest httpServletRequest) {
@@ -127,7 +128,8 @@ public class JwtUtil {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
 
-    public String regenerateAccessToken(final Long userId, final UserRoleEnum role) {
+    public String regenerateAccessToken(final Long userId, final UserRoleEnum role) {;
         return generateAccessToken(userId, role.getAuthority());
+
     }
 }

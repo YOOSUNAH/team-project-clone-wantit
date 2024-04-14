@@ -33,8 +33,11 @@ public class UserService {
 
     @Transactional
     public void signup(SignupRequestDto requestDto) {
-        if (userRepository.checkEmail(requestDto.getEmail())) {
+        if (userRepository.existsByEmail(requestDto.getEmail())) {
             throw new EntityExistsException("해당 이메일이 존재합니다.");
+        }
+        if (userRepository.existsByNickname(requestDto.getNickname())) {
+            throw new EntityExistsException("해당 Nickname이 존재합니다.");
         }
         String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
         User user = UserMapper.SignupRequestDtoToUser(requestDto, encodedPassword);

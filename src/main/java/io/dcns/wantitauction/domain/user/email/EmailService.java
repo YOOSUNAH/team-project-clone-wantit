@@ -81,7 +81,7 @@ public class EmailService {
         message.setText(setContext(authCode), "utf-8",
             "html");  // 이메일 본문 설정 :  utf-8" 인코딩을 사용하며, 메시지 형식은 "html"
 
-        redisUtil.setDataExpire(email, authCode, 60 * 30L);
+        redisUtil.setDataExpire(email, authCode, 60 * 3L);  // 3분
         return message;
     }
 

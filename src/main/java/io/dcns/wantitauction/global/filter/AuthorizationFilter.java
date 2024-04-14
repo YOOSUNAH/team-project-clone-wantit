@@ -68,20 +68,19 @@ public class AuthorizationFilter extends OncePerRequestFilter {
         try {
             // 만료된 AccessToken으로 부터 정보 가지고 오기
             Claims info = jwtUtil.getUserInfoFromExpiredToken(tokenValue);
-
             /*
             repository(redis)에 같은 userId를 가진 RefresthToken이 있다면 = 유효하다면 , AccessToken을 재발급한다.
             (만료기간이 끝나면 redis에서 사라지기 떄문에 존재하면 만료기간이 끝나지 않았다는 뜻)
             */
-            if (refreshTokenRepository.existsByUserId(info.get("userId", Long.class))) {
-                Long userId = Long.parseLong(info.getSubject());
+            Long userId = Long.parseLong(info.getSubject());
+            if (refreshTokenRepository.existsByUserId(userId)) {
                 UserRoleEnum role = info.get(JwtUtil.AUTHORIZATION_KEY)
                     .equals("ROLE_ADMIN") ? UserRoleEnum.ADMIN : UserRoleEnum.USER;
 
                 String newToken = jwtUtil.regenerateAccessToken(userId, role);
+                log.info("Acces Token이 재발급되었습니다.");
                 response.addHeader(JwtUtil.AUTHORIZATION_HEADER, newToken);
                 response.setStatus(HttpServletResponse.SC_OK);
-                log.info("새로운 Acces Token이 발급되었습니다.");
 
             } else {
                 /*
@@ -89,7 +88,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
                 (만료기간이 끝나면 redis에서 사라지기 떄문에 존재하지 않다면 만료기간이 끝났다는 뜻)
                  */
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 토큰의 상태를 바꿔준다.
-                log.info("Acces Token, Refresh Token 모두 만료되었습니다.");
+                log.info("Acces Token, Refresh Token 모두 만료되었습니다. 다시 로그인해주세요.");
             }
         } catch (Exception e) {
             log.error(e.getMessage());
