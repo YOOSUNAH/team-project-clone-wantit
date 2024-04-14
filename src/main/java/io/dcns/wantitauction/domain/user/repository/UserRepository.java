@@ -2,20 +2,17 @@ package io.dcns.wantitauction.domain.user.repository;
 
 import io.dcns.wantitauction.domain.user.entity.User;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository {
+public interface UserRepository extends JpaRepository<User, Long> {
 
-    boolean checkEmail(String email);
+    boolean existsByEmail(String email);
 
-    void save(User user);
+    boolean existsByNickname(String nickname);
 
     Optional<User> findByEmail(String email);
 
     Optional<User> findByUserId(Long userId);
-
-    void delete(User user);
-
-    boolean existsByNickname(String nickname);
 
     Optional<User> findByKakaoId(Long kakaoId);
 }
