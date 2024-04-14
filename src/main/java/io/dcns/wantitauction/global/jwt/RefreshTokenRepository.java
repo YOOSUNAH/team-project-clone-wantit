@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 @RequiredArgsConstructor
 @Repository
-@Slf4j
+@Slf4j(topic = "refreshTokenRepository")
 public class RefreshTokenRepository {
 
     private static final String TOKEN_PREFIX = "token_";  // 식별하기 편하게 하기 위해서, redis에 저장할때 사용한다.
