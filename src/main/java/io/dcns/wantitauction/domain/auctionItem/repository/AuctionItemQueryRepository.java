@@ -3,6 +3,7 @@ package io.dcns.wantitauction.domain.auctionItem.repository;
 import static io.dcns.wantitauction.domain.auctionItem.entity.QAuctionItem.auctionItem;
 
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.dcns.wantitauction.domain.auctionItem.dto.AuctionItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.FinishedItemResponseDto;
@@ -13,6 +14,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -143,5 +147,32 @@ public class AuctionItemQueryRepository {
                 auctionItem.status.eq(AuctionItemEnum.READY)
                     .and(auctionItem.startDate.lt(LocalDateTime.now())))
             .fetch();
+    }
+
+    public Page<AuctionItemResponseDto> findAll(Pageable pageable) {
+        Long totalSize = jpaQueryFactory
+            .select(Wildcard.count)
+            .from(auctionItem)
+            .fetch()
+            .get(0);
+
+        List<AuctionItemResponseDto> auctionItems = jpaQueryFactory
+            .select(Projections.fields(AuctionItemResponseDto.class,
+                auctionItem.auctionItemId,
+                auctionItem.userId,
+                auctionItem.itemName,
+                auctionItem.itemDescription,
+                auctionItem.minPrice,
+                auctionItem.winPrice,
+                auctionItem.startDate,
+                auctionItem.endDate,
+                auctionItem.status))
+            .from(auctionItem)
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .orderBy(auctionItem.createdAt.desc())
+            .fetch();
+
+        return PageableExecutionUtils.getPage(auctionItems, pageable, () -> totalSize);
     }
 }

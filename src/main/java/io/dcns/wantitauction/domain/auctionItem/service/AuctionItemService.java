@@ -1,5 +1,6 @@
 package io.dcns.wantitauction.domain.auctionItem.service;
 
+import io.dcns.wantitauction.domain.auctionItem.dto.AuctionItemPageableResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.AuctionItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.FinishedItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItem;
@@ -7,6 +8,9 @@ import io.dcns.wantitauction.domain.auctionItem.repository.AuctionItemQueryRepos
 import io.dcns.wantitauction.domain.auctionItem.repository.AuctionItemRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,8 +28,15 @@ public class AuctionItemService {
         return new AuctionItemResponseDto(auctionItem);
     }
 
-    public List<AuctionItemResponseDto> getAuctionItems() {
-        return auctionItemQueryRepository.findAll();
+    public AuctionItemPageableResponseDto getAuctionItems(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<AuctionItemResponseDto> responseDtoPage =
+            auctionItemQueryRepository.findAll(pageable);
+        int totalPage = responseDtoPage.getTotalPages();
+
+        return new AuctionItemPageableResponseDto(
+            responseDtoPage.getContent(), size, page + 1, totalPage
+        );
     }
 
     public List<FinishedItemResponseDto> getFinishedAuctionItems() {
