@@ -1,7 +1,7 @@
 package io.dcns.wantitauction.domain.admin.controller;
 
+import io.dcns.wantitauction.domain.admin.dto.UsersResponseDto;
 import io.dcns.wantitauction.domain.admin.service.AdminService;
-import io.dcns.wantitauction.domain.user.entity.User;
 import io.dcns.wantitauction.global.dto.ResponseDto;
 import io.dcns.wantitauction.global.impl.UserDetailsImpl;
 import java.util.List;
@@ -22,10 +22,10 @@ public class AdminController {
     private final AdminService adminService;
 
     @GetMapping("/users")
-    public ResponseEntity<ResponseDto<List<User>>> getUsers(
+    public ResponseEntity<ResponseDto<List<UsersResponseDto>>> getUsers(
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        List<User>  userList =  adminService.getUsers(userDetails);
+        List<UsersResponseDto>  userList =  adminService.getUsers(userDetails);
         return ResponseDto.of(HttpStatus.OK, userList);
     }
 }
