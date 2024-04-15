@@ -78,19 +78,10 @@ public class EmailService {
         message.addRecipients(MimeMessage.RecipientType.TO, email);    // 받는 사람 설정
         message.setSubject("Want It 회원가입 인증 번호 입니다.");  // 이메일 제목
         message.setFrom(configEmail);        // 보내는 사람 설정
-        message.setText(setContext(authCode), "utf-8",
-            "html");  // 이메일 본문 설정 :  utf-8" 인코딩을 사용하며, 메시지 형식은 "html"
+        message.setText("인증코드 : " + authCode);
 
         redisUtil.setDataExpire(email, authCode, 60 * 3L);  // 3분
         return message;
-    }
-
-    // Thymeleaf 템플릿 엔진을 사용하여 HTML 이메일 본문을 생성
-    private String setContext(String code) {
-        Context context = new Context();  // thymeleaf Context 객체를 생성 (템플릿 내에 데이터를 전달하는데 사용)
-        context.setVariable("code", code);  // createEmailForm에서 난수를 전달 받음.
-        return templateEngine.process("mail",
-            context);  // process메서드를 통해서, mail이라는 이름의 템플릿을, context객체를 전달한다.
     }
 
     public Boolean verifyEmailCode(String email, String code) {
