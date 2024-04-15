@@ -98,4 +98,8 @@ public class User extends Timestamped {
         this.kakaoId = kakaoId;
         return this;
     }
+
+    public void setRole(UserRoleEnum role) {
+        this.role = role;
+    }
 }
