@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 public class WinningBidEvent {
 
     private final Long auctionItemId;
+    private final String itemName;
     private final Long winnerId;
     private final Long winPrice;
 }

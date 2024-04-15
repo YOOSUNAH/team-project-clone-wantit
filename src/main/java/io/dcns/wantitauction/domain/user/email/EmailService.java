@@ -1,11 +1,17 @@
 package io.dcns.wantitauction.domain.user.email;
 
+import io.dcns.wantitauction.domain.user.entity.User;
+import io.dcns.wantitauction.domain.user.repository.UserRepository;
+import io.dcns.wantitauction.global.event.WinningBidEvent;
+import io.dcns.wantitauction.global.exception.UserNotFoundException;
 import io.dcns.wantitauction.global.util.RedisUtil;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMessage.RecipientType;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.event.EventListener;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
@@ -18,6 +24,7 @@ public class EmailService {
     private final JavaMailSender emailSender;
     private final RedisUtil redisUtil;
     private final TemplateEngine templateEngine;
+    private final UserRepository userRepository;
 
     @Value("${spring.mail.username}")  //yml에서 추출
     private String configEmail;
@@ -47,6 +54,23 @@ public class EmailService {
         emailSender.send(emailForm);
     }
 
+    @EventListener(classes = {WinningBidEvent.class})
+    private void sendEmailToWinner(WinningBidEvent winningBidEvent) throws MessagingException {
+        User user = userRepository.findByUserId(winningBidEvent.getWinnerId()).orElseThrow(
+            () -> new UserNotFoundException("존재하지 않는 유저입니다.")
+        );
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("경매 상품 : ").append(winningBidEvent.getItemName()).append("\n");
+        buffer.append("낙찰 가격 : ").append(winningBidEvent.getWinPrice()).append("\n");
+
+        MimeMessage message = emailSender.createMimeMessage();
+        message.addRecipients(RecipientType.TO, user.getEmail());
+        message.setSubject("축하합니다! 참여하신 경매에 낙찰되셨습니다.");
+        message.setFrom(configEmail);
+        message.setText(buffer.toString(), "utf-8");
+        emailSender.send(message);
+    }
+
     // 메일 양식 작성
     public MimeMessage createEmailForm(String email) throws MessagingException {
         String authCode = createdCode();
@@ -57,7 +81,7 @@ public class EmailService {
         message.setText(setContext(authCode), "utf-8",
             "html");  // 이메일 본문 설정 :  utf-8" 인코딩을 사용하며, 메시지 형식은 "html"
 
-        redisUtil.setDataExpire(email, authCode, 60 * 30L);
+        redisUtil.setDataExpire(email, authCode, 60 * 3L);  // 3분
         return message;
     }
 

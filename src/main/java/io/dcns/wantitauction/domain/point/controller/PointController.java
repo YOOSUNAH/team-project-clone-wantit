@@ -23,7 +23,7 @@ public class PointController {
 
     private final PointService pointService;
 
-    @PostMapping
+    @PostMapping("/charge")
     public ResponseEntity<ResponseDto<PointChangedResponseDto>> putPoint(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @RequestBody PointRequestDto pointRequestDto
