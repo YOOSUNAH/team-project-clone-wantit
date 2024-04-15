@@ -78,8 +78,14 @@ public class AuctionItemQueryRepository {
 
     }
 
-    public List<FinishedItemResponseDto> findAllByFinished() {
-        return jpaQueryFactory
+    public Page<FinishedItemResponseDto> findAllByFinished(Pageable pageable) {
+        Long totalSize = jpaQueryFactory
+            .select(Wildcard.count)
+            .from(auctionItem)
+            .where(auctionItem.status.eq(AuctionItemEnum.FINISHED))
+            .fetch()
+            .get(0);
+        List<FinishedItemResponseDto> finishedItems = jpaQueryFactory
             .select(Projections.fields(FinishedItemResponseDto.class,
                 auctionItem.auctionItemId,
                 auctionItem.userId,
@@ -92,7 +98,11 @@ public class AuctionItemQueryRepository {
                 auctionItem.endDate))
             .from(auctionItem)
             .where(auctionItem.status.eq(AuctionItemEnum.FINISHED))
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .orderBy(auctionItem.endDate.desc())
             .fetch();
+        return PageableExecutionUtils.getPage(finishedItems, pageable, () -> totalSize);
     }
 
     public Optional<FinishedItemResponseDto> findByIdAndFinished(Long auctionItemId) {
