@@ -41,6 +41,9 @@ public class UserService {
         }
         String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
         User user = UserMapper.SignupRequestDtoToUser(requestDto, encodedPassword);
+
+        UserRoleEnum role = UserRoleEnum.valueOf(requestDto.getRole());
+        user.setRole(role);
         userRepository.save(user);
     }
 
