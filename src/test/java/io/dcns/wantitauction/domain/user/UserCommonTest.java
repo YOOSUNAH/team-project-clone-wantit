@@ -1,8 +1,6 @@
 package io.dcns.wantitauction.domain.user;
 
 import io.dcns.wantitauction.domain.user.dto.SignupRequestDto;
-import io.dcns.wantitauction.domain.user.dto.UserRequestDto;
-import io.dcns.wantitauction.domain.user.dto.UserResponseDto;
 import io.dcns.wantitauction.domain.user.entity.User;
 import io.dcns.wantitauction.domain.user.entity.UserRoleEnum;
 
