@@ -18,6 +18,8 @@ import static org.mockito.Mockito.verify;
 
 import io.dcns.wantitauction.domain.user.entity.UserRoleEnum;
 import io.dcns.wantitauction.domain.user.repository.UserRepository;
+import io.dcns.wantitauction.global.exception.NotMatchException;
+import io.dcns.wantitauction.global.exception.UserNotFoundException;
 import io.dcns.wantitauction.global.jwt.JwtUtil;
 import jakarta.persistence.EntityExistsException;
 import java.util.Optional;
@@ -101,6 +103,32 @@ class UserServiceTest {
 
         // then
         assertNotNull(token);
+    }
+
+
+    @DisplayName("로그인 실패 - user가 존재하지 않을때")
+    @Test
+    void login_fail() {
+        // given
+        given(userRepository.findByEmail(anyString())).willReturn(Optional.empty());
+
+        // when, then
+        assertThrows(UserNotFoundException.class,
+            () -> userService.login(TEST_USER_LOGIN_REQUEST_DTO)
+        );
+    }
+
+    @DisplayName("로그인 실패 - password가 일치하지 않을때")
+    @Test
+    void login_fail_by_password() {
+        // given
+        given(userRepository.findByEmail(anyString())).willReturn(Optional.of(TEST_USER));
+        given(passwordEncoder.matches(anyString(), anyString())).willReturn(false);
+
+        // when, then
+        assertThrows(NotMatchException.class,
+            () -> userService.login(TEST_USER_LOGIN_REQUEST_DTO)
+        );
     }
 
     @Test
