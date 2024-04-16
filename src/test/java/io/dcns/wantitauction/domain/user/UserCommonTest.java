@@ -1,5 +1,6 @@
 package io.dcns.wantitauction.domain.user;
 
+import io.dcns.wantitauction.domain.user.dto.LoginRequestDto;
 import io.dcns.wantitauction.domain.user.dto.SignupRequestDto;
 import io.dcns.wantitauction.domain.user.entity.User;
 import io.dcns.wantitauction.domain.user.entity.UserRoleEnum;
@@ -13,6 +14,8 @@ public interface UserCommonTest {
     String TEST_USER_NICKNAME = "nickname";
     String TEST_USER_PHONENUMBER = "010-1234-5678";
     String TEST_USER_ADDRESS = "대한민구 서울 용산구";
+    String TOKEN = "test-token";
+
 
     User TEST_USER = User.builder()
         .email(TEST_USER_EMAIL)
@@ -32,6 +35,11 @@ public interface UserCommonTest {
         .phoneNumber(TEST_USER_PHONENUMBER)
         .address(TEST_USER_ADDRESS)
         .role(String.valueOf(USER_ROLE))
+        .build();
+
+    LoginRequestDto TEST_USER_LOGIN_REQUEST_DTO = LoginRequestDto.builder()
+        .email(TEST_USER_EMAIL)
+        .password(TEST_USER_PASSWORD)
         .build();
 
 }
