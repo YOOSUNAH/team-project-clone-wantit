@@ -7,6 +7,7 @@ import io.dcns.wantitauction.domain.user.entity.UserRoleEnum;
 
 public interface UserCommonTest {
 
+    Long TEST_USER_ID = 1L;
     UserRoleEnum USER_ROLE = UserRoleEnum.USER;
     String TEST_USER_NAME = "username12";
     String TEST_USER_PASSWORD = "password12^^";

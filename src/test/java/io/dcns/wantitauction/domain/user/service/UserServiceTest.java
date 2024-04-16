@@ -2,6 +2,7 @@ package io.dcns.wantitauction.domain.user.service;
 
 
 import static io.dcns.wantitauction.domain.user.UserCommonTest.TEST_USER;
+import static io.dcns.wantitauction.domain.user.UserCommonTest.TEST_USER_ID;
 import static io.dcns.wantitauction.domain.user.UserCommonTest.TEST_USER_LOGIN_REQUEST_DTO;
 import static io.dcns.wantitauction.domain.user.UserCommonTest.TEST_USER_SIGNUP_REQUEST_DTO;
 import static io.dcns.wantitauction.domain.user.UserCommonTest.TOKEN;
@@ -9,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.nullable;
@@ -21,6 +23,7 @@ import io.dcns.wantitauction.domain.user.repository.UserRepository;
 import io.dcns.wantitauction.global.exception.NotMatchException;
 import io.dcns.wantitauction.global.exception.UserNotFoundException;
 import io.dcns.wantitauction.global.jwt.JwtUtil;
+import io.dcns.wantitauction.global.jwt.RefreshTokenRepository;
 import jakarta.persistence.EntityExistsException;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -42,6 +45,9 @@ class UserServiceTest {
 
     @Mock
     PasswordEncoder passwordEncoder;
+
+    @Mock
+    RefreshTokenRepository refreshTokenRepository;
 
     @Mock
     JwtUtil jwtUtil;
@@ -131,9 +137,19 @@ class UserServiceTest {
         );
     }
 
+    @DisplayName("로그아웃")
     @Test
     void logout() {
+        // given
+        given(refreshTokenRepository.findByUserId(anyLong())).willReturn(TOKEN);
+
+        // when, then
+        assertDoesNotThrow(
+            () -> userService.logout(TEST_USER_ID)
+        );
+        verify(refreshTokenRepository, times(1)).delete(TOKEN);
     }
+
 
     @DisplayName("프로필 수정")
     @Test
