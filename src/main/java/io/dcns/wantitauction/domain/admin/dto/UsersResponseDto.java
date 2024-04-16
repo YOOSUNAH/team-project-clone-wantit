@@ -2,8 +2,10 @@ package io.dcns.wantitauction.domain.admin.dto;
 
 import io.dcns.wantitauction.domain.user.entity.User;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class UsersResponseDto {
 
     private Long userId;
@@ -14,7 +16,6 @@ public class UsersResponseDto {
     private String phoneNumber;
     private String address;
     private Long kakaoId;
-
 
     public UsersResponseDto(User user) {
         this.userId = user.getUserId();
