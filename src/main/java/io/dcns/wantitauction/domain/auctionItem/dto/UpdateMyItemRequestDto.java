@@ -17,4 +17,13 @@ public class UpdateMyItemRequestDto {
 
     @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime endDate;
+
+    public UpdateMyItemRequestDto(String itemName, String itemDescription, Long minPrice,
+        LocalDateTime startDate, LocalDateTime endDate) {
+        this.itemName = itemName;
+        this.itemDescription = itemDescription;
+        this.minPrice = minPrice;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
 }

@@ -21,4 +21,12 @@ public class CreateProductRequestDto {
 
     private final AuctionItemEnum status = AuctionItemEnum.READY;
 
+    public CreateProductRequestDto(String itemName, String itemDescription, Long minPrice,
+        LocalDateTime startDate, LocalDateTime endDate) {
+        this.itemName = itemName;
+        this.itemDescription = itemDescription;
+        this.minPrice = minPrice;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
 }
