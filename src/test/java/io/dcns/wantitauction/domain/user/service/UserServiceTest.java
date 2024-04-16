@@ -154,13 +154,26 @@ class UserServiceTest {
     @DisplayName("프로필 수정")
     @Test
     void updateUser() {
+
     }
 
+    @DisplayName("프로필 수정 - 비밀번호")
     @Test
     void updatePassword() {
     }
 
+    @DisplayName("회원 탈퇴")
     @Test
     void deleteUser() {
+        // given
+        given(userRepository.findByUserId(anyLong())).willReturn(Optional.of(TEST_USER));
+
+        // when, then
+        assertDoesNotThrow(
+            () -> userService.deleteUser(TEST_USER_ID)
+        );
+
+        verify(userRepository, times(1)).delete(TEST_USER);
     }
 }
+

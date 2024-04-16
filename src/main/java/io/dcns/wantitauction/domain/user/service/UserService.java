@@ -96,11 +96,10 @@ public class UserService {
 
     @Transactional
     public void deleteUser(Long userId) {
-        User user = getUser(userId);
+        User user = userRepository.findByUserId(userId)
+            .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 사용자입니다."));
         userRepository.delete(user);
     }
-
-
 
     private User getUser(Long userId) {
         return userRepository.findByUserId(userId)
