@@ -41,7 +41,7 @@ public class KakaoService {
         KakaoUserInfoDto kakaoUserInfo = getKakaoUserInfo(accessToken);
 
         User kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
-        
+
         String createToken = jwtUtil.generateAccessAndRefreshToken(kakaoUser.getUserId(),
             UserRoleEnum.USER);
 
@@ -51,12 +51,8 @@ public class KakaoService {
     private String getToken(String code) throws JsonProcessingException {
         log.info("인가코드 : " + code);
 
-        URI uri = UriComponentsBuilder
-            .fromUriString("https://kauth.kakao.com")
-            .path("/oauth/token")
-            .encode()
-            .build()
-            .toUri();
+        URI uri = UriComponentsBuilder.fromUriString("https://kauth.kakao.com").path("/oauth/token")
+            .encode().build().toUri();
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
@@ -67,10 +63,8 @@ public class KakaoService {
         body.add("redirect_uri", "http://localhost:8080/v1/users/kakao/callback");   // redirect URL
         body.add("code", code);
 
-        RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
-            .post(uri)
-            .headers(headers)
-            .body(body);
+        RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity.post(uri)
+            .headers(headers).body(body);
 
         ResponseEntity<String> response = restTemplate.exchange(requestEntity, String.class);
 
@@ -82,33 +76,22 @@ public class KakaoService {
     private KakaoUserInfoDto getKakaoUserInfo(String accessToken) throws JsonProcessingException {
         log.info("인가코드 (accessToken): " + accessToken);
 
-        URI uri = UriComponentsBuilder
-            .fromUriString("https://kapi.kakao.com")
-            .path("/v2/user/me")
-            .encode()
-            .build()
-            .toUri();
+        URI uri = UriComponentsBuilder.fromUriString("https://kapi.kakao.com").path("/v2/user/me")
+            .encode().build().toUri();
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + accessToken);
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
-        RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
-            .post(uri)
-            .headers(headers)
-            .body(new LinkedMultiValueMap<>());
+        RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity.post(uri)
+            .headers(headers).body(new LinkedMultiValueMap<>());
 
-        ResponseEntity<String> response = restTemplate.exchange(
-            requestEntity,
-            String.class
-        );
+        ResponseEntity<String> response = restTemplate.exchange(requestEntity, String.class);
 
         JsonNode jsonNode = new ObjectMapper().readTree(response.getBody());
         Long kakaoId = jsonNode.get("id").asLong();
-        String nickname = jsonNode.get("properties")
-            .get("nickname").asText();
-        String email = jsonNode.get("kakao_account")
-            .get("email").asText();
+        String nickname = jsonNode.get("properties").get("nickname").asText();
+        String email = jsonNode.get("kakao_account").get("email").asText();
 
         log.info("카카오 사용자 정보: " + kakaoId + ", " + nickname + ", " + email);
         return new KakaoUserInfoDto(kakaoId, nickname, email);
@@ -128,8 +111,6 @@ public class KakaoService {
 
                 kakaoUser = kakaoUser.kakaoIdUpdate(kakaoId);
             } else {
-
-
                 String password = UUID.randomUUID().toString();
                 String encodedPassword = passwordEncoder.encode(password);
 

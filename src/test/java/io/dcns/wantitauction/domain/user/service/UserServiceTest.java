@@ -181,9 +181,9 @@ class UserServiceTest {
             testUser.getPhoneNumber(),
             testUser.getAddress()
         );
-        assertThat(result.getNickname()).isEqualTo(userResponseDto.getNickname());
-        assertThat(result.getPhoneNumber()).isEqualTo(userResponseDto.getPhoneNumber());
-        assertThat(result.getAddress()).isEqualTo(userResponseDto.getAddress());
+        assertThat(result.nickname()).isEqualTo(userResponseDto.nickname());
+        assertThat(result.phoneNumber()).isEqualTo(userResponseDto.phoneNumber());
+        assertThat(result.address()).isEqualTo(userResponseDto.address());
     }
 
     @DisplayName("프로필 수정-실패 - 중복된 nickName")
