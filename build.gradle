@@ -84,9 +84,9 @@ dependencies {
     implementation group: 'com.google.firebase', name: 'firebase-admin', version: '9.2.0'
 
     // AssertJ
-    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.21.0'
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.25.3'
 }
 
-test {
+tasks.named('test') {
     useJUnitPlatform()
 }

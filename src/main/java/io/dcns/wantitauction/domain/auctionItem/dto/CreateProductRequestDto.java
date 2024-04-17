@@ -4,9 +4,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItemEnum;
 import java.time.LocalDateTime;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 public class CreateProductRequestDto {
 
     private String itemName;
@@ -20,13 +22,4 @@ public class CreateProductRequestDto {
     private LocalDateTime endDate;
 
     private final AuctionItemEnum status = AuctionItemEnum.READY;
-
-    public CreateProductRequestDto(String itemName, String itemDescription, Long minPrice,
-        LocalDateTime startDate, LocalDateTime endDate) {
-        this.itemName = itemName;
-        this.itemDescription = itemDescription;
-        this.minPrice = minPrice;
-        this.startDate = startDate;
-        this.endDate = endDate;
-    }
 }
