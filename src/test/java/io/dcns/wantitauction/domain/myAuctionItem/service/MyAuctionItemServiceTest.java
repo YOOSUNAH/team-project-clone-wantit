@@ -14,6 +14,7 @@ import io.dcns.wantitauction.domain.user.entity.User;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,20 +35,24 @@ class MyAuctionItemServiceTest {
     @InjectMocks
     private MyAuctionItemService myAuctionItemService;
 
+    private static User createUser() {
+        return User.builder()
+            .userId(1L)
+            .build();
+    }
+
     @Test
     @DisplayName("[성공] 신규 경매 등록")
     void addAuctionItem() {
         // given
+        User user = createUser();
+
         CreateProductRequestDto request = CreateProductRequestDto.builder()
             .itemName("TEST_ITEM")
             .itemDescription("TEST_DESCRIPTION")
             .minPrice(100000L)
             .startDate(LocalDateTime.now())
             .endDate(LocalDateTime.now().plusDays(1))
-            .build();
-
-        User user = User.builder()
-            .userId(1L)
             .build();
 
         // when
@@ -59,7 +64,8 @@ class MyAuctionItemServiceTest {
         AuctionItem capturedAuctionItem = argumentCaptor.getValue();
 
         assertThat(capturedAuctionItem.getItemName()).isEqualTo(request.getItemName());
-        assertThat(capturedAuctionItem.getItemDescription()).isEqualTo(request.getItemDescription());
+        assertThat(capturedAuctionItem.getItemDescription()).isEqualTo(
+            request.getItemDescription());
         assertThat(capturedAuctionItem.getMinPrice()).isEqualTo(request.getMinPrice());
         assertThat(capturedAuctionItem.getStartDate()).isEqualTo(request.getStartDate());
         assertThat(capturedAuctionItem.getEndDate()).isEqualTo(request.getEndDate());
@@ -69,18 +75,44 @@ class MyAuctionItemServiceTest {
     @DisplayName("[성공] 내 경매 리스트 조회")
     void getMyAuctionItems() {
         // given
-        User user = User.builder()
-            .userId(1L)
-            .build();
+        User user = createUser();
 
         List<MyAuctionItemsResponseDto> expectedAuctionItems = new ArrayList<>();
-        when(auctionItemQueryRepository.findAllMyAuctionItems(user.getUserId())).thenReturn(expectedAuctionItems);
+        when(auctionItemQueryRepository.findAllMyAuctionItems(user.getUserId())).thenReturn(
+            expectedAuctionItems);
 
         // when
-        List<MyAuctionItemsResponseDto> actualAuctionItems = myAuctionItemService.getAuctionItems(user.getUserId());
+        List<MyAuctionItemsResponseDto> actualAuctionItems = myAuctionItemService.getAuctionItems(
+            user.getUserId());
 
         // then
         verify(auctionItemQueryRepository).findAllMyAuctionItems(user.getUserId());
         assertThat(actualAuctionItems).isEqualTo(expectedAuctionItems);
+    }
+
+    @Test
+    @DisplayName("[성공] 내 경매 단건 조회")
+    void getAuctionItem() {
+        //given
+        User user = createUser();
+
+        AuctionItem auctionItem = AuctionItem.builder()
+            .itemName("TEST_ITEM")
+            .itemDescription("TEST_DESCRIPTION")
+            .minPrice(100000L)
+            .startDate(LocalDateTime.now())
+            .endDate(LocalDateTime.now().plusDays(1))
+            .build();
+
+        when(auctionItemRepository.findByAuctionItemIdAndUserId(1L, user.getUserId()))
+            .thenReturn(Optional.of(auctionItem));
+
+        // when
+        MyAuctionItemsResponseDto actualAuctionItem = myAuctionItemService.getAuctionItem(
+            1L,
+            user.getUserId());
+
+        // then
+        assertThat(actualAuctionItem.getItemName()).isEqualTo(auctionItem.getItemName());
     }
 }
