@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
@@ -19,6 +20,7 @@ import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Getter
+@Builder
 @Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
