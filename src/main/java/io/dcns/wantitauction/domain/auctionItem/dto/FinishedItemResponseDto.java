@@ -4,20 +4,22 @@ import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItem;
 import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItemEnum;
 import java.time.LocalDateTime;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class FinishedItemResponseDto {
 
-    private final Long auctionItemId;
-    private final Long userId;
-    private final Long winnerId;
-    private final String itemName;
-    private final String itemDescription;
-    private final Long minPrice;
-    private final Long winPrice;
-    private final LocalDateTime startDate;
-    private final LocalDateTime endDate;
-    private final AuctionItemEnum status = AuctionItemEnum.FINISHED;
+    private Long auctionItemId;
+    private Long userId;
+    private Long winnerId;
+    private String itemName;
+    private String itemDescription;
+    private Long minPrice;
+    private Long winPrice;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
+    private AuctionItemEnum status = AuctionItemEnum.FINISHED;
 
     public FinishedItemResponseDto(AuctionItem auctionItem) {
         this.auctionItemId = auctionItem.getAuctionItemId();
