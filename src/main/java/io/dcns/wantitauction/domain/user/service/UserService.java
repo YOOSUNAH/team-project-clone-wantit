@@ -69,26 +69,17 @@ public class UserService {
 
     @Transactional
     public UserResponseDto updateUser(UserDetailsImpl userDetails, UserRequestDto requestDto) {
-        // 토큰으로 id 가져오기
-        Long userId = userDetails.getUser().getUserId();
-        // DB에 접근
-        User user = getUser(userId);
-        //nickname 확인
-        if (!user.getNickname().equals(requestDto.getNickname())) {
-            validateNicknameDuplicate(requestDto.getNickname());
-        }
-        // 변경
-        String nickname = requestDto.getNickname();
-        String phoneNumber = requestDto.getPhoneNumber();
-        String address = requestDto.getAddress();
+        User user = validateUser(userDetails);
+        validateNicknameDuplicate(requestDto.getNickname());
 
-        user.update(nickname, phoneNumber, address);
-        return new UserResponseDto(nickname, phoneNumber, address);
+        user.update(requestDto.getNickname(), requestDto.getPhoneNumber(), requestDto.getAddress());
+        return new UserResponseDto(requestDto.getNickname(), requestDto.getPhoneNumber(),
+            requestDto.getAddress());
     }
 
     @Transactional
-    public void updatePassword(Long userId, PasswordRequestDto requestDto) {
-        User user = getUser(userId);
+    public void updatePassword(UserDetailsImpl userDetails, PasswordRequestDto requestDto) {
+        User user = validateUser(userDetails);
 
         if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
             throw new NotMatchException("비밀번호가 일치하지 않습니다.");
@@ -105,7 +96,8 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    private User getUser(Long userId) {
+    private User validateUser(UserDetailsImpl userDetails) {
+        Long userId = userDetails.getUser().getUserId();
         return userRepository.findByUserId(userId)
             .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 사용자입니다."));
     }

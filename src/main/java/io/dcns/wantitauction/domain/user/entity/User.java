@@ -26,7 +26,7 @@ import org.hibernate.annotations.SQLRestriction;
 @AllArgsConstructor
 @SQLDelete(sql = "update users set deleted_at = NOW() where user_id = ?")
 @SQLRestriction(value = "deleted_at is NULL")
-public class User extends Timestamped implements Serializable{
+public class User extends Timestamped implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -104,5 +104,9 @@ public class User extends Timestamped implements Serializable{
 
     public void setRole(UserRoleEnum role) {
         this.role = role;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 }

@@ -2,10 +2,13 @@ package io.dcns.wantitauction.domain.user.service;
 
 
 import static io.dcns.wantitauction.domain.user.UserCommonTest.TEST_USER;
+import static io.dcns.wantitauction.domain.user.UserCommonTest.TEST_USER_DETAILS;
 import static io.dcns.wantitauction.domain.user.UserCommonTest.TEST_USER_ID;
 import static io.dcns.wantitauction.domain.user.UserCommonTest.TEST_USER_LOGIN_REQUEST_DTO;
+import static io.dcns.wantitauction.domain.user.UserCommonTest.TEST_USER_REQUEST_DTO;
 import static io.dcns.wantitauction.domain.user.UserCommonTest.TEST_USER_SIGNUP_REQUEST_DTO;
 import static io.dcns.wantitauction.domain.user.UserCommonTest.TOKEN;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -18,10 +21,14 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import io.dcns.wantitauction.domain.user.UserTestUtils;
+import io.dcns.wantitauction.domain.user.dto.UserResponseDto;
+import io.dcns.wantitauction.domain.user.entity.User;
 import io.dcns.wantitauction.domain.user.entity.UserRoleEnum;
 import io.dcns.wantitauction.domain.user.repository.UserRepository;
 import io.dcns.wantitauction.global.exception.NotMatchException;
 import io.dcns.wantitauction.global.exception.UserNotFoundException;
+import io.dcns.wantitauction.global.impl.UserDetailsImpl;
 import io.dcns.wantitauction.global.jwt.JwtUtil;
 import io.dcns.wantitauction.global.jwt.RefreshTokenRepository;
 import jakarta.persistence.EntityExistsException;
@@ -48,6 +55,7 @@ class UserServiceTest {
 
     @Mock
     RefreshTokenRepository refreshTokenRepository;
+
 
     @Mock
     JwtUtil jwtUtil;
@@ -154,8 +162,29 @@ class UserServiceTest {
     @DisplayName("프로필 수정")
     @Test
     void updateUser() {
+        //given
+        User testUser = UserTestUtils.get(TEST_USER);
+        given(userRepository.findByUserId(testUser.getUserId())).willReturn(Optional.of(testUser));
 
+        UserDetailsImpl testUserDetails = TEST_USER_DETAILS;
+        testUserDetails.getUser().setUserId(1L);
+
+        given(userRepository.existsByNickname(anyString())).willReturn(false);
+
+        // when
+        var result = userService.updateUser(testUserDetails, TEST_USER_REQUEST_DTO);
+
+        // then
+        UserResponseDto userResponseDto = new UserResponseDto(
+            testUser.getNickname(),
+            testUser.getPhoneNumber(),
+            testUser.getAddress()
+        );
+        assertThat(result.getNickname()).isEqualTo(userResponseDto.getNickname());
+        assertThat(result.getPhoneNumber()).isEqualTo(userResponseDto.getPhoneNumber());
+        assertThat(result.getAddress()).isEqualTo(userResponseDto.getAddress());
     }
+
 
     @DisplayName("프로필 수정 - 비밀번호")
     @Test

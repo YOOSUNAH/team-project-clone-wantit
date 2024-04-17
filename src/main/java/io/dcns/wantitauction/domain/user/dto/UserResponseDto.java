@@ -1,8 +1,5 @@
 package io.dcns.wantitauction.domain.user.dto;
 
-import io.dcns.wantitauction.domain.admin.dto.UsersResponseDto;
-import io.dcns.wantitauction.domain.user.entity.User;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -18,6 +15,18 @@ public class UserResponseDto {
         this.nickname = nickname;
         this.phoneNumber = phoneNumber;
         this.address = address;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public String getAddress() {
+        return address;
     }
 }
 
