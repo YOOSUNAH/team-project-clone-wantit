@@ -7,7 +7,6 @@ import lombok.Getter;
 
 @Getter
 @Builder
-
 public class LoginRequestDto {
 
     @NotBlank
