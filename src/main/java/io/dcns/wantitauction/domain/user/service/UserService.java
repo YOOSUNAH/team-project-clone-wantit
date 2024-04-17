@@ -78,8 +78,12 @@ public class UserService {
             validateNicknameDuplicate(requestDto.getNickname());
         }
         // 변경
-        user.update(requestDto.getNickname(), requestDto.getPhoneNumber(), requestDto.getAddress());
-        return new UserResponseDto(user);
+        String nickname = requestDto.getNickname();
+        String phoneNumber = requestDto.getPhoneNumber();
+        String address = requestDto.getAddress();
+
+        user.update(nickname, phoneNumber, address);
+        return new UserResponseDto(nickname, phoneNumber, address);
     }
 
     @Transactional
