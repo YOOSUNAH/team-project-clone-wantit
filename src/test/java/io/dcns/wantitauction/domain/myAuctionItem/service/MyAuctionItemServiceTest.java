@@ -155,4 +155,28 @@ class MyAuctionItemServiceTest {
         assertThat(actualAuctionItem.getStartDate()).isEqualTo(request.getStartDate());
         assertThat(actualAuctionItem.getEndDate()).isEqualTo(request.getEndDate());
     }
+
+    @Test
+    @DisplayName("[성공] 내 경매 삭제")
+    void deleteAuctionItem() {
+        // given
+        User user = createUser();
+
+        AuctionItem auctionItem = AuctionItem.builder()
+            .itemName("TEST_ITEM")
+            .itemDescription("TEST_DESCRIPTION")
+            .minPrice(100000L)
+            .startDate(LocalDateTime.now())
+            .endDate(LocalDateTime.now().plusDays(1))
+            .build();
+
+        when(auctionItemRepository.findByAuctionItemIdAndUserId(1L, user.getUserId()))
+            .thenReturn(Optional.of(auctionItem));
+
+        // when
+        myAuctionItemService.deleteAuctionItem(1L, user.getUserId());
+
+        // then
+        verify(auctionItemRepository).deleteById(auctionItem.getAuctionItemId());
+    }
 }
