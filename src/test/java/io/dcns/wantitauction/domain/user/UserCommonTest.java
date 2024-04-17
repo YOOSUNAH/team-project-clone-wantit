@@ -25,7 +25,6 @@ public interface UserCommonTest {
     int PAGE = 0;
     int SIZE = 10;
     int EXPECTED_TOTAL_PAGE = 1;
-    int EXPECTED_SIZE = 10;
 
     User TEST_USER = User.builder()
         .email(TEST_USER_EMAIL)

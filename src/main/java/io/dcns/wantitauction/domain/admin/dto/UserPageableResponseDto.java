@@ -6,7 +6,7 @@ import lombok.Builder;
 
 @Builder
 public record UserPageableResponseDto (
-    List<UsersResponseDto> responseDtoList,
+    List<AdminResponseDto> responseDtoList,
     int pageSize,
         int currentPage,
         int totalPage
