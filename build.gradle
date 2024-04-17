@@ -85,6 +85,8 @@ dependencies {
 
     // AssertJ
     testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.25.3'
+
+    testImplementation 'com.h2database:h2'
 }
 
 tasks.named('test') {
