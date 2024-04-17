@@ -3,9 +3,11 @@ package io.dcns.wantitauction.domain.auctionItem.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import java.time.LocalDateTime;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 public class UpdateMyItemRequestDto {
 
     private String itemName;

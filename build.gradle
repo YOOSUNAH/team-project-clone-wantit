@@ -82,8 +82,10 @@ dependencies {
 
     // Firebase
     implementation group: 'com.google.firebase', name: 'firebase-admin', version: '9.2.0'
+
+    testImplementation 'com.h2database:h2'
 }
 
-test {
+tasks.named('test') {
     useJUnitPlatform()
 }

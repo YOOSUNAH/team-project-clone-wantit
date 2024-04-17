@@ -13,6 +13,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
@@ -20,10 +22,12 @@ import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Getter
+@Builder
 @Table(name = "auction_items")
 @SQLDelete(sql = "update auction_items set deleted_at = NOW() where auction_item_id = ?")
 @SQLRestriction(value = "deleted_at is NULL")
 @NoArgsConstructor
+@AllArgsConstructor
 public class AuctionItem extends Timestamped {
 
     @Id
