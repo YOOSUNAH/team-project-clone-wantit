@@ -34,7 +34,6 @@ class AdminServiceTest {
     @Mock
     UserQueryRepository userQueryRepository;
 
-
     @DisplayName("회원 전체 조회")
     @Test
     void getUsers() {
