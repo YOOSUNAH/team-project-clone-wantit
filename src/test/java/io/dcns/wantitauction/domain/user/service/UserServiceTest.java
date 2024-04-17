@@ -1,6 +1,7 @@
 package io.dcns.wantitauction.domain.user.service;
 
 
+import static io.dcns.wantitauction.domain.user.UserCommonTest.TEST_PASSWORD_REQUEST_DTO;
 import static io.dcns.wantitauction.domain.user.UserCommonTest.TEST_USER;
 import static io.dcns.wantitauction.domain.user.UserCommonTest.TEST_USER_DETAILS;
 import static io.dcns.wantitauction.domain.user.UserCommonTest.TEST_USER_ID;
@@ -185,10 +186,25 @@ class UserServiceTest {
         assertThat(result.getAddress()).isEqualTo(userResponseDto.getAddress());
     }
 
-
     @DisplayName("프로필 수정 - 비밀번호")
     @Test
     void updatePassword() {
+        // given
+        User testUser = UserTestUtils.get(TEST_USER);
+        given(userRepository.findByUserId(testUser.getUserId())).willReturn(Optional.of(testUser));
+
+        UserDetailsImpl testUserDetails = TEST_USER_DETAILS;
+        testUserDetails.getUser().setUserId(1L);
+
+        given(passwordEncoder.matches(anyString(), anyString())).willReturn(true);
+        given(passwordEncoder.encode(anyString())).willReturn("encodedPassword");
+
+        // when
+        assertDoesNotThrow(
+            () -> userService.updatePassword(testUserDetails, TEST_PASSWORD_REQUEST_DTO)
+        );
+
+        verify(passwordEncoder, times(1)).encode(TEST_PASSWORD_REQUEST_DTO.getChangePassword());
     }
 
     @DisplayName("회원 탈퇴")

@@ -1,6 +1,7 @@
 package io.dcns.wantitauction.domain.user;
 
 import io.dcns.wantitauction.domain.user.dto.LoginRequestDto;
+import io.dcns.wantitauction.domain.user.dto.PasswordRequestDto;
 import io.dcns.wantitauction.domain.user.dto.SignupRequestDto;
 import io.dcns.wantitauction.domain.user.dto.UserRequestDto;
 import io.dcns.wantitauction.domain.user.entity.User;
@@ -9,6 +10,7 @@ import io.dcns.wantitauction.global.impl.UserDetailsImpl;
 
 public interface UserCommonTest {
 
+    String ANOTHER_PREFIX = "another-";
     Long TEST_USER_ID = 1L;
     UserRoleEnum USER_ROLE = UserRoleEnum.USER;
     String TEST_USER_NAME = "username12";
@@ -52,4 +54,9 @@ public interface UserCommonTest {
         .address(TEST_USER_ADDRESS)
         .build();
 
+    PasswordRequestDto TEST_PASSWORD_REQUEST_DTO = PasswordRequestDto.builder()
+        .password(TEST_USER_PASSWORD)
+        .changePassword(ANOTHER_PREFIX + TEST_USER_PASSWORD)
+        .rechangePassword(ANOTHER_PREFIX + TEST_USER_PASSWORD)
+        .build();
 }

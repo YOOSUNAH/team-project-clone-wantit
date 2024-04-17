@@ -84,8 +84,10 @@ public class UserService {
         if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
             throw new NotMatchException("비밀번호가 일치하지 않습니다.");
         }
-        checkChangePasswordEquals(requestDto.getChangePassword(),
+        checkChangePasswordEquals(
+            requestDto.getChangePassword(),
             requestDto.getRechangePassword());
+
         user.updatePassword(passwordEncoder.encode(requestDto.getChangePassword()));
     }
 
