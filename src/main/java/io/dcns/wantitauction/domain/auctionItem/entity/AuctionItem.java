@@ -1,6 +1,5 @@
 package io.dcns.wantitauction.domain.auctionItem.entity;
 
-import com.google.auto.value.AutoValue.Builder;
 import io.dcns.wantitauction.domain.auctionItem.dto.CreateProductRequestDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.UpdateMyItemRequestDto;
 import io.dcns.wantitauction.domain.user.entity.User;
@@ -15,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
@@ -73,7 +73,6 @@ public class AuctionItem extends Timestamped {
         this.startDate = request.getStartDate();
         this.endDate = request.getEndDate();
     }
-
 
     public void update(UpdateMyItemRequestDto request) {
         this.itemName = request.getItemName();
