@@ -1,6 +1,5 @@
 package io.dcns.wantitauction.domain.admin.service;
 
-import static io.dcns.wantitauction.domain.user.UserCommonTest.EXPECTED_SIZE;
 import static io.dcns.wantitauction.domain.user.UserCommonTest.EXPECTED_TOTAL_PAGE;
 import static io.dcns.wantitauction.domain.user.UserCommonTest.PAGE;
 import static io.dcns.wantitauction.domain.user.UserCommonTest.SIZE;
