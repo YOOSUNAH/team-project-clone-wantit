@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import io.dcns.wantitauction.domain.auctionItem.dto.CreateProductRequestDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.MyAuctionItemsResponseDto;
+import io.dcns.wantitauction.domain.auctionItem.dto.UpdateMyItemRequestDto;
 import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItem;
 import io.dcns.wantitauction.domain.auctionItem.repository.AuctionItemQueryRepository;
 import io.dcns.wantitauction.domain.auctionItem.repository.AuctionItemRepository;
@@ -114,5 +115,44 @@ class MyAuctionItemServiceTest {
 
         // then
         assertThat(actualAuctionItem.getItemName()).isEqualTo(auctionItem.getItemName());
+    }
+
+    @Test
+    @DisplayName("[성공] 내 경매 수정")
+    void updateAuctionItem() {
+        // given
+        User user = createUser();
+
+        AuctionItem auctionItem = AuctionItem.builder()
+            .itemName("TEST_ITEM")
+            .itemDescription("TEST_DESCRIPTION")
+            .minPrice(100000L)
+            .startDate(LocalDateTime.now())
+            .endDate(LocalDateTime.now().plusDays(1))
+            .build();
+
+        UpdateMyItemRequestDto request = UpdateMyItemRequestDto.builder()
+            .itemName("UPDATED_ITEM")
+            .itemDescription("UPDATED_DESCRIPTION")
+            .minPrice(200000L)
+            .startDate(LocalDateTime.now().plusDays(1))
+            .endDate(LocalDateTime.now().plusDays(2))
+            .build();
+
+        when(auctionItemRepository.findByAuctionItemIdAndUserId(1L, user.getUserId()))
+            .thenReturn(Optional.of(auctionItem));
+
+        // when
+        MyAuctionItemsResponseDto actualAuctionItem = myAuctionItemService.updateAuctionItem(
+            request,
+            1L,
+            user.getUserId());
+
+        // then
+        assertThat(actualAuctionItem.getItemName()).isEqualTo(request.getItemName());
+        assertThat(actualAuctionItem.getItemDescription()).isEqualTo(request.getItemDescription());
+        assertThat(actualAuctionItem.getMinPrice()).isEqualTo(request.getMinPrice());
+        assertThat(actualAuctionItem.getStartDate()).isEqualTo(request.getStartDate());
+        assertThat(actualAuctionItem.getEndDate()).isEqualTo(request.getEndDate());
     }
 }
