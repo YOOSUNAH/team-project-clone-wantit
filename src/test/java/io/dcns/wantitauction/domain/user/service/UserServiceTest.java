@@ -8,6 +8,7 @@ import static io.dcns.wantitauction.domain.user.UserCommonTest.TEST_USER_ID;
 import static io.dcns.wantitauction.domain.user.UserCommonTest.TEST_USER_LOGIN_REQUEST_DTO;
 import static io.dcns.wantitauction.domain.user.UserCommonTest.TEST_USER_REQUEST_DTO;
 import static io.dcns.wantitauction.domain.user.UserCommonTest.TEST_USER_SIGNUP_REQUEST_DTO;
+import static io.dcns.wantitauction.domain.user.UserCommonTest.TEST_WRONG_PASSWORD_REQUEST_DTO;
 import static io.dcns.wantitauction.domain.user.UserCommonTest.TOKEN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -159,7 +160,6 @@ class UserServiceTest {
         verify(refreshTokenRepository, times(1)).delete(TOKEN);
     }
 
-
     @DisplayName("프로필 수정")
     @Test
     void updateUser() {
@@ -186,6 +186,24 @@ class UserServiceTest {
         assertThat(result.getAddress()).isEqualTo(userResponseDto.getAddress());
     }
 
+    @DisplayName("프로필 수정-실패 - 중복된 nickName")
+    @Test
+    void updateUserFail() {
+        //given
+        User testUser = UserTestUtils.get(TEST_USER);
+        given(userRepository.findByUserId(testUser.getUserId())).willReturn(Optional.of(testUser));
+
+        UserDetailsImpl testUserDetails = TEST_USER_DETAILS;
+        testUserDetails.getUser().setUserId(1L);
+
+        given(userRepository.existsByNickname(anyString())).willReturn(true);
+
+        // when, then
+        assertThrows(EntityExistsException.class,
+            () -> userService.updateUser(testUserDetails, TEST_USER_REQUEST_DTO)
+        );
+    }
+
     @DisplayName("프로필 수정 - 비밀번호")
     @Test
     void updatePassword() {
@@ -204,7 +222,46 @@ class UserServiceTest {
             () -> userService.updatePassword(testUserDetails, TEST_PASSWORD_REQUEST_DTO)
         );
 
+        // then
         verify(passwordEncoder, times(1)).encode(TEST_PASSWORD_REQUEST_DTO.getChangePassword());
+    }
+
+    @DisplayName("프로필 수정 - 이전 비밀번호 확인 실패")
+    @Test
+    void updatePasswordFail() {
+        // given
+        User testUser = UserTestUtils.get(TEST_USER);
+        given(userRepository.findByUserId(testUser.getUserId())).willReturn(Optional.of(testUser));
+
+        UserDetailsImpl testUserDetails = TEST_USER_DETAILS;
+        testUserDetails.getUser().setUserId(1L);
+
+        // when
+        given(passwordEncoder.matches(anyString(), anyString())).willReturn(false);
+
+        // then
+        assertThrows(NotMatchException.class,
+            () -> userService.updatePassword(testUserDetails, TEST_PASSWORD_REQUEST_DTO)
+        );
+    }
+
+    @DisplayName("프로필 수정 - 바꾸려는 비밀번호 확인 실패")
+    @Test
+    void updatePasswordFailDuplilcate() {
+        // given
+        User testUser = UserTestUtils.get(TEST_USER);
+        given(userRepository.findByUserId(testUser.getUserId())).willReturn(Optional.of(testUser));
+
+        UserDetailsImpl testUserDetails = TEST_USER_DETAILS;
+        testUserDetails.getUser().setUserId(1L);
+
+        // when
+        given(passwordEncoder.matches(anyString(), anyString())).willReturn(true);
+
+        // then
+        assertThrows(NotMatchException.class,
+            () -> userService.updatePassword(testUserDetails, TEST_WRONG_PASSWORD_REQUEST_DTO)
+        );
     }
 
     @DisplayName("회원 탈퇴")
