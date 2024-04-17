@@ -13,6 +13,7 @@ import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,13 +29,17 @@ public class Scheduler {
 
     // cron = "초, 분, 시, 일, 월, 주" 순서
     // cron official document : https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/scheduling/support/CronExpression.html
-    // @Scheduled(cron = "*/10 * * * * *") // 테스트용, 현재 매 10초 마다 동작, Todo : 경매 마감 시간 정해야함
+    @Scheduled(cron = "*/10 * * * * *") // 테스트용, 현재 매 10초 마다 동작, Todo : 경매 마감 시간 정해야함
     @Transactional
     public void decideBidWinner() throws InterruptedException {
         log.info("경매 낙찰 로직 시작");
         List<AuctionItem> auctionItemList = auctionItemQueryRepository.findAllEndAuctionItems();
         for (AuctionItem auctionItem : auctionItemList) {
             Bid winBid = bidRepository.findTopByAuctionItemOrderByBidPriceDesc(auctionItem);
+            if (winBid == null) {
+                auctionItem.failAuction();
+                continue;
+            }
             auctionItem.finishAuction(winBid.getUserId(), winBid.getBidPrice());
             eventPublisher.publishEvent(
                 new WinningBidEvent(
