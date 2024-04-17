@@ -69,40 +69,37 @@ public class UserService {
 
     @Transactional
     public UserResponseDto updateUser(UserDetailsImpl userDetails, UserRequestDto requestDto) {
-        // 토큰으로 id 가져오기
-        Long userId = userDetails.getUser().getUserId();
-        // DB에 접근
-        User user = getUser(userId);
-        //nickname 확인
-        if (!user.getNickname().equals(requestDto.getNickname())) {
-            validateNicknameDuplicate(requestDto.getNickname());
-        }
-        // 변경
+        User user = validateUser(userDetails);
+        validateNicknameDuplicate(requestDto.getNickname());
+
         user.update(requestDto.getNickname(), requestDto.getPhoneNumber(), requestDto.getAddress());
-        return new UserResponseDto(user);
+        return new UserResponseDto(requestDto.getNickname(), requestDto.getPhoneNumber(),
+            requestDto.getAddress());
     }
 
     @Transactional
-    public void updatePassword(Long userId, PasswordRequestDto requestDto) {
-        User user = getUser(userId);
+    public void updatePassword(UserDetailsImpl userDetails, PasswordRequestDto requestDto) {
+        User user = validateUser(userDetails);
 
         if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
             throw new NotMatchException("비밀번호가 일치하지 않습니다.");
         }
-        checkChangePasswordEquals(requestDto.getChangePassword(),
+        checkChangePasswordEquals(
+            requestDto.getChangePassword(),
             requestDto.getRechangePassword());
+
         user.updatePassword(passwordEncoder.encode(requestDto.getChangePassword()));
     }
 
     @Transactional
     public void deleteUser(Long userId) {
-        User user = getUser(userId);
+        User user = userRepository.findByUserId(userId)
+            .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 사용자입니다."));
         userRepository.delete(user);
     }
 
-
-
-    private User getUser(Long userId) {
+    private User validateUser(UserDetailsImpl userDetails) {
+        Long userId = userDetails.getUser().getUserId();
         return userRepository.findByUserId(userId)
             .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 사용자입니다."));
     }

@@ -1,18 +1,10 @@
 package io.dcns.wantitauction.domain.user.dto;
 
-import io.dcns.wantitauction.domain.user.entity.User;
-import lombok.Getter;
+import lombok.Builder;
 
-@Getter
-public class UserResponseDto {
+@Builder
+public record UserResponseDto(String nickname, String phoneNumber, String address) {
 
-    private final String nickname;
-    private final String phoneNumber;
-    private final String address;
-
-    public UserResponseDto(User user) {
-        nickname = user.getNickname();
-        phoneNumber = user.getPhoneNumber();
-        address = user.getAddress();
-    }
 }
+
+
