@@ -1,10 +1,17 @@
 package io.dcns.wantitauction.domain.user.dto;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Builder
-public record UserResponseDto(String nickname, String phoneNumber, String address) {
 
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+public class UserResponseDto {
+    private String nickname;
+    private String phoneNumber;
+    private String address;
 }
 
 
