@@ -61,10 +61,19 @@ public class AuctionItemQueryRepository {
             .fetchOne();
     }
 
-    public List<MyAuctionItemsResponseDto> findAllMyAuctionItems(Long userId) {
-        return jpaQueryFactory
+    public Page<MyAuctionItemsResponseDto> findAllMyAuctionItems(Long userId, Pageable pageable) {
+
+        Long totalSize = jpaQueryFactory
+            .select(Wildcard.count)
+            .from(auctionItem)
+            .where(auctionItem.userId.eq(userId))
+            .fetch()
+            .get(0);
+
+        List<MyAuctionItemsResponseDto> myAuctionItems = jpaQueryFactory
             .select(Projections.fields(MyAuctionItemsResponseDto.class,
                 auctionItem.auctionItemId,
+                auctionItem.userId,
                 auctionItem.itemName,
                 auctionItem.itemDescription,
                 auctionItem.minPrice,
@@ -74,7 +83,12 @@ public class AuctionItemQueryRepository {
                 auctionItem.status))
             .from(auctionItem)
             .where(auctionItem.userId.eq(userId))
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .orderBy(auctionItem.createdAt.desc())
             .fetch();
+
+        return PageableExecutionUtils.getPage(myAuctionItems, pageable, () -> totalSize);
 
     }
 
@@ -185,7 +199,7 @@ public class AuctionItemQueryRepository {
 
         return PageableExecutionUtils.getPage(auctionItems, pageable, () -> totalSize);
     }
-  
+
     public List<AuctionItem> findAllTodayWinningAuctionItems() {
         return jpaQueryFactory
             .selectFrom(auctionItem)
