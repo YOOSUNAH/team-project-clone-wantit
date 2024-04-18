@@ -1,10 +1,13 @@
 package io.dcns.wantitauction.domain.myAuctionItem.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import io.dcns.wantitauction.domain.auctionItem.dto.CreateProductRequestDto;
+import io.dcns.wantitauction.domain.auctionItem.dto.MyAuctionItemPageableResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.MyAuctionItemsResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.UpdateMyItemRequestDto;
 import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItem;
@@ -13,7 +16,6 @@ import io.dcns.wantitauction.domain.auctionItem.repository.AuctionItemRepository
 import io.dcns.wantitauction.domain.auctionItem.service.MyAuctionItemService;
 import io.dcns.wantitauction.domain.user.entity.User;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -23,6 +25,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 
 @ExtendWith(MockitoExtension.class)
 class MyAuctionItemServiceTest {
@@ -77,18 +82,26 @@ class MyAuctionItemServiceTest {
     void getMyAuctionItems() {
         // given
         User user = createUser();
+        AuctionItem testItem = AuctionItem.builder().auctionItemId(1L).build();
+        Pageable pageable = PageRequest.of(0, 3);
+        int totalSize = 10;
+        List<MyAuctionItemsResponseDto> expectedAuctionItems = List.of(
+            new MyAuctionItemsResponseDto(testItem),
+            new MyAuctionItemsResponseDto(testItem),
+            new MyAuctionItemsResponseDto(testItem)
+        );
 
-        List<MyAuctionItemsResponseDto> expectedAuctionItems = new ArrayList<>();
-        when(auctionItemQueryRepository.findAllMyAuctionItems(user.getUserId())).thenReturn(
-            expectedAuctionItems);
+        when(auctionItemQueryRepository.findAllMyAuctionItems(anyLong(),
+            any(Pageable.class))).thenReturn(
+            PageableExecutionUtils.getPage(expectedAuctionItems, pageable, () -> totalSize));
 
         // when
-        List<MyAuctionItemsResponseDto> actualAuctionItems = myAuctionItemService.getAuctionItems(
-            user.getUserId());
+        MyAuctionItemPageableResponseDto pageableResponseDto = myAuctionItemService.getAuctionItems(
+            user.getUserId(), pageable.getPageNumber(), pageable.getPageSize());
 
         // then
-        verify(auctionItemQueryRepository).findAllMyAuctionItems(user.getUserId());
-        assertThat(actualAuctionItems).isEqualTo(expectedAuctionItems);
+        verify(auctionItemQueryRepository).findAllMyAuctionItems(user.getUserId(), pageable);
+        assertThat(pageableResponseDto.getResponseDtoList()).isEqualTo(expectedAuctionItems);
     }
 
     @Test
