@@ -7,4 +7,3 @@ public record UserResponseDto(String nickname, String phoneNumber, String addres
 
 }
 
-

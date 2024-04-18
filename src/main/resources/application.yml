@@ -41,8 +41,9 @@ jwt:
   secret:
     key: ${jwt.secret.key}
 
-
-
-
+kakao:
+  grant_type: ${grant_type}
+  client_id: ${client_id}
+  redirect_uri: ${redirect_uri}
 
 

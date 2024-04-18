@@ -13,6 +13,7 @@ import java.net.URI;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -32,16 +33,21 @@ public class KakaoService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final String kakaoTokenUrl = "https://kauth.kakao.com/oauth/token";
 
+    @Value("${kakao.grant_type}")
+    private String grantType;
+
+    @Value("${kakao.client_id}")
+    private String clientId;
+
+    @Value("${kakao.redirect_uri}")
+    private String redirectUri;
 
     public String kakaoLogin(String code) throws JsonProcessingException {
-
         String accessToken = getToken(code);
-
         KakaoUserInfoDto kakaoUserInfo = getKakaoUserInfo(accessToken);
-
         User kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
-
         String createToken = jwtUtil.generateAccessAndRefreshToken(kakaoUser.getUserId(),
             UserRoleEnum.USER);
 
@@ -50,22 +56,18 @@ public class KakaoService {
 
     private String getToken(String code) throws JsonProcessingException {
         log.info("인가코드 : " + code);
-
-        URI uri = UriComponentsBuilder.fromUriString("https://kauth.kakao.com").path("/oauth/token")
-            .encode().build().toUri();
-
+        URI uri = UriComponentsBuilder.fromUriString(kakaoTokenUrl).encode().build().toUri();
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("grant_type", "authorization_code");
-        body.add("client_id", "80bee01a24a6fbf2f1941a7483488338");
-        body.add("redirect_uri", "http://localhost:8080/v1/users/kakao/callback");   // redirect URL
+        body.add("grant_type", grantType);
+        body.add("client_id", clientId);
+        body.add("redirect_uri", redirectUri);
         body.add("code", code);
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity.post(uri)
             .headers(headers).body(body);
-
         ResponseEntity<String> response = restTemplate.exchange(requestEntity, String.class);
 
         JsonNode jsonNode = new ObjectMapper().readTree(
@@ -98,12 +100,10 @@ public class KakaoService {
     }
 
     private User registerKakaoUserIfNeeded(KakaoUserInfoDto kakaoUserInfo) {
-
         Long kakaoId = kakaoUserInfo.getKakaoId();
         User kakaoUser = userRepository.findByKakaoId(kakaoId).orElse(null);
 
         if (kakaoUser == null) {
-
             String kakaoEmail = kakaoUserInfo.getEmail();
             User sameEmailUser = userRepository.findByEmail(kakaoEmail).orElse(null);
             if (sameEmailUser != null) {

@@ -36,6 +36,11 @@ public class KaKaoViewController {
 
     @PostMapping("/v1/users/signup-page")
     public String signup(@Valid SignupRequestDto requestDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            bindingResult.getAllErrors().forEach(error -> {
+                log.error(error.getDefaultMessage());
+            });
+        }
         userService.signup(requestDto);
         return "redirect:/v1/users/login-page";
     }
@@ -46,9 +51,8 @@ public class KaKaoViewController {
         log.info("controller code : " + code);
         String token = kaoKaoService.kakaoLogin(code);
 
-        // 쿠키에 넣어주기
         Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, token.substring(7));
-        cookie.setPath("/");  //메인 페이지
+        cookie.setPath("/");
         response.addCookie(cookie);
         return "redirect:/";
     }

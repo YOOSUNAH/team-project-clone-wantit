@@ -42,7 +42,7 @@ public class User extends Timestamped implements Serializable {
     @Column(nullable = false)
     private String username;
 
-    @Column(nullable = false)
+    @Column
     private String nickname;
 
     private String phoneNumber;
@@ -52,6 +52,7 @@ public class User extends Timestamped implements Serializable {
     @Column
     private LocalDateTime deletedAt;
 
+    @Column
     private Long kakaoId;
 
     @Column(nullable = false)
