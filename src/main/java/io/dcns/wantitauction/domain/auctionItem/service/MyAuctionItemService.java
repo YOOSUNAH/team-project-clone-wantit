@@ -1,6 +1,7 @@
 package io.dcns.wantitauction.domain.auctionItem.service;
 
 import io.dcns.wantitauction.domain.auctionItem.dto.CreateProductRequestDto;
+import io.dcns.wantitauction.domain.auctionItem.dto.FinishedItemPageableResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.FinishedItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.MyAuctionItemPageableResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.MyAuctionItemsResponseDto;
@@ -11,7 +12,6 @@ import io.dcns.wantitauction.domain.auctionItem.repository.AuctionItemRepository
 import io.dcns.wantitauction.domain.user.entity.User;
 import io.dcns.wantitauction.global.aop.ForbiddenKeyword;
 import jakarta.persistence.EntityNotFoundException;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -67,9 +67,17 @@ public class MyAuctionItemService {
         auctionItemRepository.deleteById(auctionItem.getAuctionItemId());
     }
 
-    public List<FinishedItemResponseDto> getWinningAuctionItems(Long userId) {
+    public FinishedItemPageableResponseDto getWinningAuctionItems(Long userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
 
-        return auctionItemQueryRepository.findWinningAuctionItems(userId);
+        Page<FinishedItemResponseDto> responseDtoPage = auctionItemQueryRepository
+            .findWinningAuctionItems(userId, pageable);
+
+        int totalPage = responseDtoPage.getTotalPages();
+
+        return new FinishedItemPageableResponseDto(
+            responseDtoPage.getContent(), size, page + 1, totalPage
+        );
     }
 
     public FinishedItemResponseDto getWinningAuctionItem(Long auctionItemId, Long userId) {
