@@ -7,6 +7,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import io.dcns.wantitauction.domain.auctionItem.dto.CreateProductRequestDto;
+import io.dcns.wantitauction.domain.auctionItem.dto.FinishedItemPageableResponseDto;
+import io.dcns.wantitauction.domain.auctionItem.dto.FinishedItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.MyAuctionItemPageableResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.MyAuctionItemsResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.UpdateMyItemRequestDto;
@@ -191,5 +193,41 @@ class MyAuctionItemServiceTest {
 
         // then
         verify(auctionItemRepository).deleteById(auctionItem.getAuctionItemId());
+    }
+
+    @Test
+    @DisplayName("[성공] 내 완료 경매 리스트 조회")
+    void getMyWinningAuctionItems() {
+        // given
+        User user = createUser();
+        AuctionItem testItem = AuctionItem.builder()
+            .auctionItemId(1L)
+            .winnerId(1L)
+            .build();
+        Pageable pageable = PageRequest.of(0, 3);
+        int totalSize = 10;
+        List<FinishedItemResponseDto> expectedAuctionItems = List.of(
+            new FinishedItemResponseDto(testItem),
+            new FinishedItemResponseDto(testItem),
+            new FinishedItemResponseDto(testItem)
+        );
+
+        when(auctionItemQueryRepository.findWinningAuctionItems(anyLong(),
+            any(Pageable.class))).thenReturn(
+            PageableExecutionUtils.getPage(
+                expectedAuctionItems, pageable, () -> totalSize
+            ));
+
+        // when
+        FinishedItemPageableResponseDto pageableResponseDto = myAuctionItemService
+            .getWinningAuctionItems(
+                user.getUserId(), pageable.getPageNumber(), pageable.getPageSize()
+            );
+
+        // then
+        verify(auctionItemQueryRepository).findWinningAuctionItems(user.getUserId(), pageable);
+        assertThat(
+            pageableResponseDto.getResponseDtoList().get(0).getWinnerId()
+        ).isEqualTo(user.getUserId());
     }
 }
