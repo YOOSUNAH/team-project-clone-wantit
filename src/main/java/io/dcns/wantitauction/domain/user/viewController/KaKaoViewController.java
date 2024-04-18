@@ -46,9 +46,8 @@ public class KaKaoViewController {
         log.info("controller code : " + code);
         String token = kaoKaoService.kakaoLogin(code);
 
-        // 쿠키에 넣어주기
         Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, token.substring(7));
-        cookie.setPath("/");  //메인 페이지
+        cookie.setPath("/");
         response.addCookie(cookie);
         return "redirect:/";
     }

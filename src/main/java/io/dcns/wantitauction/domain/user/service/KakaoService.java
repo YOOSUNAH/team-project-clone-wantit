@@ -22,6 +22,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.beans.factory.annotation.Value;
 
 @Slf4j(topic = "KAKAO Login")
 @Service
@@ -32,7 +33,16 @@ public class KakaoService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final String kakaoTokenUrl =  "https://kauth.kakao.com/oauth/token";
 
+    @Value("${kakao.grant_type}")
+    private String grantType;
+
+    @Value("${kakao.client_id}")
+    private String clientId;
+
+    @Value("${kakao.redirect_uri}")
+    private String redirectUri;
 
     public String kakaoLogin(String code) throws JsonProcessingException {
 
@@ -51,16 +61,15 @@ public class KakaoService {
     private String getToken(String code) throws JsonProcessingException {
         log.info("인가코드 : " + code);
 
-        URI uri = UriComponentsBuilder.fromUriString("https://kauth.kakao.com").path("/oauth/token")
-            .encode().build().toUri();
+        URI uri = UriComponentsBuilder.fromUriString(kakaoTokenUrl).encode().build().toUri();
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("grant_type", "authorization_code");
-        body.add("client_id", "80bee01a24a6fbf2f1941a7483488338");
-        body.add("redirect_uri", "http://localhost:8080/v1/users/kakao/callback");   // redirect URL
+        body.add("grant_type", grantType);
+        body.add("client_id", clientId);
+        body.add("redirect_uri", redirectUri);
         body.add("code", code);
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity.post(uri)
@@ -68,8 +77,7 @@ public class KakaoService {
 
         ResponseEntity<String> response = restTemplate.exchange(requestEntity, String.class);
 
-        JsonNode jsonNode = new ObjectMapper().readTree(
-            response.getBody());  // 발급받아온 엑세스 토큰이 body에 들어있다.
+        JsonNode jsonNode = new ObjectMapper().readTree(response.getBody());  // 발급받아온 엑세스 토큰이 body에 들어있다.
         return jsonNode.get("access_token").asText();
     }
 
