@@ -3,7 +3,7 @@ package io.dcns.wantitauction.domain.user.repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import io.dcns.wantitauction.domain.admin.dto.UsersResponseDto;
+import io.dcns.wantitauction.domain.admin.dto.AdminResponseDto;
 import io.dcns.wantitauction.domain.user.entity.QUser;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -18,15 +18,15 @@ public class UserQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public Page<UsersResponseDto> findAll(Pageable pageable) {
+    public Page<AdminResponseDto> findAll(Pageable pageable) {
         Long totalSize = jpaQueryFactory
             .select(Wildcard.count)
             .from(QUser.user)
             .fetch()
             .get(0);
 
-        List<UsersResponseDto> users = jpaQueryFactory
-            .select(Projections.fields(UsersResponseDto.class,
+        List<AdminResponseDto> users = jpaQueryFactory
+            .select(Projections.fields(AdminResponseDto.class,
                 QUser.user.userId,
                 QUser.user.email,
                 QUser.user.password,

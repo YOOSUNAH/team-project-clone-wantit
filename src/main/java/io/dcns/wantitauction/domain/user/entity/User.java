@@ -10,6 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,7 +27,7 @@ import org.hibernate.annotations.SQLRestriction;
 @AllArgsConstructor
 @SQLDelete(sql = "update users set deleted_at = NOW() where user_id = ?")
 @SQLRestriction(value = "deleted_at is NULL")
-public class User extends Timestamped {
+public class User extends Timestamped implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,7 +42,7 @@ public class User extends Timestamped {
     @Column(nullable = false)
     private String username;
 
-    @Column(nullable = false)
+    @Column
     private String nickname;
 
     private String phoneNumber;
@@ -51,12 +52,14 @@ public class User extends Timestamped {
     @Column
     private LocalDateTime deletedAt;
 
+    @Column
     private Long kakaoId;
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
 
+    @Builder
     public User(String email, String password, String username, String nickname,
         String phoneNumber, String address, UserRoleEnum role) {
         this.email = email;
@@ -103,5 +106,9 @@ public class User extends Timestamped {
 
     public void setRole(UserRoleEnum role) {
         this.role = role;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 }
