@@ -36,6 +36,11 @@ public class KaKaoViewController {
 
     @PostMapping("/v1/users/signup-page")
     public String signup(@Valid SignupRequestDto requestDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            bindingResult.getAllErrors().forEach(error -> {
+                log.error(error.getDefaultMessage());
+            });
+        }
         userService.signup(requestDto);
         return "redirect:/v1/users/login-page";
     }

@@ -13,6 +13,7 @@ import java.net.URI;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-import org.springframework.beans.factory.annotation.Value;
 
 @Slf4j(topic = "KAKAO Login")
 @Service
@@ -33,7 +33,7 @@ public class KakaoService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-    private final String kakaoTokenUrl =  "https://kauth.kakao.com/oauth/token";
+    private final String kakaoTokenUrl = "https://kauth.kakao.com/oauth/token";
 
     @Value("${kakao.grant_type}")
     private String grantType;
@@ -45,13 +45,9 @@ public class KakaoService {
     private String redirectUri;
 
     public String kakaoLogin(String code) throws JsonProcessingException {
-
         String accessToken = getToken(code);
-
         KakaoUserInfoDto kakaoUserInfo = getKakaoUserInfo(accessToken);
-
         User kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
-
         String createToken = jwtUtil.generateAccessAndRefreshToken(kakaoUser.getUserId(),
             UserRoleEnum.USER);
 
@@ -60,9 +56,7 @@ public class KakaoService {
 
     private String getToken(String code) throws JsonProcessingException {
         log.info("인가코드 : " + code);
-
         URI uri = UriComponentsBuilder.fromUriString(kakaoTokenUrl).encode().build().toUri();
-
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
@@ -74,10 +68,10 @@ public class KakaoService {
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity.post(uri)
             .headers(headers).body(body);
-
         ResponseEntity<String> response = restTemplate.exchange(requestEntity, String.class);
 
-        JsonNode jsonNode = new ObjectMapper().readTree(response.getBody());  // 발급받아온 엑세스 토큰이 body에 들어있다.
+        JsonNode jsonNode = new ObjectMapper().readTree(
+            response.getBody());  // 발급받아온 엑세스 토큰이 body에 들어있다.
         return jsonNode.get("access_token").asText();
     }
 
@@ -106,12 +100,10 @@ public class KakaoService {
     }
 
     private User registerKakaoUserIfNeeded(KakaoUserInfoDto kakaoUserInfo) {
-
         Long kakaoId = kakaoUserInfo.getKakaoId();
         User kakaoUser = userRepository.findByKakaoId(kakaoId).orElse(null);
 
         if (kakaoUser == null) {
-
             String kakaoEmail = kakaoUserInfo.getEmail();
             User sameEmailUser = userRepository.findByEmail(kakaoEmail).orElse(null);
             if (sameEmailUser != null) {

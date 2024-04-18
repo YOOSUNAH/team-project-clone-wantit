@@ -25,8 +25,8 @@
     회원 가입하기
   </button>
   <div>
-    <div class="login-id-label">아이디</div>
-    <input type="text" name="username" id="username" class="login-input-box">
+    <div class="login-id-label">이메일</div>
+    <input type="text" name="email" id="email" class="login-input-box">
 
     <div class="login-id-label">비밀번호</div>
     <input type="password" name="password" id="password" class="login-input-box">
@@ -54,14 +54,14 @@
   const host = 'http://' + window.location.host;
 
   function onLogin() {
-    let username = $('#username').val();
+    let email = $('#email').val();
     let password = $('#password').val();
 
     $.ajax({
       type: "POST",
       url: `/v1/users/login`,
       contentType: "application/json",
-      data: JSON.stringify({username: username, password: password}),
+      data: JSON.stringify({email: email, password: password}),
     })
     .done(function (res, status, xhr) {
       const token = xhr.getResponseHeader('Authorization');

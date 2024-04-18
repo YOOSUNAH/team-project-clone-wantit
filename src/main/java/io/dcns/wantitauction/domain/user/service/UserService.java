@@ -36,7 +36,7 @@ public class UserService {
         if (userRepository.existsByEmail(requestDto.getEmail())) {
             throw new EntityExistsException("해당 이메일이 존재합니다.");
         }
-        if (userRepository.existsByNickname(requestDto.getNickname())) {
+        if (requestDto.getNickname() != null && userRepository.existsByNickname(requestDto.getNickname())) {
             throw new EntityExistsException("해당 Nickname이 존재합니다.");
         }
         String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
