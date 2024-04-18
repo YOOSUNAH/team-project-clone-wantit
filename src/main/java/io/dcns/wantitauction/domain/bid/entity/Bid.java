@@ -22,6 +22,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "bids")
 public class Bid extends Timestamped {
 

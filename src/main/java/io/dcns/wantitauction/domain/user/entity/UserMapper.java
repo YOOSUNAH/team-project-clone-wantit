@@ -7,6 +7,9 @@ public class UserMapper {
 
     public static User SignupRequestDtoToUser(SignupRequestDto signupRequestDto,
         String encodedPassword) {
+
+        UserRoleEnum role = UserRoleEnum.valueOf(signupRequestDto.getRole().toUpperCase());
+
         return new User(
             signupRequestDto.getEmail(),
             encodedPassword,
@@ -14,7 +17,7 @@ public class UserMapper {
             signupRequestDto.getNickname(),
             signupRequestDto.getPhoneNumber(),
             signupRequestDto.getAddress(),
-            signupRequestDto.isAdmin() ? UserRoleEnum.ADMIN : UserRoleEnum.USER
+            role
         );
     }
 }
