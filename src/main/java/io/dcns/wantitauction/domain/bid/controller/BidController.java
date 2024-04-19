@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/v1/auction-items/")
+@RequestMapping("/v1/auction-items")
 public class BidController {
 
     final private BidService bidService;
