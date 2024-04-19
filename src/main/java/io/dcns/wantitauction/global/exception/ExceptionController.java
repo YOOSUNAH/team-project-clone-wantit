@@ -5,12 +5,14 @@ import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+@Slf4j(topic = "ExceptionController")
 @RestControllerAdvice
 public class ExceptionController {
 
@@ -37,10 +39,11 @@ public class ExceptionController {
             Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage());
     }
 
-    @ExceptionHandler({InterruptedException.class, LiveBidException.class,
-        MessagingException.class})
-    public ResponseEntity<ExceptionDto> handleInterruptedException(Exception e) {
-        return createResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+    @ExceptionHandler(
+        {InterruptedException.class, LiveBidException.class, MessagingException.class}
+    )
+    public void handleInterruptedException(Exception e) {
+        log.error(e.getMessage());
     }
 
     private ResponseEntity<ExceptionDto> createResponse(HttpStatus status, String message) {
