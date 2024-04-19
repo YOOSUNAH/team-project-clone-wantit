@@ -1,14 +1,15 @@
 package io.dcns.wantitauction.domain.auctionItem.controller;
 
 import io.dcns.wantitauction.domain.auctionItem.dto.CreateProductRequestDto;
+import io.dcns.wantitauction.domain.auctionItem.dto.FinishedItemPageableResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.FinishedItemResponseDto;
+import io.dcns.wantitauction.domain.auctionItem.dto.MyAuctionItemPageableResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.MyAuctionItemsResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.UpdateMyItemRequestDto;
 import io.dcns.wantitauction.domain.auctionItem.service.MyAuctionItemService;
 import io.dcns.wantitauction.global.dto.ResponseDto;
 import io.dcns.wantitauction.global.impl.UserDetailsImpl;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -39,12 +41,14 @@ public class MyAuctionItemController {
     }
 
     @GetMapping
-    public ResponseEntity<ResponseDto<List<MyAuctionItemsResponseDto>>> getAuctionItems(
-        @AuthenticationPrincipal UserDetailsImpl userDetails
+    public ResponseEntity<ResponseDto<MyAuctionItemPageableResponseDto>> getAuctionItems(
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @RequestParam("page") int page,
+        @RequestParam("size") int size
     ) {
-        List<MyAuctionItemsResponseDto> auctionItems = myAuctionItemService.getAuctionItems(
-            userDetails.getUser().getUserId());
-        return ResponseDto.of(HttpStatus.OK, auctionItems);
+        MyAuctionItemPageableResponseDto pageableResponseDto = myAuctionItemService.getAuctionItems(
+            userDetails.getUser().getUserId(), page - 1, size);
+        return ResponseDto.of(HttpStatus.OK, pageableResponseDto);
     }
 
     @GetMapping("/{auctionItemId}")
@@ -78,12 +82,17 @@ public class MyAuctionItemController {
     }
 
     @GetMapping("/finished")
-    public ResponseEntity<ResponseDto<List<FinishedItemResponseDto>>> getWinningAuctionItems(
-        @AuthenticationPrincipal UserDetailsImpl userDetails
+    public ResponseEntity<ResponseDto<FinishedItemPageableResponseDto>> getWinningAuctionItems(
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @RequestParam("page") int page,
+        @RequestParam("size") int size
     ) {
-        List<FinishedItemResponseDto> finishedAuction = myAuctionItemService
-            .getWinningAuctionItems(userDetails.getUser().getUserId());
-        return ResponseDto.of(HttpStatus.OK, finishedAuction);
+        FinishedItemPageableResponseDto pageableResponseDto = myAuctionItemService
+            .getWinningAuctionItems(
+                userDetails.getUser().getUserId(), page - 1, size
+            );
+
+        return ResponseDto.of(HttpStatus.OK, pageableResponseDto);
     }
 
     @GetMapping("/{auctionItemId}/finished")

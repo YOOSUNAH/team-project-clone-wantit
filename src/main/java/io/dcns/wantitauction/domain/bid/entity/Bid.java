@@ -20,7 +20,6 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "bids")
