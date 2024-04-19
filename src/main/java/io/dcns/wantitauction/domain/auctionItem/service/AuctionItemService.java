@@ -8,6 +8,7 @@ import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItem;
 import io.dcns.wantitauction.domain.auctionItem.repository.AuctionItemQueryRepository;
 import io.dcns.wantitauction.domain.auctionItem.repository.AuctionItemRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +29,8 @@ public class AuctionItemService {
         return new AuctionItemResponseDto(auctionItem);
     }
 
-    public AuctionItemPageableResponseDto getAuctionItems(int page, int size) {
+    @Cacheable(value = "auctionItemCache", cacheManager = "redisCacheManager")
+    public AuctionItemPageableResponseDto getAuctionItems(int page, int size){
         Pageable pageable = PageRequest.of(page, size);
         Page<AuctionItemResponseDto> responseDtoPage =
             auctionItemQueryRepository.findAll(pageable);
