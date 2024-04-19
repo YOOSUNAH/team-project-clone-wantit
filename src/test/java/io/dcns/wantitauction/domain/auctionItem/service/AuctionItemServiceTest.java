@@ -2,6 +2,8 @@ package io.dcns.wantitauction.domain.auctionItem.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
 import io.dcns.wantitauction.domain.auctionItem.dto.AuctionItemPageableResponseDto;
@@ -51,9 +53,9 @@ class AuctionItemServiceTest {
                 "itemDescription", 100000L, 110000L,
                 LocalDateTime.now(), LocalDateTime.now(), AuctionItemEnum.READY, null
             );
-            given(auctionItemRepository.findById(1L)).willReturn(Optional.of(testItem));
+            given(auctionItemRepository.findById(anyLong())).willReturn(Optional.of(testItem));
             //when
-            AuctionItemResponseDto responseDto = auctionItemService.getAuctionItem(1L);
+            AuctionItemResponseDto responseDto = auctionItemService.getAuctionItem(anyLong());
             //then
             assertThat(responseDto.getAuctionItemId()).isEqualTo(
                 new AuctionItemResponseDto(testItem).getAuctionItemId());
@@ -63,7 +65,7 @@ class AuctionItemServiceTest {
         @DisplayName("조회 실패")
         void getAuctionItemFail() {
             //given
-            given(auctionItemRepository.findById(2L)).willThrow(
+            given(auctionItemRepository.findById(anyLong())).willThrow(
                 new IllegalArgumentException("존재하지 않는 경매상품 입니다."));
             //when
             //then
@@ -94,7 +96,7 @@ class AuctionItemServiceTest {
                 new AuctionItemResponseDto(testItem),
                 new AuctionItemResponseDto(testItem)
             );
-            given(auctionItemQueryRepository.findAll(pageable))
+            given(auctionItemQueryRepository.findAll(any(Pageable.class)))
                 .willReturn(
                     PageableExecutionUtils.getPage(auctionItems, pageable, () -> totalSize)
                 );
@@ -103,7 +105,7 @@ class AuctionItemServiceTest {
                 page, size);
 
             //then
-            assertThat(responseDtoPage.getResponseDtoList().getFirst().getAuctionItemId())
+            assertThat(responseDtoPage.getResponseDtoList().get(0).getAuctionItemId())
                 .isEqualTo(testItem.getAuctionItemId());
         }
     }
@@ -121,7 +123,7 @@ class AuctionItemServiceTest {
                 "itemDescription", 100000L, 110000L,
                 LocalDateTime.now(), LocalDateTime.now(), AuctionItemEnum.FINISHED, null
             );
-            given(auctionItemQueryRepository.findByIdAndFinished(1L))
+            given(auctionItemQueryRepository.findByIdAndFinished(anyLong()))
                 .willReturn(Optional.of(new FinishedItemResponseDto(testItem)));
             //when
             FinishedItemResponseDto responseDto = auctionItemService.getFinishedAuctionItem(1L);
@@ -134,7 +136,7 @@ class AuctionItemServiceTest {
         @DisplayName("조회 실패")
         void getFinishedAuctionItemFail() {
             //given
-            given(auctionItemQueryRepository.findByIdAndFinished(2L))
+            given(auctionItemQueryRepository.findByIdAndFinished(anyLong()))
                 .willThrow(new IllegalArgumentException("존재하지 않는 상품 ID 입니다."));
             //when
             //then
@@ -165,7 +167,7 @@ class AuctionItemServiceTest {
                 new FinishedItemResponseDto(testItem),
                 new FinishedItemResponseDto(testItem)
             );
-            given(auctionItemQueryRepository.findAllByFinished(pageable))
+            given(auctionItemQueryRepository.findAllByFinished(any(Pageable.class)))
                 .willReturn(
                     PageableExecutionUtils.getPage(auctionItems, pageable, () -> totalSize)
                 );

@@ -6,9 +6,9 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class AuctionItemPageableResponseDto {
+public class MyAuctionItemPageableResponseDto {
 
-    private final List<AuctionItemResponseDto> responseDtoList;
+    private final List<MyAuctionItemsResponseDto> responseDtoList;
     private final int pageSize;
     private final int currentPage;
     private final int totalPage;
