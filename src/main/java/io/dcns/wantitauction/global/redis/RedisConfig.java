@@ -24,7 +24,6 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 @Slf4j
 @Configuration
@@ -37,16 +36,10 @@ public class RedisConfig {
     @Value("${spring.data.redis.port}")
     private int redisPort;
 
-    private final Jackson2ObjectMapperBuilder jackson2ObjectMapperBuilder;
-
-    public RedisConfig(Jackson2ObjectMapperBuilder jackson2ObjectMapperBuilder) {
-        this.jackson2ObjectMapperBuilder = jackson2ObjectMapperBuilder;
-    }
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         return new LettuceConnectionFactory(redisHost, redisPort);
-
     }
 
     @Bean
@@ -60,13 +53,12 @@ public class RedisConfig {
 
     @Bean
     @Qualifier("auctionItemRedisTemplate")
-    public RedisTemplate<String, AuctionItemPageableResponseDto> auctionItemRedisTemplate(
-        RedisConnectionFactory redisConnectionFactory) {
+    public RedisTemplate<String, AuctionItemPageableResponseDto> auctionItemRedisTemplate() {
+
         RedisTemplate<String, AuctionItemPageableResponseDto> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(redisConnectionFactory);
+        redisTemplate.setConnectionFactory(redisConnectionFactory());
         redisTemplate.setKeySerializer(new StringRedisSerializer());
 
-        // localdateTijme 오류를 해결하기 위해 추가
         Jackson2JsonRedisSerializer<AuctionItemPageableResponseDto> serializer
             = new Jackson2JsonRedisSerializer<>(AuctionItemPageableResponseDto.class);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -89,25 +81,18 @@ public class RedisConfig {
     public RedisCacheManager redisCacheManager(
         @Qualifier("auctionItemRedisTemplate") RedisTemplate<String, AuctionItemPageableResponseDto> auctionItemRedisTemplate
     ) {
-
-        // auctionItemRedisTemplate와 연결하기 위해 추가
         RedisSerializer<?> valueSerializer = auctionItemRedisTemplate.getValueSerializer();
-
-        Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(
-            Object.class); // Jackson2JsonRedisSerializer를 사용하도록 변경
-        serializer.setObjectMapper(jackson2ObjectMapperBuilder.modules(new JavaTimeModule())
-            .build()); // Java 8의 날짜 및 시간 형식을 처리할 수 있도록 JavaTimeModule이 등록된 ObjectMapper를 사용
-
         RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration
             .defaultCacheConfig()
             .serializeKeysWith(SerializationPair.fromSerializer(new StringRedisSerializer()))
-            .serializeValuesWith(SerializationPair.fromSerializer(valueSerializer))  //위에서 설정한 Jackson2JsonRedisSerializer를 사용해, JSON으로 직렬화되어 Redis에 저장
+            .serializeValuesWith(SerializationPair.fromSerializer(valueSerializer))
             .entryTtl(Duration.ofMinutes(30L));
 
         Map<String, RedisCacheConfiguration> redisCacheConfigurationMap = new HashMap<>();
-        redisCacheConfigurationMap.put("auctionItemCache",
-            redisCacheConfiguration.entryTtl(Duration.ofMinutes(5)));
-
+        redisCacheConfigurationMap.put(
+            "auctionItemCache",
+            redisCacheConfiguration.entryTtl(Duration.ofMinutes(5))
+        );
         log.info("레디스 캐싱 로그" + "Redis Cache Configuration: {}", redisCacheConfigurationMap);
 
         return RedisCacheManagerBuilder
