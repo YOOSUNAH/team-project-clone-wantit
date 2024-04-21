@@ -69,11 +69,12 @@ public class LiveBidService {
         Long auctionItemId = topBidChangeEvent.getAuctionItemId();
         Set<Long> userIdSet = auctionItemUserMap.get(auctionItemId);
         String eventName = "Live Bid";
-
-        userIdSet.parallelStream().forEach(
-            userId -> sendToClient(
-                sseEmitterMap.get(userId), userId, eventName, topBidChangeEvent
-            )
-        );
+        if (userIdSet != null) {
+            userIdSet.parallelStream().forEach(
+                userId -> sendToClient(
+                    sseEmitterMap.get(userId), userId, eventName, topBidChangeEvent
+                )
+            );
+        }
     }
 }
