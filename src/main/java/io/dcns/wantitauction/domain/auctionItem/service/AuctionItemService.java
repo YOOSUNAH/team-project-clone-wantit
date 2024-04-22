@@ -4,6 +4,8 @@ import io.dcns.wantitauction.domain.auctionItem.dto.AuctionItemPageableResponseD
 import io.dcns.wantitauction.domain.auctionItem.dto.AuctionItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.FinishedItemPageableResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.FinishedItemResponseDto;
+import io.dcns.wantitauction.domain.auctionItem.dto.ReadyItemPageableResponseDto;
+import io.dcns.wantitauction.domain.auctionItem.dto.ReadyItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItem;
 import io.dcns.wantitauction.domain.auctionItem.repository.AuctionItemQueryRepository;
 import io.dcns.wantitauction.domain.auctionItem.repository.AuctionItemRepository;
@@ -61,6 +63,18 @@ public class AuctionItemService {
     public AuctionItem findById(Long auctionItemId) {
         return auctionItemRepository.findById(auctionItemId).orElseThrow(
             () -> new IllegalArgumentException("해당 상품을 찾을 수 없습니다.")
+        );
+    }
+
+    public ReadyItemPageableResponseDto getReadyAuctionItems(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ReadyItemResponseDto> responseDtoPage =
+            auctionItemQueryRepository.findAllByReady(pageable);
+
+        int totalPage = responseDtoPage.getTotalPages();
+
+        return new ReadyItemPageableResponseDto(
+            responseDtoPage.getContent(), size, page + 1, totalPage
         );
     }
 }
