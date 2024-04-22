@@ -4,6 +4,8 @@ import io.dcns.wantitauction.domain.auctionItem.dto.AuctionItemPageableResponseD
 import io.dcns.wantitauction.domain.auctionItem.dto.AuctionItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.FinishedItemPageableResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.FinishedItemResponseDto;
+import io.dcns.wantitauction.domain.auctionItem.dto.InProgressItemPageableResponseDto;
+import io.dcns.wantitauction.domain.auctionItem.dto.InProgressItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.ReadyItemPageableResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.ReadyItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItem;
@@ -74,6 +76,18 @@ public class AuctionItemService {
         int totalPage = responseDtoPage.getTotalPages();
 
         return new ReadyItemPageableResponseDto(
+            responseDtoPage.getContent(), size, page + 1, totalPage
+        );
+    }
+
+    public InProgressItemPageableResponseDto getInProgressAuctionItems(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<InProgressItemResponseDto> responseDtoPage =
+            auctionItemQueryRepository.findAllByInProgress(pageable);
+
+        int totalPage = responseDtoPage.getTotalPages();
+
+        return new InProgressItemPageableResponseDto(
             responseDtoPage.getContent(), size, page + 1, totalPage
         );
     }

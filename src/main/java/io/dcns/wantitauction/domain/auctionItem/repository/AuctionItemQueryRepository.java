@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.dcns.wantitauction.domain.auctionItem.dto.AuctionItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.FinishedItemResponseDto;
+import io.dcns.wantitauction.domain.auctionItem.dto.InProgressItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.MyAuctionItemsResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.ReadyItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItem;
@@ -252,6 +253,35 @@ public class AuctionItemQueryRepository {
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .orderBy(auctionItem.startDate.asc())
+            .fetch();
+
+        return PageableExecutionUtils.getPage(readyItems, pageable, () -> totalSize);
+    }
+
+    public Page<InProgressItemResponseDto> findAllByInProgress(Pageable pageable) {
+        Long totalSize = jpaQueryFactory
+            .select(Wildcard.count)
+            .from(auctionItem)
+            .where(auctionItem.status.eq(AuctionItemEnum.IN_PROGRESS))
+            .fetch()
+            .get(0);
+
+        List<InProgressItemResponseDto> readyItems = jpaQueryFactory
+            .select(Projections.fields(InProgressItemResponseDto.class,
+                auctionItem.auctionItemId,
+                auctionItem.userId,
+                auctionItem.winnerId,
+                auctionItem.itemName,
+                auctionItem.itemDescription,
+                auctionItem.minPrice,
+                auctionItem.winPrice,
+                auctionItem.startDate,
+                auctionItem.endDate))
+            .from(auctionItem)
+            .where(auctionItem.status.eq(AuctionItemEnum.IN_PROGRESS))
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .orderBy(auctionItem.startDate.desc())
             .fetch();
 
         return PageableExecutionUtils.getPage(readyItems, pageable, () -> totalSize);
