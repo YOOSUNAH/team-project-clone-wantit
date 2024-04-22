@@ -9,7 +9,7 @@ on:
 env:
   DOCKER_IMAGE_NAME: chilichili/wantit
   EC2_HOST: ec2-13-125-77-85.ap-northeast-2.compute.amazonaws.com
-  EC2_USERNAME: ubuntu
+  EC2_USERNAME: ubuntu_wantit
   PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
 
 jobs:
@@ -28,7 +28,7 @@ jobs:
           distribution: 'corretto'
 
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew clean bootJar
 
       - name: Build the Docker image
         run: docker build . --file Dockerfile --tag ${{ env.DOCKER_IMAGE_NAME }}:latest
@@ -49,16 +49,15 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ env.EC2_HOST }}
-          username: ${{ env.EC2_SSH_USER }}
+          username: ${{ env.EC2_USERNAME }}
           key: ${{ env.PRIVATE_KEY }}
           script: |
-            CONTAINER_ID=$(sudo docker ps -q --filter "publish=80-8080")
+            CONTAINER_ID=$(sudo docker ps -q --filter "publish=8080-8080")
 
             if [ ! -z "$CONTAINER_ID" ]; then
               sudo docker stop $CONTAINER_ID
               sudo docker rm $CONTAINER_ID
             fi
 
-            sudo docker pull ${{ env.DOCKER_HUB }}
-            sudo docker run --name ${{ env.CONTAINER_NAME }} -d -p 80:8080 -e TZ=Asia/Seoul ${{ env.DOCKER_HUB }}
-
+            sudo docker pull ${{ env.DOCKER_IMAGE_NAME }}:latest
+            sudo docker run --name ${{ env.DOCKER_IMAGE_NAME }} -d -p 8080:8080 -e TZ=Asia/Seoul ${{ env.DOCKER_IMAGE_NAME }}:latest
