@@ -65,7 +65,7 @@ public class UserController {
     public ResponseEntity<ResponseDto<Void>> updatePassword(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @RequestBody PasswordRequestDto passwordRequestDto) {
-        userService.updatePassword(userDetails.getUser().getUserId(), passwordRequestDto);
+        userService.updatePassword(userDetails, passwordRequestDto);
         return ResponseDto.of(HttpStatus.OK, null);
     }
 

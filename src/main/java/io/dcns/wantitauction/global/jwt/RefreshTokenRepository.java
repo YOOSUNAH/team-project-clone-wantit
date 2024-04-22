@@ -1,23 +1,29 @@
 package io.dcns.wantitauction.global.jwt;
 
-import jakarta.annotation.Resource;
 import java.util.concurrent.TimeUnit;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Repository;
 
-@RequiredArgsConstructor
+
 @Repository
 @Slf4j(topic = "refreshTokenRepository")
 public class RefreshTokenRepository {
 
-    private static final String TOKEN_PREFIX = "token_";  // 식별하기 편하게 하기 위해서, redis에 저장할때 사용한다.
+    private static final String TOKEN_PREFIX = "token_";
 
     private final RedisTemplate<String, String> redisTemplate;
-    @Resource(name = "redisTemplate")
-    private ValueOperations<String, String> valueOperations;
+    private final ValueOperations<String, String> valueOperations;
+
+    public RefreshTokenRepository(
+        RedisTemplate<String, String> redisTemplate,
+        @Qualifier("redisTemplate") ValueOperations<String, String> valueOperations
+    ) {
+        this.redisTemplate = redisTemplate;
+        this.valueOperations = valueOperations;
+    }
 
     public void delete(final String subject) {
         redisTemplate.delete(TOKEN_PREFIX + subject);

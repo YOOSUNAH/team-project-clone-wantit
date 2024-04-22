@@ -7,7 +7,9 @@ import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.dcns.wantitauction.domain.auctionItem.dto.AuctionItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.FinishedItemResponseDto;
+import io.dcns.wantitauction.domain.auctionItem.dto.InProgressItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.MyAuctionItemsResponseDto;
+import io.dcns.wantitauction.domain.auctionItem.dto.ReadyItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItem;
 import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItemEnum;
 import java.time.LocalDateTime;
@@ -25,22 +27,37 @@ public class AuctionItemQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<FinishedItemResponseDto> findWinningAuctionItems(Long userId) {
-        return jpaQueryFactory
+    public Page<FinishedItemResponseDto> findWinningAuctionItems(Long userId, Pageable pageable) {
+        Long totalSize = jpaQueryFactory
+            .select(Wildcard.count)
+            .from(auctionItem)
+            .where(auctionItem.winnerId.eq(userId).and(
+                auctionItem.status.eq(AuctionItemEnum.FINISHED)
+            ))
+            .fetch()
+            .get(0);
+
+        List<FinishedItemResponseDto> finishedItems = jpaQueryFactory
             .select(Projections.fields(FinishedItemResponseDto.class,
                 auctionItem.auctionItemId,
+                auctionItem.userId,
                 auctionItem.winnerId,
                 auctionItem.itemName,
                 auctionItem.itemDescription,
                 auctionItem.minPrice,
                 auctionItem.winPrice,
                 auctionItem.startDate,
-                auctionItem.endDate,
-                auctionItem.status))
+                auctionItem.endDate))
             .from(auctionItem)
-            .where(auctionItem.status.eq(AuctionItemEnum.FINISHED),
-                auctionItem.winnerId.eq(userId))
+            .where(auctionItem.winnerId.eq(userId).and(
+                auctionItem.status.eq(AuctionItemEnum.FINISHED)
+            ))
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .orderBy(auctionItem.endDate.desc())
             .fetch();
+
+        return PageableExecutionUtils.getPage(finishedItems, pageable, () -> totalSize);
     }
 
     public FinishedItemResponseDto findWinningAuctionItem(Long auctionItemId, Long userId) {
@@ -61,10 +78,19 @@ public class AuctionItemQueryRepository {
             .fetchOne();
     }
 
-    public List<MyAuctionItemsResponseDto> findAllMyAuctionItems(Long userId) {
-        return jpaQueryFactory
+    public Page<MyAuctionItemsResponseDto> findAllMyAuctionItems(Long userId, Pageable pageable) {
+
+        Long totalSize = jpaQueryFactory
+            .select(Wildcard.count)
+            .from(auctionItem)
+            .where(auctionItem.userId.eq(userId))
+            .fetch()
+            .get(0);
+
+        List<MyAuctionItemsResponseDto> myAuctionItems = jpaQueryFactory
             .select(Projections.fields(MyAuctionItemsResponseDto.class,
                 auctionItem.auctionItemId,
+                auctionItem.userId,
                 auctionItem.itemName,
                 auctionItem.itemDescription,
                 auctionItem.minPrice,
@@ -74,8 +100,12 @@ public class AuctionItemQueryRepository {
                 auctionItem.status))
             .from(auctionItem)
             .where(auctionItem.userId.eq(userId))
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .orderBy(auctionItem.createdAt.desc())
             .fetch();
 
+        return PageableExecutionUtils.getPage(myAuctionItems, pageable, () -> totalSize);
     }
 
     public Page<FinishedItemResponseDto> findAllByFinished(Pageable pageable) {
@@ -85,6 +115,7 @@ public class AuctionItemQueryRepository {
             .where(auctionItem.status.eq(AuctionItemEnum.FINISHED))
             .fetch()
             .get(0);
+
         List<FinishedItemResponseDto> finishedItems = jpaQueryFactory
             .select(Projections.fields(FinishedItemResponseDto.class,
                 auctionItem.auctionItemId,
@@ -102,6 +133,7 @@ public class AuctionItemQueryRepository {
             .limit(pageable.getPageSize())
             .orderBy(auctionItem.endDate.desc())
             .fetch();
+
         return PageableExecutionUtils.getPage(finishedItems, pageable, () -> totalSize);
     }
 
@@ -185,7 +217,7 @@ public class AuctionItemQueryRepository {
 
         return PageableExecutionUtils.getPage(auctionItems, pageable, () -> totalSize);
     }
-  
+
     public List<AuctionItem> findAllTodayWinningAuctionItems() {
         return jpaQueryFactory
             .selectFrom(auctionItem)
@@ -195,5 +227,63 @@ public class AuctionItemQueryRepository {
                         LocalDateTime.now().withHour(0).withMinute(0).withSecond(0),
                         LocalDateTime.now().withHour(23).withMinute(59).withSecond(59))))
             .fetch();
+    }
+
+    public Page<ReadyItemResponseDto> findAllByReady(Pageable pageable) {
+        Long totalSize = jpaQueryFactory
+            .select(Wildcard.count)
+            .from(auctionItem)
+            .where(auctionItem.status.eq(AuctionItemEnum.READY))
+            .fetch()
+            .get(0);
+
+        List<ReadyItemResponseDto> readyItems = jpaQueryFactory
+            .select(Projections.fields(ReadyItemResponseDto.class,
+                auctionItem.auctionItemId,
+                auctionItem.userId,
+                auctionItem.winnerId,
+                auctionItem.itemName,
+                auctionItem.itemDescription,
+                auctionItem.minPrice,
+                auctionItem.winPrice,
+                auctionItem.startDate,
+                auctionItem.endDate))
+            .from(auctionItem)
+            .where(auctionItem.status.eq(AuctionItemEnum.READY))
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .orderBy(auctionItem.startDate.asc())
+            .fetch();
+
+        return PageableExecutionUtils.getPage(readyItems, pageable, () -> totalSize);
+    }
+
+    public Page<InProgressItemResponseDto> findAllByInProgress(Pageable pageable) {
+        Long totalSize = jpaQueryFactory
+            .select(Wildcard.count)
+            .from(auctionItem)
+            .where(auctionItem.status.eq(AuctionItemEnum.IN_PROGRESS))
+            .fetch()
+            .get(0);
+
+        List<InProgressItemResponseDto> readyItems = jpaQueryFactory
+            .select(Projections.fields(InProgressItemResponseDto.class,
+                auctionItem.auctionItemId,
+                auctionItem.userId,
+                auctionItem.winnerId,
+                auctionItem.itemName,
+                auctionItem.itemDescription,
+                auctionItem.minPrice,
+                auctionItem.winPrice,
+                auctionItem.startDate,
+                auctionItem.endDate))
+            .from(auctionItem)
+            .where(auctionItem.status.eq(AuctionItemEnum.IN_PROGRESS))
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .orderBy(auctionItem.startDate.desc())
+            .fetch();
+
+        return PageableExecutionUtils.getPage(readyItems, pageable, () -> totalSize);
     }
 }

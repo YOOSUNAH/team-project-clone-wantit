@@ -2,9 +2,11 @@ package io.dcns.wantitauction.domain.user.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 public class LoginRequestDto {
 
     @NotBlank

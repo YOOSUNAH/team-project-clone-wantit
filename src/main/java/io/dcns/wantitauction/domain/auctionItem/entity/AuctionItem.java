@@ -91,4 +91,8 @@ public class AuctionItem extends Timestamped {
     public void startAuction() {
         this.status = AuctionItemEnum.IN_PROGRESS;
     }
+
+    public void failAuction() {
+        this.status = AuctionItemEnum.FAILED;
+    }
 }

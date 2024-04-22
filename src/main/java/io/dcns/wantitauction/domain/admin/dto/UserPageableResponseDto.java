@@ -2,17 +2,12 @@ package io.dcns.wantitauction.domain.admin.dto;
 
 
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Builder;
 
-@Getter
-@AllArgsConstructor
-public class UserPageableResponseDto {
-
-
-    private final List<UsersResponseDto> responseDtoList;
-    private final int pageSize;
-    private final int currentPage;
-    private final int totalPage;
-
-}
+@Builder
+public record UserPageableResponseDto (
+    List<AdminResponseDto> responseDtoList,
+    int pageSize,
+        int currentPage,
+        int totalPage
+){}

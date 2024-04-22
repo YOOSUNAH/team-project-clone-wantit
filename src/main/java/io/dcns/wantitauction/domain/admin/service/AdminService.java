@@ -1,7 +1,7 @@
 package io.dcns.wantitauction.domain.admin.service;
 
+import io.dcns.wantitauction.domain.admin.dto.AdminResponseDto;
 import io.dcns.wantitauction.domain.admin.dto.UserPageableResponseDto;
-import io.dcns.wantitauction.domain.admin.dto.UsersResponseDto;
 import io.dcns.wantitauction.domain.user.entity.UserRoleEnum;
 import io.dcns.wantitauction.domain.user.repository.UserQueryRepository;
 import io.dcns.wantitauction.global.impl.UserDetailsImpl;
@@ -25,7 +25,7 @@ public class AdminService {
         }
 
         Pageable pageable = PageRequest.of(page, size);
-        Page<UsersResponseDto> responseDtoPage = userQueryRepository.findAll(pageable);
+        Page<AdminResponseDto> responseDtoPage = userQueryRepository.findAll(pageable);
         int totalPage = responseDtoPage.getTotalPages();
 
         return new UserPageableResponseDto(

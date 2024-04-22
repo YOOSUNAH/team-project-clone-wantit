@@ -3,9 +3,11 @@ package io.dcns.wantitauction.domain.user.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 @AllArgsConstructor
 public class SignupRequestDto {
 
@@ -30,8 +32,8 @@ public class SignupRequestDto {
 
     private String role;
 
-    private boolean admin = false;
-
-    private String adminToken = "";
+    public void setRole(String role) {
+        this.role = role != null ? role.toUpperCase() : "USER";
+    }
 
 }
