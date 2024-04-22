@@ -27,7 +27,7 @@ public class LiveBidService {
         setSseEmitter(sseEmitter, userId);
         sseEmitterMap.put(userId, sseEmitter);
         addAuctionItemUser(auctionItemId, userId);
-        sendToClient(sseEmitter, userId, "연결 성공");
+        sendToClient(sseEmitter, userId, "SSE 연결", "연결 성공");
         return sseEmitter;
     }
 
@@ -51,16 +51,16 @@ public class LiveBidService {
         }
     }
 
-    private void sendToClient(SseEmitter sseEmitter, Long userId, Object data) {
+    private void sendToClient(SseEmitter sseEmitter, Long userId, String eventName, Object data) {
         try {
             sseEmitter.send(
                 SseEmitter.event()
                     .id(userId.toString())
-                    .name("SSE 연결")
+                    .name(eventName)
                     .data(data)
             );
-        } catch (Exception e) {
-            sseEmitterMap.remove(userId);
+        } catch (IOException e) {
+            log.error("유저 ID: [ " + userId + " ] 에게 메세지 전송에 실패했습니다.");
         }
     }
 
@@ -68,20 +68,13 @@ public class LiveBidService {
     public void topBidEventListener(TopBidChangeEvent topBidChangeEvent) {
         Long auctionItemId = topBidChangeEvent.getAuctionItemId();
         Set<Long> userIdSet = auctionItemUserMap.get(auctionItemId);
-
-        userIdSet.parallelStream().forEach(userId -> sendToClient(userId, topBidChangeEvent));
-    }
-
-    public void sendToClient(Long userId, TopBidChangeEvent bidChangeEvent) {
-        try {
-            sseEmitterMap.get(userId)
-                .send(
-                    SseEmitter.event()
-                        .name("LiveBid")
-                        .data(bidChangeEvent)
-                );
-        } catch (IOException e) {
-            log.error("유저 ID: [ " + userId + " ] 에게 메세지 전송에 실패했습니다.");
+        String eventName = "Live Bid";
+        if (userIdSet != null) {
+            userIdSet.parallelStream().forEach(
+                userId -> sendToClient(
+                    sseEmitterMap.get(userId), userId, eventName, topBidChangeEvent
+                )
+            );
         }
     }
 }
