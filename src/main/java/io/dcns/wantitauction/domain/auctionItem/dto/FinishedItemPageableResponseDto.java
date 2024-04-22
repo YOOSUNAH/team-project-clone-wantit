@@ -4,8 +4,8 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@AllArgsConstructor
 @Getter
+@AllArgsConstructor
 public class FinishedItemPageableResponseDto {
 
     private final List<FinishedItemResponseDto> responseDtoList;
