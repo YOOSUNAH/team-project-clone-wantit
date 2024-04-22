@@ -10,6 +10,8 @@ import io.dcns.wantitauction.domain.auctionItem.dto.AuctionItemPageableResponseD
 import io.dcns.wantitauction.domain.auctionItem.dto.AuctionItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.FinishedItemPageableResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.FinishedItemResponseDto;
+import io.dcns.wantitauction.domain.auctionItem.dto.ReadyItemPageableResponseDto;
+import io.dcns.wantitauction.domain.auctionItem.dto.ReadyItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItem;
 import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItemEnum;
 import io.dcns.wantitauction.domain.auctionItem.repository.AuctionItemQueryRepository;
@@ -147,7 +149,7 @@ class AuctionItemServiceTest {
     }
 
     @Nested
-    @DisplayName("경매 상품 목록 조회")
+    @DisplayName("종료 경매 상품 목록 조회")
     class GetFinishedListTest {
 
         @Test
@@ -173,6 +175,42 @@ class AuctionItemServiceTest {
                 );
             //when
             FinishedItemPageableResponseDto responseDtoPage = auctionItemService.getFinishedAuctionItems(
+                page, size);
+
+            //then
+            assertThat(responseDtoPage.getResponseDtoList().get(1).getAuctionItemId())
+                .isEqualTo(testItem.getAuctionItemId());
+        }
+    }
+
+    @Nested
+    @DisplayName("예정 경매 상품 목록 조회")
+    class GetReadyListTest {
+
+        @Test
+        @DisplayName("조회 성공")
+        void getFinishedAuctionItemList() {
+            //given
+            int page = 0;
+            int size = 3;
+            Long totalSize = 1L;
+            Pageable pageable = PageRequest.of(page, size);
+            testItem = new AuctionItem(
+                1L, 1L, null, "Test Item",
+                "itemDescription", 100000L, 110000L,
+                LocalDateTime.now(), LocalDateTime.now(), AuctionItemEnum.READY, null
+            );
+            List<ReadyItemResponseDto> auctionItems = List.of(
+                new ReadyItemResponseDto(testItem),
+                new ReadyItemResponseDto(testItem),
+                new ReadyItemResponseDto(testItem)
+            );
+            given(auctionItemQueryRepository.findAllByReady(any(Pageable.class)))
+                .willReturn(
+                    PageableExecutionUtils.getPage(auctionItems, pageable, () -> totalSize)
+                );
+            //when
+            ReadyItemPageableResponseDto responseDtoPage = auctionItemService.getReadyAuctionItems(
                 page, size);
 
             //then
