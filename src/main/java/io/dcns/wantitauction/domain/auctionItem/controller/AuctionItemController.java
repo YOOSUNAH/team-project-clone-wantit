@@ -4,6 +4,8 @@ import io.dcns.wantitauction.domain.auctionItem.dto.AuctionItemPageableResponseD
 import io.dcns.wantitauction.domain.auctionItem.dto.AuctionItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.FinishedItemPageableResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.FinishedItemResponseDto;
+import io.dcns.wantitauction.domain.auctionItem.dto.InProgressItemPageableResponseDto;
+import io.dcns.wantitauction.domain.auctionItem.dto.ReadyItemPageableResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.service.AuctionItemService;
 import io.dcns.wantitauction.global.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -59,5 +61,27 @@ public class AuctionItemController {
         FinishedItemResponseDto responseDto = auctionItemService.getFinishedAuctionItem(
             auctionItemId);
         return ResponseDto.of(HttpStatus.OK, responseDto);
+    }
+
+    @GetMapping("/ready")
+    public ResponseEntity<ResponseDto<ReadyItemPageableResponseDto>> getReadyAuctionItems(
+        @RequestParam("page") int page,
+        @RequestParam("size") int size
+    ) {
+        ReadyItemPageableResponseDto pageableResponseDto = auctionItemService
+            .getReadyAuctionItems(page - 1, size);
+
+        return ResponseDto.of(HttpStatus.OK, pageableResponseDto);
+    }
+
+    @GetMapping("/in-progress")
+    public ResponseEntity<ResponseDto<InProgressItemPageableResponseDto>> getInProgressAuctionItems(
+        @RequestParam("page") int page,
+        @RequestParam("size") int size
+    ) {
+        InProgressItemPageableResponseDto pageableResponseDto = auctionItemService
+            .getInProgressAuctionItems(page - 1, size);
+
+        return ResponseDto.of(HttpStatus.OK, pageableResponseDto);
     }
 }

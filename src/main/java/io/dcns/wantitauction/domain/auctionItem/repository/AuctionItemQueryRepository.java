@@ -7,7 +7,9 @@ import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.dcns.wantitauction.domain.auctionItem.dto.AuctionItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.FinishedItemResponseDto;
+import io.dcns.wantitauction.domain.auctionItem.dto.InProgressItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.MyAuctionItemsResponseDto;
+import io.dcns.wantitauction.domain.auctionItem.dto.ReadyItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItem;
 import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItemEnum;
 import java.time.LocalDateTime;
@@ -225,5 +227,63 @@ public class AuctionItemQueryRepository {
                         LocalDateTime.now().withHour(0).withMinute(0).withSecond(0),
                         LocalDateTime.now().withHour(23).withMinute(59).withSecond(59))))
             .fetch();
+    }
+
+    public Page<ReadyItemResponseDto> findAllByReady(Pageable pageable) {
+        Long totalSize = jpaQueryFactory
+            .select(Wildcard.count)
+            .from(auctionItem)
+            .where(auctionItem.status.eq(AuctionItemEnum.READY))
+            .fetch()
+            .get(0);
+
+        List<ReadyItemResponseDto> readyItems = jpaQueryFactory
+            .select(Projections.fields(ReadyItemResponseDto.class,
+                auctionItem.auctionItemId,
+                auctionItem.userId,
+                auctionItem.winnerId,
+                auctionItem.itemName,
+                auctionItem.itemDescription,
+                auctionItem.minPrice,
+                auctionItem.winPrice,
+                auctionItem.startDate,
+                auctionItem.endDate))
+            .from(auctionItem)
+            .where(auctionItem.status.eq(AuctionItemEnum.READY))
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .orderBy(auctionItem.startDate.asc())
+            .fetch();
+
+        return PageableExecutionUtils.getPage(readyItems, pageable, () -> totalSize);
+    }
+
+    public Page<InProgressItemResponseDto> findAllByInProgress(Pageable pageable) {
+        Long totalSize = jpaQueryFactory
+            .select(Wildcard.count)
+            .from(auctionItem)
+            .where(auctionItem.status.eq(AuctionItemEnum.IN_PROGRESS))
+            .fetch()
+            .get(0);
+
+        List<InProgressItemResponseDto> readyItems = jpaQueryFactory
+            .select(Projections.fields(InProgressItemResponseDto.class,
+                auctionItem.auctionItemId,
+                auctionItem.userId,
+                auctionItem.winnerId,
+                auctionItem.itemName,
+                auctionItem.itemDescription,
+                auctionItem.minPrice,
+                auctionItem.winPrice,
+                auctionItem.startDate,
+                auctionItem.endDate))
+            .from(auctionItem)
+            .where(auctionItem.status.eq(AuctionItemEnum.IN_PROGRESS))
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .orderBy(auctionItem.startDate.desc())
+            .fetch();
+
+        return PageableExecutionUtils.getPage(readyItems, pageable, () -> totalSize);
     }
 }
