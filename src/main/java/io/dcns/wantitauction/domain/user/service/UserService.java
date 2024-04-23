@@ -36,7 +36,8 @@ public class UserService {
         if (userRepository.existsByEmail(requestDto.getEmail())) {
             throw new EntityExistsException("해당 이메일이 존재합니다.");
         }
-        if (requestDto.getNickname() != null && userRepository.existsByNickname(requestDto.getNickname())) {
+        if (requestDto.getNickname() != null && userRepository.existsByNickname(
+            requestDto.getNickname())) {
             throw new EntityExistsException("해당 Nickname이 존재합니다.");
         }
         String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
@@ -121,5 +122,10 @@ public class UserService {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new IllegalArgumentException("선택한 유저가 존재하지 않습니다."));
         return new UserUpdateResponseDto(user.getNickname(), user.getPhoneNumber(), user.getAddress());
+    }
+
+    public User findByUserId(Long userId) {
+        return userRepository.findByUserId(userId).orElseThrow(
+            () -> new EntityNotFoundException("존재하지 않는 사용자입니다."));
     }
 }

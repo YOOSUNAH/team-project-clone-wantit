@@ -10,6 +10,7 @@ import io.dcns.wantitauction.domain.bid.repository.BidRepository;
 import io.dcns.wantitauction.domain.point.entity.Point;
 import io.dcns.wantitauction.domain.point.service.PointService;
 import io.dcns.wantitauction.domain.user.entity.User;
+import io.dcns.wantitauction.global.aop.Lock.Lockable;
 import io.dcns.wantitauction.global.event.TopBidChangeEvent;
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public class BidService {
     private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
+    @Lockable(value = "createBid", waitTime = 3000, leaseTime = 1000)
     public BidResponseDto createBid(User user, Long auctionItemId, BidRequestDto bidRequestDto) {
 
         Point point = pointService.findPoint(user.getUserId());

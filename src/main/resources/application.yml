@@ -9,8 +9,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${email.username}
-    password: ${email.password}
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
     properties:
       mail:
         smtp:
@@ -28,22 +28,32 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/${database.name}
-    username: ${mysql.username}
-    password: ${mysql.password}
+    url: jdbc:mysql://wantit-mysql.c3q28yoac28n.ap-northeast-2.rds.amazonaws.com:3306/${DATABASE_NAME}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
 
   data:
     redis:
-      host: localhost
+      host: wantit-redis.xymoll.ng.0001.apn2.cache.amazonaws.com
       port: 6379
 
 jwt:
   secret:
-    key: ${jwt.secret.key}
+    key: ${JWT_SECRET_KEY}
 
 kakao:
-  grant_type: ${grant_type}
-  client_id: ${client_id}
-  redirect_uri: ${redirect_uri}
+  grant_type: ${GRANT_TYPE}
+  client_id: ${CLIENT_ID}
+  redirect_uri: ${REDIRECT_URI}
+
+cloud:
+  aws:
+    s3:
+      bucket: wantit-bucket
+    stack.auto: false
+    region.static: ap-northeast-2
+    credentials:
+      accessKey: ${AWS_ACCESS_KEY}
+      secretKey: ${AWS_SECRET_KEY}
 
 
