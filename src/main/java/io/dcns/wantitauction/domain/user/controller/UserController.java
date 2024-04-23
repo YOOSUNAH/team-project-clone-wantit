@@ -8,8 +8,6 @@ import io.dcns.wantitauction.domain.user.dto.UserUpdateResponseDto;
 import io.dcns.wantitauction.domain.user.service.UserService;
 import io.dcns.wantitauction.global.dto.ResponseDto;
 import io.dcns.wantitauction.global.impl.UserDetailsImpl;
-import io.dcns.wantitauction.global.jwt.JwtUtil;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,10 +39,10 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<ResponseDto<String>> login(
-        @Valid @RequestBody LoginRequestDto request, HttpServletResponse response
+        @Valid @RequestBody LoginRequestDto request
     ) {
         String accessToken = userService.login(request);
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, accessToken);
+
         log.info("로그인 API 성공 _  accessToken: {}", accessToken);
         return ResponseDto.of(HttpStatus.OK, accessToken);
     }
@@ -61,7 +59,8 @@ public class UserController {
     public ResponseEntity<ResponseDto<UserUpdateResponseDto>> updateProfile(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @RequestBody UserRequestDto userRequestDto) {
-        UserUpdateResponseDto userUpdateResponseDto = userService.updateUser(userDetails, userRequestDto);
+        UserUpdateResponseDto userUpdateResponseDto = userService.updateUser(userDetails,
+            userRequestDto);
         log.info("유저 정보 변경 API 성공");
         return ResponseDto.of(HttpStatus.OK, userUpdateResponseDto);
     }
@@ -85,7 +84,7 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<ResponseDto<UserUpdateResponseDto>> getOneUser(
-        @AuthenticationPrincipal UserDetailsImpl userDetails){
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
         UserUpdateResponseDto user = userService.getUser(userDetails);
         log.info("유저 정보 조회 API 성공");
         return ResponseDto.of(HttpStatus.OK, user);
