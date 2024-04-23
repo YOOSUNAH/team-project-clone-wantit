@@ -10,13 +10,16 @@ public class PointResponseDto {
 
     private final Long userId;
 
+    private final String nickName;
+
     private final Long point;
 
     private final Long availablePoint;
 
-    public PointResponseDto(Point point) {
+    public PointResponseDto(Point point, String nickName) {
         this.pointId = point.getPointId();
         this.userId = point.getUserId();
+        this.nickName = nickName;
         this.point = point.getPoint();
         this.availablePoint = point.getAvailablePoint();
     }
