@@ -3,6 +3,7 @@ package io.dcns.wantitauction.domain.myAuctionItem.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItem;
+import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItemEnum;
 import io.dcns.wantitauction.domain.auctionItem.repository.AuctionItemRepository;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
@@ -21,11 +22,13 @@ class AuctionItemRepositoryTest {
     void addAuctionItem() {
         // given
         AuctionItem auctionItem = AuctionItem.builder()
+            .userId(1L)
             .itemName("TEST_ITEM")
             .itemDescription("TEST_DESCRIPTION")
             .minPrice(100000L)
             .startDate(LocalDateTime.now())
             .endDate(LocalDateTime.now().plusDays(1))
+            .status(AuctionItemEnum.READY)
             .build();
 
         // when

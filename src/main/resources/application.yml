@@ -28,13 +28,13 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/${database.name}
+    url: jdbc:mysql://wantit-mysql.c3q28yoac28n.ap-northeast-2.rds.amazonaws.com:3306/${database.name}
     username: ${mysql.username}
     password: ${mysql.password}
 
   data:
     redis:
-      host: localhost
+      host: wantit-redis.xymoll.ng.0001.apn2.cache.amazonaws.com
       port: 6379
 
 jwt:
