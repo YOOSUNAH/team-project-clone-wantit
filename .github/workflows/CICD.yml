@@ -10,6 +10,9 @@ env:
   EC2_HOST: ec2-13-125-77-85.ap-northeast-2.compute.amazonaws.com
   EC2_USERNAME: ubuntu
   PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+  S3_BUCKET_NAME: wantit-bucket
+  RESOURCE_PATH: ./src/main/resources/application.yml
+
 
 jobs:
   build-and-push-docker:
@@ -25,6 +28,21 @@ jobs:
         with:
           java-version: '17'
           distribution: 'corretto'
+
+      - name: Set yml file
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ${{ env.RESOURCE_PATH }}
+        env:
+            EMAIL_USERNAME: ${{ secrets.EMAIL_USERNAME }}
+            EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+            DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+            MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
+            MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+            JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+            GRANT_TYPE: ${{ secrets.GRANT_TYPE }}
+            CLIENT_ID: ${{ secrets.CLIENT_ID }}
+            REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
 
       - name: Make FCM SDK
         run: |
