@@ -2,9 +2,11 @@ name: CI/CD
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 env:
   DOCKER_IMAGE_NAME: chilichili/wantit
