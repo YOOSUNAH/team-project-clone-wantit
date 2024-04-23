@@ -86,7 +86,11 @@ dependencies {
     // Firebase
     implementation group: 'com.google.firebase', name: 'firebase-admin', version: '9.2.0'
 
+    // H2
     testImplementation 'com.h2database:h2'
+
+    // AWS
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.6.RELEASE'
 }
 
 tasks.named('test') {
