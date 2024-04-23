@@ -1,4 +1,4 @@
-package io.dcns.wantitauction.global.util;
+package io.dcns.wantitauction.global.redis;
 
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;

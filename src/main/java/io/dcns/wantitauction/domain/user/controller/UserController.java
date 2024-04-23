@@ -12,6 +12,7 @@ import io.dcns.wantitauction.global.jwt.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/users")
@@ -37,19 +39,21 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ResponseDto<Void>> login(
+    public ResponseEntity<ResponseDto<String>> login(
         @Valid @RequestBody LoginRequestDto request, HttpServletResponse response
     ) {
         String accessToken = userService.login(request);
-
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, accessToken);
-        return ResponseDto.of(HttpStatus.OK, null);
+
+        log.info("로그인 API 성공 _  accessToken: {}", accessToken);
+        return ResponseDto.of(HttpStatus.OK, accessToken);
     }
 
     @PostMapping("/logout")
     public ResponseEntity<ResponseDto<Void>> logout(
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         userService.logout(userDetails.getUser().getUserId());
+        log.info("로그아웃 API 성공");
         return ResponseDto.of(HttpStatus.OK, null);
     }
 
