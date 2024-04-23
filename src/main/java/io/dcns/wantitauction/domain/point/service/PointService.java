@@ -9,6 +9,7 @@ import io.dcns.wantitauction.domain.pointLog.entity.PointLog;
 import io.dcns.wantitauction.domain.pointLog.entity.PointLogStatus;
 import io.dcns.wantitauction.domain.pointLog.repository.PointLogRepository;
 import io.dcns.wantitauction.domain.user.entity.User;
+import io.dcns.wantitauction.domain.user.repository.UserRepository;
 import io.dcns.wantitauction.global.event.WinningBidEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
@@ -22,6 +23,7 @@ public class PointService {
 
     private final PointRepository pointRepository;
     private final PointLogRepository pointLogRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public PointChangedResponseDto putPoint(User user, PointRequestDto pointRequestDto) {
@@ -61,8 +63,9 @@ public class PointService {
     }
 
     public PointResponseDto getPoint(User user) {
-        final Point point = findPoint(user.getUserId());
-        return new PointResponseDto(point);
+        Point point = findPoint(user.getUserId());
+        String nickName = userRepository.findById(user.getUserId()).get().getNickname();
+        return new PointResponseDto(point, nickName);
     }
 
     public void returnBidPoint(Long userId, Long availablePoint) {
