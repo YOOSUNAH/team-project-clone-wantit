@@ -9,7 +9,6 @@ import io.dcns.wantitauction.domain.pointLog.entity.PointLog;
 import io.dcns.wantitauction.domain.pointLog.entity.PointLogStatus;
 import io.dcns.wantitauction.domain.pointLog.repository.PointLogRepository;
 import io.dcns.wantitauction.domain.user.entity.User;
-import io.dcns.wantitauction.domain.user.service.UserService;
 import io.dcns.wantitauction.global.event.WinningBidEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
@@ -23,7 +22,6 @@ public class PointService {
 
     private final PointRepository pointRepository;
     private final PointLogRepository pointLogRepository;
-    private final UserService userService;
 
     @Transactional
     public PointChangedResponseDto putPoint(User user, PointRequestDto pointRequestDto) {
@@ -63,9 +61,8 @@ public class PointService {
     }
 
     public PointResponseDto getPoint(User user) {
-        Point point = findPoint(user.getUserId());
-        User user1 = userService.findByUserId(user.getUserId());
-        return new PointResponseDto(point, user1);
+        final Point point = findPoint(user.getUserId());
+        return new PointResponseDto(point);
     }
 
     public void returnBidPoint(Long userId, Long availablePoint) {
@@ -79,8 +76,9 @@ public class PointService {
     }
 
     public Point findPoint(Long userId) {
-        return pointRepository.findByUserId(userId).orElse(
-            new Point(userService.findByUserId(userId)));
+        return pointRepository.findByUserId(userId).orElseThrow(
+            () -> new IllegalArgumentException("포인트가 존재하지 않습니다.")
+        );
     }
 
     private void checkPoint(Point point, PointRequestDto pointRequestDto) {
