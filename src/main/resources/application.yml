@@ -46,4 +46,14 @@ kakao:
   client_id: ${CLIENT_ID}
   redirect_uri: ${REDIRECT_URI}
 
+cloud:
+  aws:
+    s3:
+      bucket: wantit-bucket
+    stack.auto: false
+    region.static: ap-northeast-2
+    credentials:
+      accessKey: ${AWS_ACCESS_KEY}
+      secretKey: ${AWS_SECRET_KEY}
+
 
