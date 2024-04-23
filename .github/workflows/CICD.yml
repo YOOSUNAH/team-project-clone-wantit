@@ -26,6 +26,13 @@ jobs:
           java-version: '17'
           distribution: 'corretto'
 
+      - name: Make FCM SDK
+        run: |
+          cd ./src/main/resources/firebase
+          touch ./firebase-adminSDK.json
+          echo "${{ secrets.ADMIN_SDK }}" >> ./firebase-adminSDK.json
+        shell: bash
+
       - name: Build with Gradle
         run: ./gradlew clean bootJar
 
