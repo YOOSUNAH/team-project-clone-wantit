@@ -72,6 +72,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.redisson:redisson-spring-boot-starter:3.27.1'
 
+    //캐시
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+
     // Redis와 Spring을 통신할 수 있게 해줌.
     implementation 'org.springframework.data:spring-data-redis:2.7.5'
     // email
