@@ -5,7 +5,7 @@ import io.dcns.wantitauction.domain.user.dto.LoginRequestDto;
 import io.dcns.wantitauction.domain.user.dto.PasswordRequestDto;
 import io.dcns.wantitauction.domain.user.dto.SignupRequestDto;
 import io.dcns.wantitauction.domain.user.dto.UserRequestDto;
-import io.dcns.wantitauction.domain.user.dto.UserResponseDto;
+import io.dcns.wantitauction.domain.user.dto.UserUpdateResponseDto;
 import io.dcns.wantitauction.domain.user.entity.User;
 import io.dcns.wantitauction.domain.user.entity.UserMapper;
 import io.dcns.wantitauction.domain.user.entity.UserRoleEnum;
@@ -69,12 +69,12 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDto updateUser(UserDetailsImpl userDetails, UserRequestDto requestDto) {
+    public UserUpdateResponseDto updateUser(UserDetailsImpl userDetails, UserRequestDto requestDto) {
         User user = validateUser(userDetails);
         validateNicknameDuplicate(requestDto.getNickname());
 
         user.update(requestDto.getNickname(), requestDto.getPhoneNumber(), requestDto.getAddress());
-        return new UserResponseDto(requestDto.getNickname(), requestDto.getPhoneNumber(),
+        return new UserUpdateResponseDto(requestDto.getNickname(), requestDto.getPhoneNumber(),
             requestDto.getAddress());
     }
 
@@ -87,7 +87,7 @@ public class UserService {
         }
         checkChangePasswordEquals(
             requestDto.getChangePassword(),
-            requestDto.getRechangePassword());
+            requestDto.getCheckPassword());
 
         user.updatePassword(passwordEncoder.encode(requestDto.getChangePassword()));
     }
@@ -115,6 +115,13 @@ public class UserService {
         if (!changePassword.equals(rechangePassword)) {
             throw new NotMatchException("바꿀 비밀번호가 일치하지 않습니다.");
         }
+    }
+
+    public UserUpdateResponseDto getUser(UserDetailsImpl userDetails) {
+        Long userId = userDetails.getUser().getUserId();
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new IllegalArgumentException("선택한 유저가 존재하지 않습니다."));
+        return new UserUpdateResponseDto(user.getNickname(), user.getPhoneNumber(), user.getAddress());
     }
 
     public User findByUserId(Long userId) {

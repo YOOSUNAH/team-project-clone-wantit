@@ -62,13 +62,13 @@ public interface UserCommonTest {
     PasswordRequestDto TEST_PASSWORD_REQUEST_DTO = PasswordRequestDto.builder()
         .password(TEST_USER_PASSWORD)
         .changePassword(ANOTHER_PREFIX + TEST_USER_PASSWORD)
-        .rechangePassword(ANOTHER_PREFIX + TEST_USER_PASSWORD)
+        .checkPassword(ANOTHER_PREFIX + TEST_USER_PASSWORD)
         .build();
 
 
     PasswordRequestDto TEST_WRONG_PASSWORD_REQUEST_DTO = PasswordRequestDto.builder()
         .password(TEST_USER_PASSWORD)
         .changePassword(ANOTHER_PREFIX + TEST_USER_PASSWORD)
-        .rechangePassword(DIFFERENT_PREFIX + TEST_USER_PASSWORD)
+        .checkPassword(DIFFERENT_PREFIX + TEST_USER_PASSWORD)
         .build();
 }

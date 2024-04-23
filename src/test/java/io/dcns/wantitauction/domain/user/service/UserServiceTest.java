@@ -24,7 +24,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import io.dcns.wantitauction.domain.user.UserTestUtils;
-import io.dcns.wantitauction.domain.user.dto.UserResponseDto;
+import io.dcns.wantitauction.domain.user.dto.UserUpdateResponseDto;
 import io.dcns.wantitauction.domain.user.entity.User;
 import io.dcns.wantitauction.domain.user.entity.UserRoleEnum;
 import io.dcns.wantitauction.domain.user.repository.UserRepository;
@@ -189,14 +189,14 @@ class UserServiceTest {
             var result = userService.updateUser(testUserDetails, TEST_USER_REQUEST_DTO);
 
             // then
-            UserResponseDto userResponseDto = new UserResponseDto(
+            UserUpdateResponseDto userUpdateResponseDto = new UserUpdateResponseDto(
                 testUser.getNickname(),
                 testUser.getPhoneNumber(),
                 testUser.getAddress()
             );
-            assertThat(result.nickname()).isEqualTo(userResponseDto.nickname());
-            assertThat(result.phoneNumber()).isEqualTo(userResponseDto.phoneNumber());
-            assertThat(result.address()).isEqualTo(userResponseDto.address());
+            assertThat(result.nickname()).isEqualTo(userUpdateResponseDto.nickname());
+            assertThat(result.phoneNumber()).isEqualTo(userUpdateResponseDto.phoneNumber());
+            assertThat(result.address()).isEqualTo(userUpdateResponseDto.address());
         }
 
         @DisplayName("프로필 수정-실패 - 중복된 nickName")
