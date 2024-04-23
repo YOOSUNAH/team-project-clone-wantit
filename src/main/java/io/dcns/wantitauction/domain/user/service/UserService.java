@@ -86,7 +86,7 @@ public class UserService {
         }
         checkChangePasswordEquals(
             requestDto.getChangePassword(),
-            requestDto.getRechangePassword());
+            requestDto.getCheckPassword());
 
         user.updatePassword(passwordEncoder.encode(requestDto.getChangePassword()));
     }
