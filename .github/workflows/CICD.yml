@@ -3,7 +3,7 @@ name: CI/CD
 on:
   push:
     branches:
-      - main
+      - deploy
 
 env:
   DOCKER_IMAGE_NAME: chilichili/wantit
