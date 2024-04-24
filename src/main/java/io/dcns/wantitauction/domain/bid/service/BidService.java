@@ -5,6 +5,7 @@ import io.dcns.wantitauction.domain.auctionItem.service.AuctionItemService;
 import io.dcns.wantitauction.domain.bid.dto.BidRequestDto;
 import io.dcns.wantitauction.domain.bid.dto.BidResponseDto;
 import io.dcns.wantitauction.domain.bid.dto.TopAuctionItemsResponseDto;
+import io.dcns.wantitauction.domain.bid.dto.TopBidResponseDto;
 import io.dcns.wantitauction.domain.bid.entity.Bid;
 import io.dcns.wantitauction.domain.bid.repository.BidQueryRepository;
 import io.dcns.wantitauction.domain.bid.repository.BidRepository;
@@ -127,5 +128,14 @@ public class BidService {
         } else {
             throw new IllegalArgumentException("정상적인 가격이 아닙니다.");
         }
+    }
+
+    public TopBidResponseDto findTopBid(Long auctionItemId) {
+        AuctionItem auctionItem = auctionItemService.findById(auctionItemId);
+        Bid topBid = bidRepository.findTopByAuctionItemOrderByBidPriceDesc(auctionItem);
+        if (topBid == null) {
+            return new TopBidResponseDto(null, auctionItemId, auctionItem.getMinPrice());
+        }
+        return new TopBidResponseDto(topBid);
     }
 }

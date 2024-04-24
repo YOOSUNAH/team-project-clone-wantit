@@ -56,6 +56,7 @@ public class WebSecurityConfig {
                 .requestMatchers("/v1/auction-items/finished").permitAll()
                 .requestMatchers("/v1/auction-items/{auctionItemId}/finished").permitAll()
                 .requestMatchers("/v1/auction-items/bids/top3").permitAll()
+                .requestMatchers("/v1/auction-items/{auctionItemId}/bids/top").permitAll()
                 // 카카오 로그인
                 .requestMatchers("/").permitAll()
                 .requestMatchers("/v1/users/kakao/callback").permitAll()
