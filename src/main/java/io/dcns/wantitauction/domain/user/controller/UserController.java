@@ -41,7 +41,6 @@ public class UserController {
     public ResponseEntity<ResponseDto<String>> login(
         @Valid @RequestBody LoginRequestDto request) {
         String accessToken = userService.login(request);
-        log.info("로그인 API 성공 _  accessToken: {}", accessToken);
         return ResponseDto.of(HttpStatus.OK, accessToken);
     }
 
@@ -49,7 +48,6 @@ public class UserController {
     public ResponseEntity<ResponseDto<Void>> logout(
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         userService.logout(userDetails.getUser().getUserId());
-        log.info("로그아웃 API 성공");
         return ResponseDto.of(HttpStatus.OK, null);
     }
 
@@ -59,7 +57,6 @@ public class UserController {
         @RequestBody UserRequestDto userRequestDto) {
         UserUpdateResponseDto userUpdateResponseDto = userService.updateUser(userDetails,
             userRequestDto);
-        log.info("유저 정보 변경 API 성공");
         return ResponseDto.of(HttpStatus.OK, userUpdateResponseDto);
     }
 
@@ -68,7 +65,6 @@ public class UserController {
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @RequestBody PasswordRequestDto passwordRequestDto) {
         userService.updatePassword(userDetails, passwordRequestDto);
-        log.info("유저 비밀번호 변경 API 성공");
         return ResponseDto.of(HttpStatus.OK, null);
     }
 
@@ -76,7 +72,6 @@ public class UserController {
     public ResponseEntity<ResponseDto<Void>> deleteUser(
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         userService.deleteUser(userDetails.getUser().getUserId());
-        log.info("회원 탈퇴 API 성공");
         return ResponseDto.of(HttpStatus.OK, null);
     }
 
@@ -84,7 +79,6 @@ public class UserController {
     public ResponseEntity<ResponseDto<UserUpdateResponseDto>> getOneUser(
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         UserUpdateResponseDto user = userService.getUser(userDetails);
-        log.info("유저 정보 조회 API 성공");
         return ResponseDto.of(HttpStatus.OK, user);
     }
 }
