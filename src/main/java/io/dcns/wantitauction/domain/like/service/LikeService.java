@@ -1,6 +1,8 @@
 package io.dcns.wantitauction.domain.like.service;
 
+import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItem;
 import io.dcns.wantitauction.domain.auctionItem.repository.AuctionItemRepository;
+import io.dcns.wantitauction.domain.like.dto.LikeAuctionItemResponseDto;
 import io.dcns.wantitauction.domain.like.dto.LikeResponseDto;
 import io.dcns.wantitauction.domain.like.entity.Like;
 import io.dcns.wantitauction.domain.like.repository.LikeQueryRepository;
@@ -9,6 +11,7 @@ import io.dcns.wantitauction.domain.user.entity.User;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -34,8 +37,15 @@ public class LikeService {
         return new LikeResponseDto(like.getUserId(), like.getAuctionItemId(), like.isLiked());
     }
 
-    public List<LikeResponseDto> getLikedAuctionItem(Long userId) {
-        return likeQueryRepository.findAllByUserId(userId);
+    public List<LikeAuctionItemResponseDto> getLikedAuctionItem(Long userId) {
+        List<Long> likedAuctionItemIds = likeRepository.findByUserIdAndLikedTrue(userId).stream()
+            .map(Like::getAuctionItemId).toList();
+        List<AuctionItem> likedAuctionItems = likedAuctionItemIds.stream()
+            .map(auctionItemRepository::findByAuctionItemId)
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .toList();
+        return likedAuctionItems.stream().map(this::mapToDto).toList();
     }
 
     private void validateAuctionItem(Long auctionItemId) {
@@ -46,5 +56,14 @@ public class LikeService {
 
     private Like findByAuctionItemIdAndUserId(Long auctionItemId, Long userId) {
         return likeRepository.findByAuctionItemIdAndUserId(auctionItemId, userId);
+    }
+
+    private LikeAuctionItemResponseDto mapToDto(AuctionItem auctionItem) {
+        return new LikeAuctionItemResponseDto(
+            auctionItem.getItemName(),
+            auctionItem.getItemDescription(),
+            auctionItem.getStartDate(),
+            auctionItem.getEndDate()
+        );
     }
 }

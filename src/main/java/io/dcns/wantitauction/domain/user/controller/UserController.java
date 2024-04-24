@@ -39,10 +39,8 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<ResponseDto<String>> login(
-        @Valid @RequestBody LoginRequestDto request
-    ) {
+        @Valid @RequestBody LoginRequestDto request) {
         String accessToken = userService.login(request);
-
         log.info("로그인 API 성공 _  accessToken: {}", accessToken);
         return ResponseDto.of(HttpStatus.OK, accessToken);
     }
