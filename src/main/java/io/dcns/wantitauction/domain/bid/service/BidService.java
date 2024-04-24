@@ -2,6 +2,7 @@ package io.dcns.wantitauction.domain.bid.service;
 
 import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItem;
 import io.dcns.wantitauction.domain.auctionItem.service.AuctionItemService;
+import io.dcns.wantitauction.domain.bid.dto.BidPageableResponseDto;
 import io.dcns.wantitauction.domain.bid.dto.BidRequestDto;
 import io.dcns.wantitauction.domain.bid.dto.BidResponseDto;
 import io.dcns.wantitauction.domain.bid.dto.TopAuctionItemsResponseDto;
@@ -22,6 +23,9 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,8 +74,14 @@ public class BidService {
         }
     }
 
-    public List<BidResponseDto> getAllBids(User user) {
-        return bidQueryRepository.findAllBids(user);
+    public BidPageableResponseDto getAllBids(User user, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<BidResponseDto> bidResponseDtoList = bidQueryRepository
+            .findAllBidsPageable(user, pageable);
+        int totalPage = bidResponseDtoList.getTotalPages();
+        return new BidPageableResponseDto(
+            bidResponseDtoList.getContent(), size, page + 1, totalPage
+        );
     }
 
     public List<TopAuctionItemsResponseDto> getTop3AuctionItemsByBid() {
