@@ -11,7 +11,6 @@ import io.dcns.wantitauction.domain.user.entity.User;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
