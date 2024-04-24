@@ -28,7 +28,8 @@ public class BidQueryRepository {
             .select(Wildcard.count)
             .from(bid)
             .where(bid.userId.eq(user.getUserId()))
-            .fetch().get(0);
+            .fetch()
+            .get(0);
 
         List<BidResponseDto> allBids = jpaQueryFactory
             .select(Projections.fields(BidResponseDto.class,
@@ -42,6 +43,8 @@ public class BidQueryRepository {
             ))
             .from(bid)
             .where(bid.userId.eq(user.getUserId()))
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
             .orderBy(bid.createdAt.desc())
             .fetch();
 

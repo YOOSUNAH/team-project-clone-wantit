@@ -76,11 +76,11 @@ public class BidService {
 
     public BidPageableResponseDto getAllBids(User user, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<BidResponseDto> bidResponseDtoList = bidQueryRepository
+        Page<BidResponseDto> responseDtoPage = bidQueryRepository
             .findAllBidsPageable(user, pageable);
-        int totalPage = bidResponseDtoList.getTotalPages();
+        int totalPage = responseDtoPage.getTotalPages();
         return new BidPageableResponseDto(
-            bidResponseDtoList.getContent(), size, page + 1, totalPage
+            responseDtoPage.getContent(), size, page + 1, totalPage
         );
     }
 
