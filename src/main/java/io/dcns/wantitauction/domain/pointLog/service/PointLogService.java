@@ -22,7 +22,7 @@ public class PointLogService {
             .findAllPointLogsPageable(user, pageable, status);
         int totalPage = pointLogResponseDtoList.getTotalPages();
         return new PointLogPageableResponseDto(
-            pointLogResponseDtoList.getContent(), size, page + 1, totalPage)
-            ;
+            pointLogResponseDtoList.getContent(), size, page + 1, totalPage
+        );
     }
 }
