@@ -2,6 +2,7 @@ package io.dcns.wantitauction.domain.auctionItem.dto;
 
 import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItem;
 import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItemEnum;
+import io.dcns.wantitauction.domain.auctionItem.entity.CategoryEnum;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,7 @@ public class FinishedItemResponseDto {
     private Long winnerId;
     private String itemName;
     private String itemDescription;
+    private CategoryEnum category;
     private Long minPrice;
     private Long winPrice;
     private LocalDateTime startDate;
@@ -27,6 +29,7 @@ public class FinishedItemResponseDto {
         this.winnerId = auctionItem.getWinnerId();
         this.itemName = auctionItem.getItemName();
         this.itemDescription = auctionItem.getItemDescription();
+        this.category = auctionItem.getCategory();
         this.minPrice = auctionItem.getMinPrice();
         this.winPrice = auctionItem.getWinPrice();
         this.startDate = auctionItem.getStartDate();

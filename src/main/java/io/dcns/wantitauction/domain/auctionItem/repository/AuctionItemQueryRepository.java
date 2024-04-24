@@ -3,6 +3,7 @@ package io.dcns.wantitauction.domain.auctionItem.repository;
 import static io.dcns.wantitauction.domain.auctionItem.entity.QAuctionItem.auctionItem;
 
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.dcns.wantitauction.domain.auctionItem.dto.AuctionItemResponseDto;
@@ -12,6 +13,7 @@ import io.dcns.wantitauction.domain.auctionItem.dto.MyAuctionItemsResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.ReadyItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItem;
 import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItemEnum;
+import io.dcns.wantitauction.domain.auctionItem.entity.CategoryEnum;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -44,6 +46,7 @@ public class AuctionItemQueryRepository {
                 auctionItem.winnerId,
                 auctionItem.itemName,
                 auctionItem.itemDescription,
+                auctionItem.category,
                 auctionItem.minPrice,
                 auctionItem.winPrice,
                 auctionItem.startDate,
@@ -66,6 +69,7 @@ public class AuctionItemQueryRepository {
                 auctionItem.auctionItemId,
                 auctionItem.itemName,
                 auctionItem.itemDescription,
+                auctionItem.category,
                 auctionItem.minPrice,
                 auctionItem.winPrice,
                 auctionItem.startDate,
@@ -93,6 +97,7 @@ public class AuctionItemQueryRepository {
                 auctionItem.userId,
                 auctionItem.itemName,
                 auctionItem.itemDescription,
+                auctionItem.category,
                 auctionItem.minPrice,
                 auctionItem.winPrice,
                 auctionItem.startDate,
@@ -123,6 +128,7 @@ public class AuctionItemQueryRepository {
                 auctionItem.winnerId,
                 auctionItem.itemName,
                 auctionItem.itemDescription,
+                auctionItem.category,
                 auctionItem.minPrice,
                 auctionItem.winPrice,
                 auctionItem.startDate,
@@ -146,6 +152,7 @@ public class AuctionItemQueryRepository {
                     auctionItem.winnerId,
                     auctionItem.itemName,
                     auctionItem.itemDescription,
+                    auctionItem.category,
                     auctionItem.minPrice,
                     auctionItem.winPrice,
                     auctionItem.startDate,
@@ -164,6 +171,7 @@ public class AuctionItemQueryRepository {
                 auctionItem.userId,
                 auctionItem.itemName,
                 auctionItem.itemDescription,
+                auctionItem.category,
                 auctionItem.minPrice,
                 auctionItem.winPrice,
                 auctionItem.startDate,
@@ -204,6 +212,7 @@ public class AuctionItemQueryRepository {
                 auctionItem.userId,
                 auctionItem.itemName,
                 auctionItem.itemDescription,
+                auctionItem.category,
                 auctionItem.minPrice,
                 auctionItem.winPrice,
                 auctionItem.startDate,
@@ -244,6 +253,7 @@ public class AuctionItemQueryRepository {
                 auctionItem.winnerId,
                 auctionItem.itemName,
                 auctionItem.itemDescription,
+                auctionItem.category,
                 auctionItem.minPrice,
                 auctionItem.winPrice,
                 auctionItem.startDate,
@@ -258,11 +268,12 @@ public class AuctionItemQueryRepository {
         return PageableExecutionUtils.getPage(readyItems, pageable, () -> totalSize);
     }
 
-    public Page<InProgressItemResponseDto> findAllByInProgress(Pageable pageable) {
+    public Page<InProgressItemResponseDto> findAllByInProgress(Pageable pageable, String category) {
         Long totalSize = jpaQueryFactory
             .select(Wildcard.count)
             .from(auctionItem)
-            .where(auctionItem.status.eq(AuctionItemEnum.IN_PROGRESS))
+            .where(auctionItem.status.eq(AuctionItemEnum.IN_PROGRESS),
+                categoryEq(category))
             .fetch()
             .get(0);
 
@@ -273,17 +284,27 @@ public class AuctionItemQueryRepository {
                 auctionItem.winnerId,
                 auctionItem.itemName,
                 auctionItem.itemDescription,
+                auctionItem.category,
                 auctionItem.minPrice,
                 auctionItem.winPrice,
                 auctionItem.startDate,
                 auctionItem.endDate))
             .from(auctionItem)
-            .where(auctionItem.status.eq(AuctionItemEnum.IN_PROGRESS))
+            .where(auctionItem.status.eq(AuctionItemEnum.IN_PROGRESS),
+                categoryEq(category))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .orderBy(auctionItem.startDate.desc())
             .fetch();
 
         return PageableExecutionUtils.getPage(readyItems, pageable, () -> totalSize);
+    }
+
+    private BooleanExpression categoryEq(String status) {
+        if (status != null) {
+            CategoryEnum categoryEnum = CategoryEnum.valueOf(status);
+            return auctionItem.category.eq(categoryEnum);
+        }
+        return null;
     }
 }
