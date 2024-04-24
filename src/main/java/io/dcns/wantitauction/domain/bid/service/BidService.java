@@ -4,6 +4,7 @@ import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItem;
 import io.dcns.wantitauction.domain.auctionItem.service.AuctionItemService;
 import io.dcns.wantitauction.domain.bid.dto.BidRequestDto;
 import io.dcns.wantitauction.domain.bid.dto.BidResponseDto;
+import io.dcns.wantitauction.domain.bid.dto.TopAuctionItemsResponseDto;
 import io.dcns.wantitauction.domain.bid.entity.Bid;
 import io.dcns.wantitauction.domain.bid.repository.BidQueryRepository;
 import io.dcns.wantitauction.domain.bid.repository.BidRepository;
@@ -70,6 +71,10 @@ public class BidService {
 
     public List<BidResponseDto> getAllBids(User user) {
         return bidQueryRepository.findAllBids(user);
+    }
+
+    public List<TopAuctionItemsResponseDto> getTop3AuctionItemsByBid() {
+        return bidQueryRepository.findTop3AuctionItemsByBid();
     }
 
     private void checkUser(AuctionItem auctionItem, User user) {
