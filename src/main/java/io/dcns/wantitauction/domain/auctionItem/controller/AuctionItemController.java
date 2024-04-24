@@ -77,10 +77,11 @@ public class AuctionItemController {
     @GetMapping("/in-progress")
     public ResponseEntity<ResponseDto<InProgressItemPageableResponseDto>> getInProgressAuctionItems(
         @RequestParam("page") int page,
-        @RequestParam("size") int size
+        @RequestParam("size") int size,
+        @RequestParam(value = "category", required = false) String category
     ) {
         InProgressItemPageableResponseDto pageableResponseDto = auctionItemService
-            .getInProgressAuctionItems(page - 1, size);
+            .getInProgressAuctionItems(page - 1, size, category);
 
         return ResponseDto.of(HttpStatus.OK, pageableResponseDto);
     }

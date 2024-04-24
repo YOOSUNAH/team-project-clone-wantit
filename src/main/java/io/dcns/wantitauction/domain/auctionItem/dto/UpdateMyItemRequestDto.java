@@ -13,6 +13,7 @@ public class UpdateMyItemRequestDto {
     private String itemName;
     private String itemDescription;
     private Long minPrice;
+    private String category;
 
     @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime startDate;

@@ -82,10 +82,11 @@ public class AuctionItemService {
         );
     }
 
-    public InProgressItemPageableResponseDto getInProgressAuctionItems(int page, int size) {
+    public InProgressItemPageableResponseDto getInProgressAuctionItems(int page, int size,
+        String category) {
         Pageable pageable = PageRequest.of(page, size);
         Page<InProgressItemResponseDto> responseDtoPage =
-            auctionItemQueryRepository.findAllByInProgress(pageable);
+            auctionItemQueryRepository.findAllByInProgress(pageable, category);
 
         int totalPage = responseDtoPage.getTotalPages();
 
