@@ -3,6 +3,7 @@ package io.dcns.wantitauction.domain.bid.controller;
 import io.dcns.wantitauction.domain.bid.dto.BidRequestDto;
 import io.dcns.wantitauction.domain.bid.dto.BidResponseDto;
 import io.dcns.wantitauction.domain.bid.dto.TopAuctionItemsResponseDto;
+import io.dcns.wantitauction.domain.bid.dto.TopBidResponseDto;
 import io.dcns.wantitauction.domain.bid.service.BidService;
 import io.dcns.wantitauction.global.dto.ResponseDto;
 import io.dcns.wantitauction.global.impl.UserDetailsImpl;
@@ -52,5 +53,14 @@ public class BidController {
         List<TopAuctionItemsResponseDto> TopBidResponseDtoList = bidService
             .getTop3AuctionItemsByBid();
         return ResponseDto.of(HttpStatus.OK, TopBidResponseDtoList);
+    }
+
+    @GetMapping("/{auctionItemId}/bids/top")
+    public ResponseEntity<ResponseDto<TopBidResponseDto>> findTopBid(
+        @PathVariable Long auctionItemId
+    ) {
+        TopBidResponseDto bidResponseDto = bidService.findTopBid(auctionItemId);
+
+        return ResponseDto.of(HttpStatus.OK, bidResponseDto);
     }
 }
