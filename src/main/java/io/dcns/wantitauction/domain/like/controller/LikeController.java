@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("v1/auction-item")
+@RequestMapping("v1/auction-items")
 public class LikeController {
 
     private final LikeService likeService;
