@@ -46,7 +46,7 @@ public class BidController {
         return ResponseDto.of(HttpStatus.OK, bidResponseDtoList);
     }
 
-    @GetMapping("/bids/top3")
+    @GetMapping("/top3")
     public ResponseEntity<ResponseDto<List<TopAuctionItemsResponseDto>>> getTop3AuctionItems(
     ) {
         List<TopAuctionItemsResponseDto> TopBidResponseDtoList = bidService
