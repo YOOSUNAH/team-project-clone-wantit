@@ -23,6 +23,7 @@ public class BidQueryRepository {
             .select(Projections.fields(BidResponseDto.class,
                 bid.bidId,
                 bid.auctionItem.auctionItemId,
+                bid.auctionItem.itemName,
                 bid.userId,
                 bid.bidPrice,
                 bid.createdAt,

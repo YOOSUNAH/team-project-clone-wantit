@@ -1,6 +1,8 @@
 package io.dcns.wantitauction.domain.like.service;
 
+import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItem;
 import io.dcns.wantitauction.domain.auctionItem.repository.AuctionItemRepository;
+import io.dcns.wantitauction.domain.like.dto.LikeAuctionItemResponseDto;
 import io.dcns.wantitauction.domain.like.dto.LikeResponseDto;
 import io.dcns.wantitauction.domain.like.entity.Like;
 import io.dcns.wantitauction.domain.like.repository.LikeQueryRepository;
@@ -34,8 +36,32 @@ public class LikeService {
         return new LikeResponseDto(like.getUserId(), like.getAuctionItemId(), like.isLiked());
     }
 
-    public List<LikeResponseDto> getLikedAuctionItem(Long userId) {
-        return likeQueryRepository.findAllByUserId(userId);
+    public List<LikeAuctionItemResponseDto> getLikedAuctionItem(Long userId) {
+        List<LikeResponseDto> likedItems = likeQueryRepository.findAllLikedByUserId(userId);
+
+        List<Long> auctionItemIds = likedItems.stream()
+            .map(LikeResponseDto::getAuctionItemId)
+            .toList();
+
+        List<AuctionItem> auctionItems = auctionItemRepository.findAllById(auctionItemIds);
+
+        return auctionItems.stream()
+            .map(this::mapToDto)
+            .toList();
+    }
+
+    public List<LikeAuctionItemResponseDto> getDislikedAuctionItem(Long userId) {
+        List<LikeResponseDto> dislikedItems = likeQueryRepository.findAllDisLikedByUserId(userId);
+
+        List<Long> auctionItemIds = dislikedItems.stream()
+            .map(LikeResponseDto::getAuctionItemId)
+            .toList();
+
+        List<AuctionItem> auctionItems = auctionItemRepository.findAllById(auctionItemIds);
+
+        return auctionItems.stream()
+            .map(this::mapToDto)
+            .toList();
     }
 
     private void validateAuctionItem(Long auctionItemId) {
@@ -46,5 +72,15 @@ public class LikeService {
 
     private Like findByAuctionItemIdAndUserId(Long auctionItemId, Long userId) {
         return likeRepository.findByAuctionItemIdAndUserId(auctionItemId, userId);
+    }
+
+    private LikeAuctionItemResponseDto mapToDto(AuctionItem auctionItem) {
+        return new LikeAuctionItemResponseDto(
+            auctionItem.getAuctionItemId(),
+            auctionItem.getItemName(),
+            auctionItem.getItemDescription(),
+            auctionItem.getStartDate(),
+            auctionItem.getEndDate()
+        );
     }
 }

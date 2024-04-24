@@ -13,6 +13,8 @@ public class BidResponseDto {
 
     private Long auctionItemId;
 
+    private String itemName;
+
     private Long userId;
 
     private Long bidPrice;
@@ -24,6 +26,7 @@ public class BidResponseDto {
     public BidResponseDto(Bid bid) {
         this.bidId = bid.getBidId();
         this.auctionItemId = bid.getAuctionItem().getAuctionItemId();
+        this.itemName = bid.getAuctionItem().getItemName();
         this.userId = bid.getUserId();
         this.bidPrice = bid.getBidPrice();
         this.createdAt = bid.getCreatedAt();
