@@ -15,7 +15,7 @@ public class LikeQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<LikeResponseDto> findAllByUserId(Long userId) {
+    public List<LikeResponseDto> findAllLikedByUserId(Long userId) {
         return jpaQueryFactory
             .select(Projections.fields(LikeResponseDto.class,
                 like.userId,
@@ -24,6 +24,17 @@ public class LikeQueryRepository {
             .from(like)
             .where(like.userId.eq(userId)
                 .and(like.liked.isTrue()))
+            .fetch();
+    }
+    public List<LikeResponseDto> findAllDisLikedByUserId(Long userId) {
+        return jpaQueryFactory
+            .select(Projections.fields(LikeResponseDto.class,
+                like.userId,
+                like.auctionItemId,
+                like.liked))
+            .from(like)
+            .where(like.userId.eq(userId)
+                .and(like.liked.isFalse()))
             .fetch();
     }
 }

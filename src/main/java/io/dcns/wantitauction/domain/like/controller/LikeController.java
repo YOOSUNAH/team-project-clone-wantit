@@ -32,7 +32,7 @@ public class LikeController {
         LikeResponseDto likeResponseDto = likeService.likeAuctionItem(
             auctionItemId, userDetails.getUser()
         );
-
+        log.info("좋아요(찜하기) 등록 또는 취소 API 성공");
         return ResponseDto.of(HttpStatus.OK, likeResponseDto);
     }
 
@@ -42,6 +42,15 @@ public class LikeController {
         List<LikeAuctionItemResponseDto> likeResponseDtolist = likeService.getLikedAuctionItem(
             userDetails.getUser().getUserId());
         log.info("내가 찜한 경매 상품 조회 API 성공");
+        return ResponseDto.of(HttpStatus.OK, likeResponseDtolist);
+    }
+
+    @GetMapping("/dislikes")
+    public ResponseEntity<ResponseDto<List<LikeAuctionItemResponseDto>>> getDislikeAuctionItem(
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        List<LikeAuctionItemResponseDto> likeResponseDtolist = likeService.getDislikedAuctionItem(
+            userDetails.getUser().getUserId());
+        log.info("내가 취소한 찜한 경매 상품 조회 API 성공");
         return ResponseDto.of(HttpStatus.OK, likeResponseDtolist);
     }
 }

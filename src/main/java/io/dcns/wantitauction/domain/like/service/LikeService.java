@@ -11,7 +11,7 @@ import io.dcns.wantitauction.domain.user.entity.User;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -38,14 +38,31 @@ public class LikeService {
     }
 
     public List<LikeAuctionItemResponseDto> getLikedAuctionItem(Long userId) {
-        List<Long> likedAuctionItemIds = likeRepository.findByUserIdAndLikedTrue(userId).stream()
-            .map(Like::getAuctionItemId).toList();
-        List<AuctionItem> likedAuctionItems = likedAuctionItemIds.stream()
-            .map(auctionItemRepository::findByAuctionItemId)
-            .filter(Optional::isPresent)
-            .map(Optional::get)
+        List<LikeResponseDto> likedItems = likeQueryRepository.findAllLikedByUserId(userId);
+
+        List<Long> auctionItemIds = likedItems.stream()
+            .map(LikeResponseDto::getAuctionItemId)
             .toList();
-        return likedAuctionItems.stream().map(this::mapToDto).toList();
+
+        List<AuctionItem> auctionItems = auctionItemRepository.findAllById(auctionItemIds);
+
+        return auctionItems.stream()
+            .map(this::mapToDto)
+            .toList();
+    }
+
+    public List<LikeAuctionItemResponseDto> getDislikedAuctionItem(Long userId) {
+        List<LikeResponseDto> dislikedItems = likeQueryRepository.findAllDisLikedByUserId(userId);
+
+        List<Long> auctionItemIds = dislikedItems.stream()
+            .map(LikeResponseDto::getAuctionItemId)
+            .toList();
+
+        List<AuctionItem> auctionItems = auctionItemRepository.findAllById(auctionItemIds);
+
+        return auctionItems.stream()
+            .map(this::mapToDto)
+            .toList();
     }
 
     private void validateAuctionItem(Long auctionItemId) {
@@ -60,6 +77,7 @@ public class LikeService {
 
     private LikeAuctionItemResponseDto mapToDto(AuctionItem auctionItem) {
         return new LikeAuctionItemResponseDto(
+            auctionItem.getAuctionItemId(),
             auctionItem.getItemName(),
             auctionItem.getItemDescription(),
             auctionItem.getStartDate(),

@@ -9,14 +9,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LikeAuctionItemResponseDto {
 
-
+    private Long auctionItemId;
     private String itemName;
     private String itemDescription;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
 
     public LikeAuctionItemResponseDto(
-        String itemName, String itemDescription, LocalDateTime startDate, LocalDateTime endDate) {
+        Long auctionItemId, String itemName, String itemDescription, LocalDateTime startDate, LocalDateTime endDate) {
+       this.auctionItemId = auctionItemId;
         this.itemName = itemName;
         this.itemDescription = itemDescription;
         this.startDate = startDate;
