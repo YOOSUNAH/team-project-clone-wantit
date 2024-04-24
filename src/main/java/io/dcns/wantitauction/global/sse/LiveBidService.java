@@ -2,7 +2,6 @@ package io.dcns.wantitauction.global.sse;
 
 import io.dcns.wantitauction.global.event.TopBidChangeEvent;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -16,63 +15,65 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @Slf4j
 public class LiveBidService {
 
-    private final Map<Long, SseEmitter> sseEmitterMap = new ConcurrentHashMap<>();
-    private final Map<Long, Set<Long>> auctionItemUserMap = new ConcurrentHashMap<>();
+    private Map<Long, Set<SseEmitter>> auctionEmitterMap = new ConcurrentHashMap<>();
     private static final Long TIMEOUT = 60 * 60 * 1000L;
 
-    public SseEmitter subscribeLiveBid(Long userId, Long auctionItemId) {
-        sseEmitterMap.remove(userId);
-
+    public SseEmitter subscribeLiveBid(Long auctionItemId) {
         SseEmitter sseEmitter = new SseEmitter(TIMEOUT);
-        setSseEmitter(sseEmitter, userId);
-        sseEmitterMap.put(userId, sseEmitter);
-        addAuctionItemUser(auctionItemId, userId);
-        sendToClient(sseEmitter, userId, "SSE 연결", "연결 성공");
+        setSseEmitter(sseEmitter, auctionItemId);
+        addAuctionEmitter(auctionItemId, sseEmitter);
+        sendToClient(sseEmitter, "초기 연결", "연결 성공");
         return sseEmitter;
     }
 
-    private void addAuctionItemUser(Long auctionItemId, Long userId) {
-        Set<Long> userIdSet = auctionItemUserMap.getOrDefault(auctionItemId,
-            new HashSet<>());
-        userIdSet.add(userId);
-        auctionItemUserMap.put(auctionItemId, userIdSet);
+    private void addAuctionEmitter(Long auctionItemId, SseEmitter sseEmitter) {
+        Set<SseEmitter> emitterSet = auctionEmitterMap
+            .getOrDefault(auctionItemId, new HashSet<>());
+        emitterSet.add(sseEmitter);
+
+        auctionEmitterMap.put(auctionItemId, emitterSet);
     }
 
-    private void setSseEmitter(SseEmitter sseEmitter, Long userId) {
-        sseEmitter.onTimeout(() -> removeSseEmitterAndUser(userId));
-        sseEmitter.onCompletion(() -> removeSseEmitterAndUser(userId));
-        sseEmitter.onError((e) -> removeSseEmitterAndUser(userId));
+    private void setSseEmitter(SseEmitter sseEmitter, Long auctionItemId) {
+        sseEmitter.onTimeout(() -> removeSseEmitter(auctionItemId, sseEmitter));
+        sseEmitter.onCompletion(() -> removeSseEmitter(auctionItemId, sseEmitter));
+        sseEmitter.onError((e) -> removeSseEmitter(auctionItemId, sseEmitter));
     }
 
-    private void removeSseEmitterAndUser(Long userId) {
-        sseEmitterMap.remove(userId);
-        for (Collection<Long> collection : auctionItemUserMap.values()) {
-            collection.remove(userId);
+    private void removeSseEmitter(Long auctionItemId, SseEmitter sseEmitter) {
+        Set<SseEmitter> emitterSet = auctionEmitterMap.get(auctionItemId);
+        if (emitterSet != null) {
+            emitterSet.remove(sseEmitter);
+            log.info("SseEmitter 삭제");
+            if (emitterSet.isEmpty()) {
+                auctionEmitterMap.remove(auctionItemId);
+                log.info("SseEmitter Set 삭제");
+            }
         }
     }
 
-    private void sendToClient(SseEmitter sseEmitter, Long userId, String eventName, Object data) {
+    private void sendToClient(SseEmitter sseEmitter, String eventName, Object data) {
         try {
             sseEmitter.send(
                 SseEmitter.event()
-                    .id(userId.toString())
                     .name(eventName)
                     .data(data)
             );
         } catch (IOException e) {
-            log.error("유저 ID: [ " + userId + " ] 에게 메세지 전송에 실패했습니다.");
+            log.error("메세지 전송에 실패했습니다.");
         }
     }
 
     @TransactionalEventListener
     public void topBidEventListener(TopBidChangeEvent topBidChangeEvent) {
         Long auctionItemId = topBidChangeEvent.getAuctionItemId();
-        Set<Long> userIdSet = auctionItemUserMap.get(auctionItemId);
-        String eventName = "Live Bid";
-        if (userIdSet != null) {
-            userIdSet.parallelStream().forEach(
-                userId -> sendToClient(
-                    sseEmitterMap.get(userId), userId, eventName, topBidChangeEvent
+        Set<SseEmitter> emitterSet = auctionEmitterMap.get(auctionItemId);
+        String eventName = "bidUpdate";
+
+        if (emitterSet != null) {
+            emitterSet.parallelStream().forEach(
+                sseEmitter -> sendToClient(
+                    sseEmitter, eventName, topBidChangeEvent
                 )
             );
         }
