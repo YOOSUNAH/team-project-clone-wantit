@@ -1,10 +1,10 @@
 package io.dcns.wantitauction.domain.bid.service;
 
-import io.dcns.wantitauction.domain.auctionItem.dto.InProgressItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItem;
 import io.dcns.wantitauction.domain.auctionItem.service.AuctionItemService;
 import io.dcns.wantitauction.domain.bid.dto.BidRequestDto;
 import io.dcns.wantitauction.domain.bid.dto.BidResponseDto;
+import io.dcns.wantitauction.domain.bid.dto.TopAuctionItemsResponseDto;
 import io.dcns.wantitauction.domain.bid.entity.Bid;
 import io.dcns.wantitauction.domain.bid.repository.BidQueryRepository;
 import io.dcns.wantitauction.domain.bid.repository.BidRepository;
@@ -73,8 +73,8 @@ public class BidService {
         return bidQueryRepository.findAllBids(user);
     }
 
-    public List<InProgressItemResponseDto> getTop3Bids() {
-        return bidQueryRepository.findTop3Bids();
+    public List<TopAuctionItemsResponseDto> getTop3AuctionItemsByBid() {
+        return bidQueryRepository.findTop3AuctionItemsByBid();
     }
 
     private void checkUser(AuctionItem auctionItem, User user) {

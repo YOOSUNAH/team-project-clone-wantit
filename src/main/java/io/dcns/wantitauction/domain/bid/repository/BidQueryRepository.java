@@ -4,9 +4,9 @@ import static io.dcns.wantitauction.domain.bid.entity.QBid.bid;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import io.dcns.wantitauction.domain.auctionItem.dto.InProgressItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItemEnum;
 import io.dcns.wantitauction.domain.bid.dto.BidResponseDto;
+import io.dcns.wantitauction.domain.bid.dto.TopAuctionItemsResponseDto;
 import io.dcns.wantitauction.domain.user.entity.User;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -34,19 +34,14 @@ public class BidQueryRepository {
             .fetch();
     }
 
-    public List<InProgressItemResponseDto> findTop3Bids() {
+    public List<TopAuctionItemsResponseDto> findTop3AuctionItemsByBid() {
         return jpaQueryFactory
-            .select(Projections.fields(InProgressItemResponseDto.class,
+            .select(Projections.fields(TopAuctionItemsResponseDto.class,
                 bid.auctionItem.auctionItemId,
-                bid.auctionItem.userId,
-                bid.auctionItem.winnerId,
                 bid.auctionItem.itemName,
                 bid.auctionItem.itemDescription,
-                bid.auctionItem.minPrice,
-                bid.auctionItem.winPrice,
                 bid.auctionItem.startDate,
-                bid.auctionItem.endDate,
-                bid.auctionItem.status
+                bid.auctionItem.endDate
             ))
             .from(bid)
             .where(bid.auctionItem.status.eq(AuctionItemEnum.IN_PROGRESS))
