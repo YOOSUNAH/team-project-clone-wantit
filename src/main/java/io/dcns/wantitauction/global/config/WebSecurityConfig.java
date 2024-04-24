@@ -64,6 +64,7 @@ public class WebSecurityConfig {
                 // 이메일 인증
                 .requestMatchers("v1/users/emails/authcode").permitAll()
                 .requestMatchers("v1/users/emails/authcode/verify").permitAll()
+                .requestMatchers("/v1/live-bids/auction-items/{auctionItemId}").permitAll()
                 .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 
