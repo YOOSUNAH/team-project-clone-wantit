@@ -69,6 +69,9 @@ public class AuctionItem extends Timestamped {
     @Column
     private LocalDateTime deletedAt;
 
+    @Column
+    private String imageUrl;
+
     public AuctionItem(CreateProductRequestDto request, User user) {
         this.userId = user.getUserId();
         this.itemName = request.getItemName();
@@ -77,6 +80,17 @@ public class AuctionItem extends Timestamped {
         this.minPrice = request.getMinPrice();
         this.startDate = request.getStartDate();
         this.endDate = request.getEndDate();
+    }
+
+    public AuctionItem(CreateProductRequestDto request, String imageUrl, User user) {
+        this.userId = user.getUserId();
+        this.itemName = request.getItemName();
+        this.itemDescription = request.getItemDescription();
+        this.category = CategoryEnum.valueOf(request.getCategory());
+        this.minPrice = request.getMinPrice();
+        this.startDate = request.getStartDate();
+        this.endDate = request.getEndDate();
+        this.imageUrl = imageUrl;
     }
 
     public void update(UpdateMyItemRequestDto request) {

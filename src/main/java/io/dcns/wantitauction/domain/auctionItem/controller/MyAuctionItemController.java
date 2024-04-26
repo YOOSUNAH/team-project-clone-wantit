@@ -7,6 +7,7 @@ import io.dcns.wantitauction.domain.auctionItem.dto.MyAuctionItemPageableRespons
 import io.dcns.wantitauction.domain.auctionItem.dto.MyAuctionItemsResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.UpdateMyItemRequestDto;
 import io.dcns.wantitauction.domain.auctionItem.service.MyAuctionItemService;
+import io.dcns.wantitauction.global.aws.s3.S3Service;
 import io.dcns.wantitauction.global.dto.ResponseDto;
 import io.dcns.wantitauction.global.impl.UserDetailsImpl;
 import jakarta.validation.Valid;
@@ -22,7 +23,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,13 +33,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class MyAuctionItemController {
 
     private final MyAuctionItemService myAuctionItemService;
+    private final S3Service s3Service;
 
     @PostMapping
     public ResponseEntity<ResponseDto<Void>> createAuctionItem(
-        @Valid @RequestBody CreateProductRequestDto request,
+        @RequestPart("file") MultipartFile file,
+        @Valid @RequestPart("requestBody") CreateProductRequestDto request,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        myAuctionItemService.createAuctionItem(request, userDetails.getUser());
+        String imageUrl = s3Service.uploadFile(file);
+
+        myAuctionItemService.createAuctionItem(request, imageUrl, userDetails.getUser());
         return ResponseDto.of(HttpStatus.CREATED, null);
     }
 
