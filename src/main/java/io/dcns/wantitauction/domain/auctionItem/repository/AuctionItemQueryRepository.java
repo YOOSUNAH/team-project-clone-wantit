@@ -169,23 +169,6 @@ public class AuctionItemQueryRepository {
         );
     }
 
-    public List<AuctionItemResponseDto> findAll() {
-        return jpaQueryFactory
-            .select(Projections.fields(AuctionItemResponseDto.class,
-                auctionItem.auctionItemId,
-                auctionItem.userId,
-                auctionItem.itemName,
-                auctionItem.itemDescription,
-                auctionItem.category,
-                auctionItem.minPrice,
-                auctionItem.winPrice,
-                auctionItem.startDate,
-                auctionItem.endDate,
-                auctionItem.status))
-            .from(auctionItem)
-            .fetch();
-    }
-
     public List<AuctionItem> findAllEndAuctionItems() {
         return jpaQueryFactory
             .selectFrom(auctionItem)
@@ -231,17 +214,6 @@ public class AuctionItemQueryRepository {
             .fetch();
 
         return PageableExecutionUtils.getPage(auctionItems, pageable, () -> totalSize);
-    }
-
-    public List<AuctionItem> findAllTodayWinningAuctionItems() {
-        return jpaQueryFactory
-            .selectFrom(auctionItem)
-            .where(
-                auctionItem.status.eq(AuctionItemEnum.FINISHED)
-                    .and(auctionItem.endDate.between(
-                        LocalDateTime.now().withHour(0).withMinute(0).withSecond(0),
-                        LocalDateTime.now().withHour(23).withMinute(59).withSecond(59))))
-            .fetch();
     }
 
     public Page<ReadyItemResponseDto> findAllByReady(Pageable pageable) {
