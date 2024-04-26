@@ -22,6 +22,7 @@ public class InProgressItemResponseDto {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private AuctionItemEnum status = AuctionItemEnum.IN_PROGRESS;
+    private String imageUrl;
 
     public InProgressItemResponseDto(AuctionItem auctionItem) {
         this.auctionItemId = auctionItem.getAuctionItemId();
@@ -34,5 +35,6 @@ public class InProgressItemResponseDto {
         this.winPrice = auctionItem.getWinPrice();
         this.startDate = auctionItem.getStartDate();
         this.endDate = auctionItem.getEndDate();
+        this.imageUrl = auctionItem.getImageUrl();
     }
 }

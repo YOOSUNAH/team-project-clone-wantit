@@ -62,9 +62,9 @@ class MyAuctionItemServiceTest {
             .startDate(LocalDateTime.now())
             .endDate(LocalDateTime.now().plusDays(1))
             .build();
-
+        String imageUrl = "123123123";
         // when
-        myAuctionItemService.createAuctionItem(request, user);
+        myAuctionItemService.createAuctionItem(request, imageUrl, user);
 
         // then
         ArgumentCaptor<AuctionItem> argumentCaptor = ArgumentCaptor.forClass(AuctionItem.class);
@@ -160,6 +160,7 @@ class MyAuctionItemServiceTest {
         // when
         MyAuctionItemsResponseDto actualAuctionItem = myAuctionItemService.updateAuctionItem(
             request,
+            "12314124",
             1L,
             user.getUserId());
 

@@ -50,7 +50,8 @@ public class AuctionItemQueryRepository {
                 auctionItem.minPrice,
                 auctionItem.winPrice,
                 auctionItem.startDate,
-                auctionItem.endDate))
+                auctionItem.endDate,
+                auctionItem.imageUrl))
             .from(auctionItem)
             .where(auctionItem.winnerId.eq(userId).and(
                 auctionItem.status.eq(AuctionItemEnum.FINISHED)
@@ -74,7 +75,8 @@ public class AuctionItemQueryRepository {
                 auctionItem.winPrice,
                 auctionItem.startDate,
                 auctionItem.endDate,
-                auctionItem.status))
+                auctionItem.status,
+                auctionItem.imageUrl))
             .from(auctionItem)
             .where(auctionItem.status.eq(AuctionItemEnum.FINISHED),
                 auctionItem.auctionItemId.eq(auctionItemId),
@@ -102,7 +104,8 @@ public class AuctionItemQueryRepository {
                 auctionItem.winPrice,
                 auctionItem.startDate,
                 auctionItem.endDate,
-                auctionItem.status))
+                auctionItem.status,
+                auctionItem.imageUrl))
             .from(auctionItem)
             .where(auctionItem.userId.eq(userId))
             .offset(pageable.getOffset())
@@ -132,7 +135,8 @@ public class AuctionItemQueryRepository {
                 auctionItem.minPrice,
                 auctionItem.winPrice,
                 auctionItem.startDate,
-                auctionItem.endDate))
+                auctionItem.endDate,
+                auctionItem.imageUrl))
             .from(auctionItem)
             .where(auctionItem.status.eq(AuctionItemEnum.FINISHED))
             .offset(pageable.getOffset())
@@ -156,29 +160,13 @@ public class AuctionItemQueryRepository {
                     auctionItem.minPrice,
                     auctionItem.winPrice,
                     auctionItem.startDate,
-                    auctionItem.endDate))
+                    auctionItem.endDate,
+                    auctionItem.imageUrl))
                 .from(auctionItem)
                 .where(auctionItem.auctionItemId.eq(auctionItemId)
                     .and(auctionItem.status.eq(AuctionItemEnum.FINISHED)))
                 .fetchFirst()
         );
-    }
-
-    public List<AuctionItemResponseDto> findAll() {
-        return jpaQueryFactory
-            .select(Projections.fields(AuctionItemResponseDto.class,
-                auctionItem.auctionItemId,
-                auctionItem.userId,
-                auctionItem.itemName,
-                auctionItem.itemDescription,
-                auctionItem.category,
-                auctionItem.minPrice,
-                auctionItem.winPrice,
-                auctionItem.startDate,
-                auctionItem.endDate,
-                auctionItem.status))
-            .from(auctionItem)
-            .fetch();
     }
 
     public List<AuctionItem> findAllEndAuctionItems() {
@@ -217,7 +205,8 @@ public class AuctionItemQueryRepository {
                 auctionItem.winPrice,
                 auctionItem.startDate,
                 auctionItem.endDate,
-                auctionItem.status))
+                auctionItem.status,
+                auctionItem.imageUrl))
             .from(auctionItem)
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
@@ -225,17 +214,6 @@ public class AuctionItemQueryRepository {
             .fetch();
 
         return PageableExecutionUtils.getPage(auctionItems, pageable, () -> totalSize);
-    }
-
-    public List<AuctionItem> findAllTodayWinningAuctionItems() {
-        return jpaQueryFactory
-            .selectFrom(auctionItem)
-            .where(
-                auctionItem.status.eq(AuctionItemEnum.FINISHED)
-                    .and(auctionItem.endDate.between(
-                        LocalDateTime.now().withHour(0).withMinute(0).withSecond(0),
-                        LocalDateTime.now().withHour(23).withMinute(59).withSecond(59))))
-            .fetch();
     }
 
     public Page<ReadyItemResponseDto> findAllByReady(Pageable pageable) {
@@ -257,7 +235,8 @@ public class AuctionItemQueryRepository {
                 auctionItem.minPrice,
                 auctionItem.winPrice,
                 auctionItem.startDate,
-                auctionItem.endDate))
+                auctionItem.endDate,
+                auctionItem.imageUrl))
             .from(auctionItem)
             .where(auctionItem.status.eq(AuctionItemEnum.READY))
             .offset(pageable.getOffset())
@@ -288,7 +267,8 @@ public class AuctionItemQueryRepository {
                 auctionItem.minPrice,
                 auctionItem.winPrice,
                 auctionItem.startDate,
-                auctionItem.endDate))
+                auctionItem.endDate,
+                auctionItem.imageUrl))
             .from(auctionItem)
             .where(auctionItem.status.eq(AuctionItemEnum.IN_PROGRESS),
                 categoryEq(category))
