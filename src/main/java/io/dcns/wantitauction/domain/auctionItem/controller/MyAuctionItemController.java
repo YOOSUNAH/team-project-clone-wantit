@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -70,12 +69,15 @@ public class MyAuctionItemController {
 
     @PutMapping("/{auctionItemId}")
     public ResponseEntity<ResponseDto<MyAuctionItemsResponseDto>> updateAuctionItem(
-        @Valid @RequestBody UpdateMyItemRequestDto request,
+        @RequestPart("file") MultipartFile file,
+        @Valid @RequestPart("requestBody") UpdateMyItemRequestDto request,
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @PathVariable Long auctionItemId
     ) {
+        String imageUrl = s3Service.uploadFile(file); // Todo : 기존 사진 지우는 과정 추가
+
         MyAuctionItemsResponseDto updateItem = myAuctionItemService.updateAuctionItem(
-            request, auctionItemId, userDetails.getUser().getUserId());
+            request, imageUrl, auctionItemId, userDetails.getUser().getUserId());
         return ResponseDto.of(HttpStatus.OK, updateItem);
     }
 

@@ -54,10 +54,10 @@ public class MyAuctionItemService {
 
     @Transactional
     public MyAuctionItemsResponseDto updateAuctionItem(
-        UpdateMyItemRequestDto request, Long auctionItemId, Long userId
+        UpdateMyItemRequestDto request, String imageUrl, Long auctionItemId, Long userId
     ) {
         AuctionItem auctionItem = getItem(auctionItemId, userId);
-        auctionItem.update(request);
+        auctionItem.update(request, imageUrl);
         return new MyAuctionItemsResponseDto(auctionItem);
     }
 
@@ -65,6 +65,7 @@ public class MyAuctionItemService {
 
         AuctionItem auctionItem = getItem(auctionItemId, userId);
         auctionItemRepository.deleteById(auctionItem.getAuctionItemId());
+        //Todo : S3에서 이미지 지우는 과정
     }
 
     public FinishedItemPageableResponseDto getWinningAuctionItems(Long userId, int page, int size) {

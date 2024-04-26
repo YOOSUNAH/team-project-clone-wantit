@@ -50,7 +50,8 @@ public class AuctionItemQueryRepository {
                 auctionItem.minPrice,
                 auctionItem.winPrice,
                 auctionItem.startDate,
-                auctionItem.endDate))
+                auctionItem.endDate,
+                auctionItem.imageUrl))
             .from(auctionItem)
             .where(auctionItem.winnerId.eq(userId).and(
                 auctionItem.status.eq(AuctionItemEnum.FINISHED)
@@ -74,7 +75,8 @@ public class AuctionItemQueryRepository {
                 auctionItem.winPrice,
                 auctionItem.startDate,
                 auctionItem.endDate,
-                auctionItem.status))
+                auctionItem.status,
+                auctionItem.imageUrl))
             .from(auctionItem)
             .where(auctionItem.status.eq(AuctionItemEnum.FINISHED),
                 auctionItem.auctionItemId.eq(auctionItemId),
@@ -102,7 +104,8 @@ public class AuctionItemQueryRepository {
                 auctionItem.winPrice,
                 auctionItem.startDate,
                 auctionItem.endDate,
-                auctionItem.status))
+                auctionItem.status,
+                auctionItem.imageUrl))
             .from(auctionItem)
             .where(auctionItem.userId.eq(userId))
             .offset(pageable.getOffset())
