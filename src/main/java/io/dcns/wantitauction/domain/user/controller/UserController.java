@@ -8,6 +8,8 @@ import io.dcns.wantitauction.domain.user.dto.UserUpdateResponseDto;
 import io.dcns.wantitauction.domain.user.service.UserService;
 import io.dcns.wantitauction.global.dto.ResponseDto;
 import io.dcns.wantitauction.global.impl.UserDetailsImpl;
+import io.dcns.wantitauction.global.jwt.JwtUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,10 +40,12 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ResponseDto<String>> login(
-        @Valid @RequestBody LoginRequestDto request) {
+    public ResponseEntity<ResponseDto<Void>> login(
+        @Valid @RequestBody LoginRequestDto request, HttpServletResponse response
+    ) {
         String accessToken = userService.login(request);
-        return ResponseDto.of(HttpStatus.OK, accessToken);
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, accessToken);
+        return ResponseDto.of(HttpStatus.OK, null);
     }
 
     @PostMapping("/logout")
