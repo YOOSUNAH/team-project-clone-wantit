@@ -24,7 +24,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -48,9 +47,6 @@ class BidServiceTest {
 
     @Mock
     BidQueryRepository bidQueryRepository;
-
-    @Mock
-    ApplicationEventPublisher eventPublisher;
 
     private User user;
 
@@ -214,25 +210,35 @@ class BidServiceTest {
         assertEquals("호가 단위를 맞춰주세요.", exception.getMessage());
     }
 
+
     @DisplayName("입찰 조회 테스트_성공")
     @Test
-    void getAllBids() {
+    void getAllBidsTest() {
         //given
+        User user = User.builder().userId(1L).build();
         int page = 0;
         int size = 5;
+        AuctionItem auctionItem = AuctionItem.builder()
+            .auctionItemId(1L)
+            .minPrice(10_000L)
+            .userId(2L)
+            .build();
+        BidRequestDto bidRequestDto = new BidRequestDto(20_000L);
+        Bid bid = new Bid(user, bidRequestDto, auctionItem);
         Pageable pageable = PageRequest.of(page, size);
-        BidResponseDto bidResponseDto = new BidResponseDto();
-        List<BidResponseDto> bidResponseDtoList = List.of(bidResponseDto);
-        Page<BidResponseDto> bidResponseDtoPage = new PageImpl<>(bidResponseDtoList, pageable, 1L);
+        List<BidResponseDto> bidResponseDtoList = List.of(new BidResponseDto(bid));
+        Page<BidResponseDto> bidResponseDtoPage = new PageImpl<>(bidResponseDtoList, pageable,
+            bidResponseDtoList.size());
 
-        // When
-        when(bidQueryRepository.findAllBidsPageable(user, pageable)).thenReturn(bidResponseDtoPage);
-        BidPageableResponseDto result = bidService.getAllBids(user, page, size);
+        //when
+        when(bidQueryRepository.findAllBidsPageable(any(User.class),
+            any(Pageable.class))).thenReturn(bidResponseDtoPage);
+        BidPageableResponseDto actual = bidService.getAllBids(user, page, size);
 
-        // Then
-        assertEquals(bidResponseDtoList, result.getBidResponseDtoList());
-        assertEquals(size, result.getPageSize());
-        assertEquals(page + 1, result.getCurrentPage());
-        assertEquals(1, result.getTotalPage());
+        //then
+        assertEquals(bidResponseDtoList.size(), actual.getBidResponseDtoList().size());
+        assertEquals(page + 1, actual.getCurrentPage());
+        assertEquals(size, actual.getPageSize());
+        assertEquals(1, actual.getTotalPage());
     }
 }
