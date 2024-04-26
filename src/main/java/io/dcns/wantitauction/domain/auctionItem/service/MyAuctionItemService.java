@@ -29,8 +29,8 @@ public class MyAuctionItemService {
 
     @Transactional
     @ForbiddenKeyword
-    public void createAuctionItem(CreateProductRequestDto request, User user) {
-        auctionItemRepository.save(new AuctionItem(request, user));
+    public void createAuctionItem(CreateProductRequestDto request, String imageUrl, User user) {
+        auctionItemRepository.save(new AuctionItem(request, imageUrl, user));
     }
 
     public MyAuctionItemPageableResponseDto getAuctionItems(Long userId, int page, int size) {
