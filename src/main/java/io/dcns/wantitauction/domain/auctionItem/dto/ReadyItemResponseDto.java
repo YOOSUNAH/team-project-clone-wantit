@@ -22,6 +22,7 @@ public class ReadyItemResponseDto {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private AuctionItemEnum status = AuctionItemEnum.READY;
+    private String imageUrl;
 
     public ReadyItemResponseDto(AuctionItem auctionItem) {
         this.auctionItemId = auctionItem.getAuctionItemId();
@@ -34,5 +35,6 @@ public class ReadyItemResponseDto {
         this.winPrice = auctionItem.getWinPrice();
         this.startDate = auctionItem.getStartDate();
         this.endDate = auctionItem.getEndDate();
+        this.imageUrl = auctionItem.getImageUrl();
     }
 }

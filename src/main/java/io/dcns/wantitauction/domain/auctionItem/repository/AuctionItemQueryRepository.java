@@ -132,7 +132,8 @@ public class AuctionItemQueryRepository {
                 auctionItem.minPrice,
                 auctionItem.winPrice,
                 auctionItem.startDate,
-                auctionItem.endDate))
+                auctionItem.endDate,
+                auctionItem.imageUrl))
             .from(auctionItem)
             .where(auctionItem.status.eq(AuctionItemEnum.FINISHED))
             .offset(pageable.getOffset())
@@ -156,7 +157,8 @@ public class AuctionItemQueryRepository {
                     auctionItem.minPrice,
                     auctionItem.winPrice,
                     auctionItem.startDate,
-                    auctionItem.endDate))
+                    auctionItem.endDate,
+                    auctionItem.imageUrl))
                 .from(auctionItem)
                 .where(auctionItem.auctionItemId.eq(auctionItemId)
                     .and(auctionItem.status.eq(AuctionItemEnum.FINISHED)))
@@ -217,7 +219,8 @@ public class AuctionItemQueryRepository {
                 auctionItem.winPrice,
                 auctionItem.startDate,
                 auctionItem.endDate,
-                auctionItem.status))
+                auctionItem.status,
+                auctionItem.imageUrl))
             .from(auctionItem)
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
@@ -257,7 +260,8 @@ public class AuctionItemQueryRepository {
                 auctionItem.minPrice,
                 auctionItem.winPrice,
                 auctionItem.startDate,
-                auctionItem.endDate))
+                auctionItem.endDate,
+                auctionItem.imageUrl))
             .from(auctionItem)
             .where(auctionItem.status.eq(AuctionItemEnum.READY))
             .offset(pageable.getOffset())
@@ -288,7 +292,8 @@ public class AuctionItemQueryRepository {
                 auctionItem.minPrice,
                 auctionItem.winPrice,
                 auctionItem.startDate,
-                auctionItem.endDate))
+                auctionItem.endDate,
+                auctionItem.imageUrl))
             .from(auctionItem)
             .where(auctionItem.status.eq(AuctionItemEnum.IN_PROGRESS),
                 categoryEq(category))
