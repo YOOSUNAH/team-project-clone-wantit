@@ -1,5 +1,6 @@
 package io.dcns.wantitauction.domain.bid.controller;
 
+import io.dcns.wantitauction.domain.bid.dto.BidPageableResponseDto;
 import io.dcns.wantitauction.domain.bid.dto.BidRequestDto;
 import io.dcns.wantitauction.domain.bid.dto.BidResponseDto;
 import io.dcns.wantitauction.domain.bid.dto.TopAuctionItemsResponseDto;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -39,12 +41,14 @@ public class BidController {
     }
 
     @GetMapping("/bids")
-    public ResponseEntity<ResponseDto<List<BidResponseDto>>> getAllBids(
-        @AuthenticationPrincipal UserDetailsImpl userDetails
+    public ResponseEntity<ResponseDto<BidPageableResponseDto>> getAllBids(
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @RequestParam("page") int page,
+        @RequestParam("size") int size
     ) {
-        List<BidResponseDto> bidResponseDtoList = bidService
-            .getAllBids(userDetails.getUser());
-        return ResponseDto.of(HttpStatus.OK, bidResponseDtoList);
+        BidPageableResponseDto bidPageableResponseDto = bidService
+            .getAllBids(userDetails.getUser(), page - 1, size);
+        return ResponseDto.of(HttpStatus.OK, bidPageableResponseDto);
     }
 
     @GetMapping("/top3")
