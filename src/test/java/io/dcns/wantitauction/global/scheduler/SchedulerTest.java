@@ -8,7 +8,6 @@ import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItemEnum;
 import io.dcns.wantitauction.domain.auctionItem.repository.AuctionItemQueryRepository;
 import io.dcns.wantitauction.domain.bid.entity.Bid;
 import io.dcns.wantitauction.domain.bid.repository.BidRepository;
-import io.dcns.wantitauction.domain.notification.service.NotificationService;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -28,8 +27,6 @@ class SchedulerTest {
     AuctionItemQueryRepository auctionItemQueryRepository;
     @Mock
     BidRepository bidRepository;
-    @Mock
-    NotificationService notificationService;
 
     @InjectMocks
     Scheduler scheduler;

@@ -13,11 +13,8 @@ import io.dcns.wantitauction.domain.auctionItem.dto.FinishedItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.ReadyItemPageableResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.dto.ReadyItemResponseDto;
 import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItem;
-import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItemEnum;
-import io.dcns.wantitauction.domain.auctionItem.entity.CategoryEnum;
 import io.dcns.wantitauction.domain.auctionItem.repository.AuctionItemQueryRepository;
 import io.dcns.wantitauction.domain.auctionItem.repository.AuctionItemRepository;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -51,11 +48,7 @@ class AuctionItemServiceTest {
         @DisplayName("조회 성공")
         void getAuctionItem() {
             //given
-            AuctionItem testItem = new AuctionItem(
-                1L, 1L, null, "Test Item",
-                "itemDescription", CategoryEnum.WATCH, 100000L, 110000L,
-                LocalDateTime.now(), LocalDateTime.now(), AuctionItemEnum.READY, null
-            );
+            AuctionItem testItem = AuctionItem.builder().auctionItemId(1L).build();
             given(auctionItemRepository.findById(anyLong())).willReturn(Optional.of(testItem));
             //when
             AuctionItemResponseDto responseDto = auctionItemService.getAuctionItem(anyLong());
@@ -90,11 +83,7 @@ class AuctionItemServiceTest {
             int size = 3;
             Long totalSize = 1L;
             Pageable pageable = PageRequest.of(page, size);
-            testItem = new AuctionItem(
-                1L, 1L, null, "Test Item",
-                "itemDescription", CategoryEnum.WATCH, 100000L, 110000L,
-                LocalDateTime.now(), LocalDateTime.now(), AuctionItemEnum.READY, null
-            );
+            AuctionItem testItem = AuctionItem.builder().auctionItemId(1L).build();
             List<AuctionItemResponseDto> auctionItems = List.of(
                 new AuctionItemResponseDto(testItem),
                 new AuctionItemResponseDto(testItem)
@@ -121,11 +110,7 @@ class AuctionItemServiceTest {
         @DisplayName("조회 성공")
         void getFinishedAuctionItem() {
             //given
-            AuctionItem testItem = new AuctionItem(
-                1L, 1L, null, "Test Item",
-                "itemDescription", CategoryEnum.WATCH, 100000L, 110000L,
-                LocalDateTime.now(), LocalDateTime.now(), AuctionItemEnum.FINISHED, null
-            );
+            AuctionItem testItem = AuctionItem.builder().auctionItemId(1L).build();
             given(auctionItemQueryRepository.findByIdAndFinished(anyLong()))
                 .willReturn(Optional.of(new FinishedItemResponseDto(testItem)));
             //when
@@ -161,11 +146,7 @@ class AuctionItemServiceTest {
             int size = 3;
             Long totalSize = 1L;
             Pageable pageable = PageRequest.of(page, size);
-            testItem = new AuctionItem(
-                1L, 1L, null, "Test Item",
-                "itemDescription", CategoryEnum.WATCH, 100000L, 110000L,
-                LocalDateTime.now(), LocalDateTime.now(), AuctionItemEnum.FINISHED, null
-            );
+            AuctionItem testItem = AuctionItem.builder().auctionItemId(1L).build();
             List<FinishedItemResponseDto> auctionItems = List.of(
                 new FinishedItemResponseDto(testItem),
                 new FinishedItemResponseDto(testItem)
@@ -196,11 +177,7 @@ class AuctionItemServiceTest {
             int size = 3;
             Long totalSize = 1L;
             Pageable pageable = PageRequest.of(page, size);
-            testItem = new AuctionItem(
-                1L, 1L, null, "Test Item",
-                "itemDescription", CategoryEnum.WATCH, 100000L, 110000L,
-                LocalDateTime.now(), LocalDateTime.now(), AuctionItemEnum.READY, null
-            );
+            AuctionItem testItem = AuctionItem.builder().auctionItemId(1L).build();
             List<ReadyItemResponseDto> auctionItems = List.of(
                 new ReadyItemResponseDto(testItem),
                 new ReadyItemResponseDto(testItem),
