@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import io.dcns.wantitauction.domain.auctionItem.entity.AuctionItem;
 import io.dcns.wantitauction.domain.auctionItem.service.AuctionItemService;
+import io.dcns.wantitauction.domain.bid.dto.BidPageableResponseDto;
 import io.dcns.wantitauction.domain.bid.dto.BidRequestDto;
 import io.dcns.wantitauction.domain.bid.dto.BidResponseDto;
 import io.dcns.wantitauction.domain.bid.entity.Bid;
@@ -14,6 +15,7 @@ import io.dcns.wantitauction.domain.bid.repository.BidRepository;
 import io.dcns.wantitauction.domain.point.entity.Point;
 import io.dcns.wantitauction.domain.point.service.PointService;
 import io.dcns.wantitauction.domain.user.entity.User;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,6 +24,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @DisplayName("입찰 서비스 유닛 테스트")
 @ExtendWith(MockitoExtension.class)
@@ -204,42 +210,35 @@ class BidServiceTest {
         assertEquals("호가 단위를 맞춰주세요.", exception.getMessage());
     }
 
-//    @DisplayName("입찰 조회 테스트_성공")
-//    @Test
-//    void getAllBids() {
-//        //given
-//        AuctionItem auctionItem = AuctionItem.builder()
-//            .auctionItemId(1L)
-//            .minPrice(10_000L)
-//            .userId(2L)
-//            .build();
-//        BidRequestDto bidRequestDto = new BidRequestDto(20_000L);
-//        Bid bid = new Bid(user, bidRequestDto, auctionItem);
-//        List<BidResponseDto> expectedBids = List.of(new BidResponseDto(bid));
-//
-//        //when
-//        when(bidQueryRepository.findAllBidsPageable(any(User.class))).thenReturn(expectedBids);
-//        List<BidResponseDto> actualBids = bidService.getAllBids(user);
-//
-//        //then
-//        assertEquals(user.getUserId(), actualBids.get(0).getUserId());
-//        assertEquals(auctionItem.getAuctionItemId(), actualBids.get(0).getAuctionItemId());
-//        assertEquals(bidRequestDto.getBidPrice(), actualBids.get(0).getBidPrice());
-//    }
 
-//    @DisplayName("분산락 적용 테스트")
-//    @Test
-//    void distributedLockTest() throws InterruptedException{
-//        int threadCount = 100;
-//        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
-//        CountDownLatch countDownLatch = new CountDownLatch(threadCount);
-//        for(long i = 1; i < 101; i++){
-//            long userId = i;
-//            executorService.submit(()->{
-//                try {
-//                    bidService.createBid()
-//                }
-//            })
-//        }
-//    }
+    @DisplayName("입찰 조회 테스트_성공")
+    @Test
+    void getAllBidsTest() {
+        //given
+        User user = User.builder().userId(1L).build();
+        int page = 0;
+        int size = 5;
+        AuctionItem auctionItem = AuctionItem.builder()
+            .auctionItemId(1L)
+            .minPrice(10_000L)
+            .userId(2L)
+            .build();
+        BidRequestDto bidRequestDto = new BidRequestDto(20_000L);
+        Bid bid = new Bid(user, bidRequestDto, auctionItem);
+        Pageable pageable = PageRequest.of(page, size);
+        List<BidResponseDto> bidResponseDtoList = List.of(new BidResponseDto(bid));
+        Page<BidResponseDto> bidResponseDtoPage = new PageImpl<>(bidResponseDtoList, pageable,
+            bidResponseDtoList.size());
+
+        //when
+        when(bidQueryRepository.findAllBidsPageable(any(User.class),
+            any(Pageable.class))).thenReturn(bidResponseDtoPage);
+        BidPageableResponseDto actual = bidService.getAllBids(user, page, size);
+
+        //then
+        assertEquals(bidResponseDtoList.size(), actual.getBidResponseDtoList().size());
+        assertEquals(page + 1, actual.getCurrentPage());
+        assertEquals(size, actual.getPageSize());
+        assertEquals(1, actual.getTotalPage());
+    }
 }
