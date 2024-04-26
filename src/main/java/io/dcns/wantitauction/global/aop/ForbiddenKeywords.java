@@ -5,6 +5,7 @@ public enum ForbiddenKeywords {
     TOBACCO("담배", "tobacco"),
     DRUG("마약", "drug"),
     GUN("총", "gun");
+
     private final String korean;
     private final String english;
 
