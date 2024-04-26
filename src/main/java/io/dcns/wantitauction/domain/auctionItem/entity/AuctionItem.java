@@ -93,13 +93,14 @@ public class AuctionItem extends Timestamped {
         this.imageUrl = imageUrl;
     }
 
-    public void update(UpdateMyItemRequestDto request) {
+    public void update(UpdateMyItemRequestDto request, String imageUrl) {
         this.itemName = request.getItemName();
         this.itemDescription = request.getItemDescription();
         this.category = CategoryEnum.valueOf(request.getCategory());
         this.minPrice = request.getMinPrice();
         this.startDate = request.getStartDate();
         this.endDate = request.getEndDate();
+        this.imageUrl = imageUrl;
     }
 
     public void finishAuction(Long winnerId, Long winPrice) {
