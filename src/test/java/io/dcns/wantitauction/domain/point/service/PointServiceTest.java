@@ -14,6 +14,7 @@ import io.dcns.wantitauction.domain.point.repository.PointRepository;
 import io.dcns.wantitauction.domain.pointLog.entity.PointLog;
 import io.dcns.wantitauction.domain.pointLog.repository.PointLogRepository;
 import io.dcns.wantitauction.domain.user.entity.User;
+import io.dcns.wantitauction.domain.user.service.UserService;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -35,6 +36,9 @@ class PointServiceTest {
 
     @Mock
     PointLogRepository pointLogRepository;
+
+    @Mock
+    UserService userService;
 
     private User user;
 
@@ -111,9 +115,10 @@ class PointServiceTest {
         Point point = new Point(user);
         point.changePoint(2000L);
         PointRequestDto pointRequestDto = new PointRequestDto(-1000L, "출금");
-        given(pointRepository.findByUserId(user.getUserId())).willReturn(Optional.of(point));
+        given(pointRepository.findByUserId(any(Long.class))).willReturn(Optional.of(point));
         given(pointLogRepository.save(any(PointLog.class))).willAnswer(
             invocation -> invocation.<PointLog>getArgument(0));
+        given(userService.findByUserId(any(Long.class))).willReturn(user);
 
         // when
         PointChangedResponseDto pointChangedResponseDto = pointService.withdrawPoint(user,
@@ -149,6 +154,7 @@ class PointServiceTest {
         Point point = new Point(user);
         point.changePoint(2000L);
         given(pointRepository.findByUserId(user.getUserId())).willReturn(Optional.of(point));
+        given(userService.findByUserId(any(Long.class))).willReturn(user);
 
         // when
         PointResponseDto pointResponseDto = pointService.getPoint(user);
