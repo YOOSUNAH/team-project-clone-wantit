@@ -1,4 +1,4 @@
-package io.dcns.wantitauction.global.aws.s3;
+package io.dcns.wantitauction.global.config;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -17,7 +17,7 @@ public class S3Config {
     @Value("${cloud.aws.credentials.secretKey}")
     private String secretKey;
 
-    @Value("{cloud.aws.region.static}")
+    @Value("${cloud.aws.region.static}")
     private String region;
 
     @Bean
