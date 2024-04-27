@@ -57,6 +57,7 @@ public class BidQueryRepository {
                 bid.auctionItem.auctionItemId,
                 bid.auctionItem.itemName,
                 bid.auctionItem.itemDescription,
+                bid.auctionItem.imageUrl,
                 bid.auctionItem.startDate,
                 bid.auctionItem.endDate
             ))

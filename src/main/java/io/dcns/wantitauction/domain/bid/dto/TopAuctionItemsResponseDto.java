@@ -13,6 +13,7 @@ public class TopAuctionItemsResponseDto {
     private Long auctionItemId;
     private String itemName;
     private String itemDescription;
+    private String imageUrl;
     private CategoryEnum category;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
@@ -21,6 +22,7 @@ public class TopAuctionItemsResponseDto {
         this.auctionItemId = auctionItem.getAuctionItemId();
         this.itemName = auctionItem.getItemName();
         this.itemDescription = auctionItem.getItemDescription();
+        this.imageUrl = auctionItem.getImageUrl();
         this.category = auctionItem.getCategory();
         this.startDate = auctionItem.getStartDate();
         this.endDate = auctionItem.getEndDate();
