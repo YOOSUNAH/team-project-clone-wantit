@@ -88,6 +88,15 @@ public class BidService {
         return bidQueryRepository.findTop3AuctionItemsByBid();
     }
 
+    public TopBidResponseDto findTopBid(Long auctionItemId) {
+        AuctionItem auctionItem = auctionItemService.findById(auctionItemId);
+        Bid topBid = bidRepository.findTopByAuctionItemOrderByBidPriceDesc(auctionItem);
+        if (topBid == null) {
+            return new TopBidResponseDto(null, auctionItemId, auctionItem.getMinPrice());
+        }
+        return new TopBidResponseDto(topBid);
+    }
+
     private void checkUser(AuctionItem auctionItem, User user) {
         if (auctionItem.getUserId().equals(user.getUserId())) {
             throw new IllegalArgumentException("본인이 올린 상품입니다.");
@@ -138,14 +147,5 @@ public class BidService {
         } else {
             throw new IllegalArgumentException("정상적인 가격이 아닙니다.");
         }
-    }
-
-    public TopBidResponseDto findTopBid(Long auctionItemId) {
-        AuctionItem auctionItem = auctionItemService.findById(auctionItemId);
-        Bid topBid = bidRepository.findTopByAuctionItemOrderByBidPriceDesc(auctionItem);
-        if (topBid == null) {
-            return new TopBidResponseDto(null, auctionItemId, auctionItem.getMinPrice());
-        }
-        return new TopBidResponseDto(topBid);
     }
 }
