@@ -14,13 +14,15 @@ public class LikeAuctionItemResponseDto {
     private String itemDescription;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
+    private String imageUrl;
 
     public LikeAuctionItemResponseDto(
-        Long auctionItemId, String itemName, String itemDescription, LocalDateTime startDate, LocalDateTime endDate) {
+        Long auctionItemId, String itemName, String itemDescription, LocalDateTime startDate, LocalDateTime endDate, String imageUrl) {
        this.auctionItemId = auctionItemId;
         this.itemName = itemName;
         this.itemDescription = itemDescription;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.imageUrl = imageUrl;
     }
 }

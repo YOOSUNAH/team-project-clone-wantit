@@ -42,12 +42,4 @@ public class LikeController {
             userDetails.getUser().getUserId());
         return ResponseDto.of(HttpStatus.OK, likeResponseDtolist);
     }
-
-    @GetMapping("/dislikes")
-    public ResponseEntity<ResponseDto<List<LikeAuctionItemResponseDto>>> getDislikeAuctionItem(
-        @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        List<LikeAuctionItemResponseDto> likeResponseDtolist = likeService.getDislikedAuctionItem(
-            userDetails.getUser().getUserId());
-        return ResponseDto.of(HttpStatus.OK, likeResponseDtolist);
-    }
 }
