@@ -50,20 +50,6 @@ public class LikeService {
             .toList();
     }
 
-    public List<LikeAuctionItemResponseDto> getDislikedAuctionItem(Long userId) {
-        List<LikeResponseDto> dislikedItems = likeQueryRepository.findAllDisLikedByUserId(userId);
-
-        List<Long> auctionItemIds = dislikedItems.stream()
-            .map(LikeResponseDto::getAuctionItemId)
-            .toList();
-
-        List<AuctionItem> auctionItems = auctionItemRepository.findAllById(auctionItemIds);
-
-        return auctionItems.stream()
-            .map(this::mapToDto)
-            .toList();
-    }
-
     private void validateAuctionItem(Long auctionItemId) {
         if (!auctionItemRepository.existsByAuctionItemId(auctionItemId)) {
             throw new NoSuchElementException("해당 auctionItemId이 존재하지 않습니다.");
@@ -80,7 +66,8 @@ public class LikeService {
             auctionItem.getItemName(),
             auctionItem.getItemDescription(),
             auctionItem.getStartDate(),
-            auctionItem.getEndDate()
+            auctionItem.getEndDate(),
+            auctionItem.getImageUrl()
         );
     }
 }
