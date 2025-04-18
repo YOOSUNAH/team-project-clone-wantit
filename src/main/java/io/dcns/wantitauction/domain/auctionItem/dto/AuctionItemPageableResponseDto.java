@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
 public class AuctionItemPageableResponseDto {
-
     private final List<AuctionItemResponseDto> responseDtoList;
     private final int pageSize;
     private final int currentPage;

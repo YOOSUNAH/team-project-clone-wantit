@@ -13,14 +13,11 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RequiredArgsConstructor
 @RequestMapping("/v1/live-bids")
 public class LiveBidController {
-
     private final LiveBidService liveBidService;
 
     @GetMapping(value = "/auction-items/{auctionItemId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<SseEmitter> subscribeLiveBid(
-        @PathVariable Long auctionItemId
-    ) {
-        return ResponseEntity.ok(
-            liveBidService.subscribeLiveBid(auctionItemId));
+            @PathVariable Long auctionItemId) {
+        return ResponseEntity.ok(liveBidService.subscribeLiveBid(auctionItemId));
     }
 }

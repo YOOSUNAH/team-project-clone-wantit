@@ -1,4 +1,4 @@
-package io.dcns.wantitauction.domain.user.viewController;
+package io.dcns.wantitauction.domain.user.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.dcns.wantitauction.domain.user.dto.SignupRequestDto;
@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @AllArgsConstructor
 public class KaKaoViewController {
-
     private final UserService userService;
     private final KakaoService kaoKaoService;
 
@@ -50,7 +49,6 @@ public class KaKaoViewController {
         throws JsonProcessingException {
         log.info("controller code : " + code);
         String token = kaoKaoService.kakaoLogin(code);
-
         Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, token.substring(7));
         cookie.setPath("/");
         response.addCookie(cookie);

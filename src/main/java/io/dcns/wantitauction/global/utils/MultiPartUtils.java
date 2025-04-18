@@ -1,11 +1,11 @@
 package io.dcns.wantitauction.global.utils;
 
 import java.util.UUID;
+
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 public class MultiPartUtils {
-
     private static final String BASE_DIR = "images";
 
     public static String getLocalHomeDirectory() {
@@ -26,8 +26,6 @@ public class MultiPartUtils {
     public static String createPath(MultipartFile file) {
         final String fieldId = MultiPartUtils.createFieldId();
         final String format = MultiPartUtils.getFormat(file.getContentType());
-
         return String.format("%s/%s.%s", BASE_DIR, fieldId, format);
     }
-
 }

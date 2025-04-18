@@ -1,6 +1,5 @@
 package io.dcns.wantitauction.global.impl;
 
-
 import io.dcns.wantitauction.domain.user.entity.User;
 import io.dcns.wantitauction.domain.user.entity.UserRoleEnum;
 import java.util.ArrayList;
@@ -10,7 +9,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public class UserDetailsImpl implements UserDetails {
-
     private final User user;
     public UserDetailsImpl(User user) {
         this.user = user;

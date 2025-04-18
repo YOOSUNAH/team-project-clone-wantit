@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public class TopBidChangeEvent {
-
     private final Long auctionItemId;
     private final Long bidPrice;
 }

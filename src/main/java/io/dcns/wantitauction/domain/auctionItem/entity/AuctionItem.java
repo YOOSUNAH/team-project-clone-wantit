@@ -12,7 +12,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+
 import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,7 +31,6 @@ import org.hibernate.annotations.SQLRestriction;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AuctionItem extends Timestamped {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long auctionItemId;
@@ -72,7 +73,9 @@ public class AuctionItem extends Timestamped {
     @Column
     private String imageUrl;
 
-    public AuctionItem(CreateProductRequestDto request, User user) {
+    public AuctionItem(
+            CreateProductRequestDto request,
+            User user) {
         this.userId = user.getUserId();
         this.itemName = request.getItemName();
         this.itemDescription = request.getItemDescription();
@@ -82,7 +85,10 @@ public class AuctionItem extends Timestamped {
         this.endDate = request.getEndDate();
     }
 
-    public AuctionItem(CreateProductRequestDto request, String imageUrl, User user) {
+    public AuctionItem(
+            CreateProductRequestDto request,
+            String imageUrl,
+            User user) {
         this.userId = user.getUserId();
         this.itemName = request.getItemName();
         this.itemDescription = request.getItemDescription();
@@ -93,7 +99,9 @@ public class AuctionItem extends Timestamped {
         this.imageUrl = imageUrl;
     }
 
-    public void update(UpdateMyItemRequestDto request, String imageUrl) {
+    public void update(
+            UpdateMyItemRequestDto request,
+            String imageUrl) {
         this.itemName = request.getItemName();
         this.itemDescription = request.getItemDescription();
         this.category = CategoryEnum.valueOf(request.getCategory());
@@ -103,7 +111,9 @@ public class AuctionItem extends Timestamped {
         this.imageUrl = imageUrl;
     }
 
-    public void finishAuction(Long winnerId, Long winPrice) {
+    public void finishAuction(
+            Long winnerId,
+            Long winPrice) {
         this.winPrice = winPrice;
         this.status = AuctionItemEnum.FINISHED;
         this.winnerId = winnerId;

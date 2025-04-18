@@ -8,7 +8,9 @@ import io.dcns.wantitauction.global.redis.RedisUtil;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMessage.RecipientType;
+
 import java.util.Random;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
@@ -19,7 +21,6 @@ import org.thymeleaf.TemplateEngine;
 @Service
 @RequiredArgsConstructor
 public class EmailService {
-
     private final JavaMailSender emailSender;
     private final RedisUtil redisUtil;
     private final UserRepository userRepository;
@@ -34,12 +35,12 @@ public class EmailService {
         Random random = new Random();
 
         return random
-            .ints(leftLimit, rightLimit + 1)
-            .filter(i -> (i <= 57 || i >= 65) && (i <= 90
-                || i >= 97))  // 정수 중 숫자(48-57)와 대문자 알파벳(65-90), 소문자 알파벳(97-122)만을 선택하기 위한 필터
-            .limit(targetStringLength)  // max size
-            .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-            .toString();
+                .ints(leftLimit, rightLimit + 1)
+                .filter(i -> (i <= 57 || i >= 65) && (i <= 90
+                        || i >= 97))  // 정수 중 숫자(48-57)와 대문자 알파벳(65-90), 소문자 알파벳(97-122)만을 선택하기 위한 필터
+                .limit(targetStringLength)  // max size
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
     }
 
     // 메일 전송
@@ -55,7 +56,7 @@ public class EmailService {
     @EventListener(classes = {WinningBidEvent.class})
     private void sendEmailToWinner(WinningBidEvent winningBidEvent) throws MessagingException {
         User user = userRepository.findByUserId(winningBidEvent.getWinnerId()).orElseThrow(
-            () -> new UserNotFoundException("존재하지 않는 유저입니다.")
+                () -> new UserNotFoundException("존재하지 않는 유저입니다.")
         );
         StringBuffer buffer = new StringBuffer();
         buffer.append("경매 상품 : ").append(winningBidEvent.getItemName()).append("\n");
@@ -82,7 +83,9 @@ public class EmailService {
         return message;
     }
 
-    public Boolean verifyEmailCode(String email, String code) {
+    public Boolean verifyEmailCode(
+            String email,
+            String code) {
         String codeFoundByEmail = redisUtil.getData(email);
         if (codeFoundByEmail == null) {
             return false;

@@ -8,7 +8,6 @@ import lombok.Getter;
 @Getter
 @Builder
 public class CreateProductRequestDto {
-
     private String itemName;
     private String itemDescription;
     private Long minPrice;

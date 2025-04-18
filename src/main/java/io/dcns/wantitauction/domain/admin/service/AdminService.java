@@ -14,11 +14,12 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AdminService {
-
     private final UserQueryRepository userQueryRepository;
 
-    public UserPageableResponseDto getUsers(UserDetailsImpl userDetails, int page, int size) {
-
+    public UserPageableResponseDto getUsers(
+            UserDetailsImpl userDetails,
+            int page,
+            int size) {
         UserRoleEnum role = userDetails.getUser().getRole();
         if (role != UserRoleEnum.ADMIN) {
             throw new IllegalArgumentException("관리자만 접근 가능합니다.");
@@ -29,7 +30,7 @@ public class AdminService {
         int totalPage = responseDtoPage.getTotalPages();
 
         return new UserPageableResponseDto(
-            responseDtoPage.getContent(), size, page + 1, totalPage);
+                responseDtoPage.getContent(), size, page + 1, totalPage);
     }
 }
 

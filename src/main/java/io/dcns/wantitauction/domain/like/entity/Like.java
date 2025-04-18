@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name = "likes")
 public class Like {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long likeId;
@@ -29,7 +28,9 @@ public class Like {
     @Column(nullable = false)
     private boolean liked;
 
-    public Like(User user, Long auctionItemId) {
+    public Like(
+            User user,
+            Long auctionItemId) {
         this.userId = user.getUserId();
         this.auctionItemId = auctionItemId;
         this.liked = true;  // 처음에는 true (좋아요)로 저장한다.

@@ -15,18 +15,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class PointLogController {
-
     private final PointLogService pointLogService;
 
     @GetMapping("/v1/points/log")
     public ResponseEntity<ResponseDto<PointLogPageableResponseDto>> getPointLogs(
-        @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @RequestParam("page") int page,
-        @RequestParam("size") int size,
-        @RequestParam(value = "status", required = false) String status
-    ) {
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam("page") int page,
+            @RequestParam("size") int size,
+            @RequestParam(value = "status", required = false) String status) {
         PointLogPageableResponseDto pointLogPageableResponseDto = pointLogService
-            .getPointLogs(userDetails.getUser(), page - 1, size, status);
+                .getPointLogs(userDetails.getUser(), page - 1, size, status);
 
         return ResponseDto.of(HttpStatus.OK, pointLogPageableResponseDto);
     }

@@ -20,13 +20,14 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class PointService {
-
     private final PointRepository pointRepository;
     private final PointLogRepository pointLogRepository;
     private final UserService userService;
 
     @Transactional
-    public PointChangedResponseDto putPoint(User user, PointRequestDto pointRequestDto) {
+    public PointChangedResponseDto putPoint(
+            User user,
+            PointRequestDto pointRequestDto) {
         PointLogStatus pointLogStatus = PointLogStatus.CHARGE;
         if (!checkSymbol(pointRequestDto)) {
             throw new IllegalArgumentException("포인트를 0 이상의 값으로 입력해주세요.");
@@ -49,7 +50,9 @@ public class PointService {
     }
 
     @Transactional
-    public PointChangedResponseDto withdrawPoint(User user, PointRequestDto pointRequestDto) {
+    public PointChangedResponseDto withdrawPoint(
+            User user,
+            PointRequestDto pointRequestDto) {
         PointLogStatus pointLogStatus = PointLogStatus.WITHDRAWAL;
         if (checkSymbol(pointRequestDto)) {
             throw new IllegalArgumentException("포인트를 0 이하의 값으로 입력해주세요.");
@@ -68,22 +71,28 @@ public class PointService {
         return new PointResponseDto(point, user1);
     }
 
-    public void returnBidPoint(Long userId, Long availablePoint) {
+    public void returnBidPoint(
+            Long userId,
+            Long availablePoint) {
         Point point = findPoint(userId);
         point.returnBidPoint(availablePoint);
     }
 
-    public void subtractPoint(Long userId, Long availablePoint) {
+    public void subtractPoint(
+            Long userId,
+            Long availablePoint) {
         Point point = findPoint(userId);
         point.subtractPoint(availablePoint);
     }
 
     public Point findPoint(Long userId) {
         return pointRepository.findByUserId(userId).orElse(
-            new Point(userService.findByUserId(userId)));
+                new Point(userService.findByUserId(userId)));
     }
 
-    private void checkPoint(Point point, PointRequestDto pointRequestDto) {
+    private void checkPoint(
+            Point point,
+            PointRequestDto pointRequestDto) {
         if (point.getAvailablePoint() < Math.abs(pointRequestDto.getChangedPoint())) {
             throw new IllegalArgumentException("잔여 가용 포인트가 부족합니다.");
         }
@@ -107,12 +116,12 @@ public class PointService {
         Long auctionItemId = winningBidEvent.getAuctionItemId();
 
         Point point = pointRepository.findByUserId(winnerId).orElseThrow(
-            () -> new IllegalArgumentException("포인트가 존재하지 않습니다.")
+                () -> new IllegalArgumentException("포인트가 존재하지 않습니다.")
         );
         point.winBidSettlement(winPrice);
 
         PointLog pointLog = new PointLog((-1) * winPrice, PointLogStatus.SUCCESSFUL_BID, "낙찰",
-            point, auctionItemId);
+                point, auctionItemId);
         pointLogRepository.save(pointLog);
     }
 }

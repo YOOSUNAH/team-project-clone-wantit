@@ -1,6 +1,7 @@
 package io.dcns.wantitauction.global.redis;
 
 import java.time.Duration;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -9,7 +10,6 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class RedisUtil {
-
     // redis client
     private final StringRedisTemplate template;  // String으로만 값을 주고 받기때문에 의존성 주입해서 활용
 
@@ -22,7 +22,9 @@ public class RedisUtil {
         return Boolean.TRUE.equals(template.hasKey(key));
     }
 
-    public void setDataExpire(String key, String value, long duration) { // key, value 저장 + 만료시간 설정
+    public void setDataExpire(String key,
+                              String value,
+                              long duration) { // key, value 저장 + 만료시간 설정
         ValueOperations<String, String> valueOperations = template.opsForValue();
         Duration expireDuration = Duration.ofSeconds(duration);
         valueOperations.set(key, value, expireDuration);

@@ -10,8 +10,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,7 +30,6 @@ import org.hibernate.annotations.SQLRestriction;
 @SQLDelete(sql = "update users set deleted_at = NOW() where user_id = ?")
 @SQLRestriction(value = "deleted_at is NULL")
 public class User extends Timestamped implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
@@ -60,8 +61,14 @@ public class User extends Timestamped implements Serializable {
     private UserRoleEnum role;
 
     @Builder
-    public User(String email, String password, String username, String nickname,
-        String phoneNumber, String address, UserRoleEnum role) {
+    public User
+            (String email,
+             String password,
+             String username,
+             String nickname,
+             String phoneNumber,
+             String address,
+             UserRoleEnum role) {
         this.email = email;
         this.password = password;
         this.username = username;
@@ -71,7 +78,10 @@ public class User extends Timestamped implements Serializable {
         this.role = role;
     }
 
-    public void update(String nickname, String phoneNumber, String address) {
+    public void update(
+            String nickname,
+            String phoneNumber,
+            String address) {
         this.nickname = nickname;
         this.phoneNumber = phoneNumber;
         this.address = address;
@@ -84,13 +94,20 @@ public class User extends Timestamped implements Serializable {
         this.password = password;
     }
 
-    public void setForUserDetails(Long userId, UserRoleEnum role) {
+    public void setForUserDetails(
+            Long userId,
+            UserRoleEnum role) {
         this.userId = userId;
         this.role = role;
     }
 
-    public User(String email, String password, String username, String nickname, UserRoleEnum role,
-        Long kakaoId) {
+    public User(
+            String email,
+            String password,
+            String username,
+            String nickname,
+            UserRoleEnum role,
+            Long kakaoId) {
         this.email = email;
         this.password = password;
         this.username = username;

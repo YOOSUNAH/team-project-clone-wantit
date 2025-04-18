@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -37,7 +36,7 @@ public class UserService {
             throw new EntityExistsException("해당 이메일이 존재합니다.");
         }
         if (requestDto.getNickname() != null && userRepository.existsByNickname(
-            requestDto.getNickname())) {
+                requestDto.getNickname())) {
             throw new EntityExistsException("해당 Nickname이 존재합니다.");
         }
         String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
@@ -51,7 +50,7 @@ public class UserService {
     @Transactional
     public String login(LoginRequestDto requestDto) {
         User user = userRepository.findByEmail(requestDto.getEmail()).orElseThrow(
-            () -> new UserNotFoundException("해당 유저가 존재하지 않습니다."));
+                () -> new UserNotFoundException("해당 유저가 존재하지 않습니다."));
         if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
             throw new NotMatchException("비밀번호가 일치하지 않습니다.");
         }
@@ -61,7 +60,6 @@ public class UserService {
         return jwtUtil.generateAccessAndRefreshToken(userId, role);
     }
 
-
     @Transactional
     public void logout(Long userId) {
         String refreshToken = refreshTokenRepository.findByUserId(userId);
@@ -69,25 +67,29 @@ public class UserService {
     }
 
     @Transactional
-    public UserUpdateResponseDto updateUser(UserDetailsImpl userDetails, UserRequestDto requestDto) {
+    public UserUpdateResponseDto updateUser(
+            UserDetailsImpl userDetails,
+            UserRequestDto requestDto) {
         User user = validateUser(userDetails);
         validateNicknameDuplicate(requestDto.getNickname());
 
         user.update(requestDto.getNickname(), requestDto.getPhoneNumber(), requestDto.getAddress());
         return new UserUpdateResponseDto(requestDto.getNickname(), requestDto.getPhoneNumber(),
-            requestDto.getAddress());
+                requestDto.getAddress());
     }
 
     @Transactional
-    public void updatePassword(UserDetailsImpl userDetails, PasswordRequestDto requestDto) {
+    public void updatePassword(
+            UserDetailsImpl userDetails,
+            PasswordRequestDto requestDto) {
         User user = validateUser(userDetails);
 
         if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
             throw new NotMatchException("비밀번호가 일치하지 않습니다.");
         }
         checkChangePasswordEquals(
-            requestDto.getChangePassword(),
-            requestDto.getCheckPassword());
+                requestDto.getChangePassword(),
+                requestDto.getCheckPassword());
 
         user.updatePassword(passwordEncoder.encode(requestDto.getChangePassword()));
     }
@@ -95,14 +97,14 @@ public class UserService {
     @Transactional
     public void deleteUser(Long userId) {
         User user = userRepository.findByUserId(userId)
-            .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 사용자입니다."));
         userRepository.delete(user);
     }
 
     private User validateUser(UserDetailsImpl userDetails) {
         Long userId = userDetails.getUser().getUserId();
         return userRepository.findByUserId(userId)
-            .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 사용자입니다."));
     }
 
     private void validateNicknameDuplicate(String nickname) {
@@ -111,7 +113,9 @@ public class UserService {
         }
     }
 
-    private void checkChangePasswordEquals(String changePassword, String rechangePassword) {
+    private void checkChangePasswordEquals(
+            String changePassword,
+            String rechangePassword) {
         if (!changePassword.equals(rechangePassword)) {
             throw new NotMatchException("바꿀 비밀번호가 일치하지 않습니다.");
         }
@@ -120,12 +124,12 @@ public class UserService {
     public UserUpdateResponseDto getUser(UserDetailsImpl userDetails) {
         Long userId = userDetails.getUser().getUserId();
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new IllegalArgumentException("선택한 유저가 존재하지 않습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("선택한 유저가 존재하지 않습니다."));
         return new UserUpdateResponseDto(user.getNickname(), user.getPhoneNumber(), user.getAddress());
     }
 
     public User findByUserId(Long userId) {
         return userRepository.findByUserId(userId).orElseThrow(
-            () -> new EntityNotFoundException("존재하지 않는 사용자입니다."));
+                () -> new EntityNotFoundException("존재하지 않는 사용자입니다."));
     }
 }

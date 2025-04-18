@@ -15,12 +15,14 @@ import io.dcns.wantitauction.domain.point.service.PointService;
 import io.dcns.wantitauction.domain.user.entity.User;
 import io.dcns.wantitauction.global.aop.Lock.Lockable;
 import io.dcns.wantitauction.global.event.TopBidChangeEvent;
+
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -33,7 +35,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class BidService {
-
     private final PointService pointService;
     private final AuctionItemService auctionItemService;
     private final BidRepository bidRepository;
@@ -42,8 +43,10 @@ public class BidService {
 
     @Transactional
     @Lockable(value = "createBid", waitTime = 3000, leaseTime = 1000)
-    public BidResponseDto createBid(User user, Long auctionItemId, BidRequestDto bidRequestDto) {
-
+    public BidResponseDto createBid(
+            User user,
+            Long auctionItemId,
+            BidRequestDto bidRequestDto) {
         Point point = pointService.findPoint(user.getUserId());
         AuctionItem auctionItem = auctionItemService.findById(auctionItemId);
         checkUser(auctionItem, user);
@@ -57,7 +60,7 @@ public class BidService {
             pointService.subtractPoint(user.getUserId(), bidRequestDto.getBidPrice());
             bidRepository.save(newBid);
             eventPublisher.publishEvent(new TopBidChangeEvent(
-                auctionItem.getAuctionItemId(), newBid.getBidPrice()
+                    auctionItem.getAuctionItemId(), newBid.getBidPrice()
             ));
             return new BidResponseDto(newBid);
         } else {
@@ -68,19 +71,22 @@ public class BidService {
             pointService.subtractPoint(user.getUserId(), bidRequestDto.getBidPrice());
             bidRepository.save(newBid);
             eventPublisher.publishEvent(new TopBidChangeEvent(
-                auctionItem.getAuctionItemId(), newBid.getBidPrice()
+                    auctionItem.getAuctionItemId(), newBid.getBidPrice()
             ));
             return new BidResponseDto(newBid);
         }
     }
 
-    public BidPageableResponseDto getAllBids(User user, int page, int size) {
+    public BidPageableResponseDto getAllBids(
+            User user,
+            int page,
+            int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<BidResponseDto> responseDtoPage = bidQueryRepository
-            .findAllBidsPageable(user, pageable);
+                .findAllBidsPageable(user, pageable);
         int totalPage = responseDtoPage.getTotalPages();
         return new BidPageableResponseDto(
-            responseDtoPage.getContent(), size, page + 1, totalPage
+                responseDtoPage.getContent(), size, page + 1, totalPage
         );
     }
 
@@ -97,25 +103,33 @@ public class BidService {
         return new TopBidResponseDto(topBid);
     }
 
-    private void checkUser(AuctionItem auctionItem, User user) {
+    private void checkUser(
+            AuctionItem auctionItem,
+            User user) {
         if (auctionItem.getUserId().equals(user.getUserId())) {
             throw new IllegalArgumentException("본인이 올린 상품입니다.");
         }
     }
 
-    private void checkAvailablePoint(Point point, BidRequestDto bidRequestDto) {
+    private void checkAvailablePoint(
+            Point point,
+            BidRequestDto bidRequestDto) {
         if (point.getAvailablePoint() < bidRequestDto.getBidPrice()) {
             throw new IllegalArgumentException("포인트가 부족합니다.");
         }
     }
 
-    private void checkMaxPrice(BidRequestDto bidRequestDto, Long maxPrice) {
+    private void checkMaxPrice(
+            BidRequestDto bidRequestDto,
+            Long maxPrice) {
         if (maxPrice >= bidRequestDto.getBidPrice()) {
             throw new IllegalArgumentException("최고 입찰가 보다 높아야 합니다.");
         }
     }
 
-    private void checkAskingPoint(BidRequestDto bidRequestDto, Long currentPrice) {
+    private void checkAskingPoint(
+            BidRequestDto bidRequestDto,
+            Long currentPrice) {
         Long askingPoint = askingPoint(currentPrice);
         if (!(Math.abs(bidRequestDto.getBidPrice() - currentPrice) % askingPoint == 0)) {
             throw new IllegalArgumentException("호가 단위를 맞춰주세요.");
@@ -124,7 +138,6 @@ public class BidService {
 
     private Long askingPoint(Long currentPrice) {
         List<Entry<Long, Long>> priceRangeList = new ArrayList<>();
-
         priceRangeList.add(new AbstractMap.SimpleEntry<>(500_000L, 10_000L));
         priceRangeList.add(new AbstractMap.SimpleEntry<>(1_000_000L, 50_000L));
         priceRangeList.add(new AbstractMap.SimpleEntry<>(3_000_000L, 100_000L));
@@ -136,9 +149,9 @@ public class BidService {
         priceRangeList.add(new AbstractMap.SimpleEntry<>(200_000_000L, 3_000_000L));
 
         Optional<Long> askingPoint = priceRangeList.stream()
-            .filter(entry -> currentPrice < entry.getKey())
-            .map(Map.Entry::getValue)
-            .findFirst();
+                .filter(entry -> currentPrice < entry.getKey())
+                .map(Map.Entry::getValue)
+                .findFirst();
 
         if (askingPoint.isPresent()) {
             return askingPoint.get();

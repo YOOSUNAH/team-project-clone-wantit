@@ -8,12 +8,11 @@ import org.springframework.http.ResponseEntity;
 @Getter
 @AllArgsConstructor
 public class ExceptionDto {
-
     private String message;
 
     public static ResponseEntity<ExceptionDto> of(
-        HttpStatus status, String message
-    ) {
+            HttpStatus status,
+            String message) {
         return ResponseEntity.status(status).body(new ExceptionDto(message));
     }
 }

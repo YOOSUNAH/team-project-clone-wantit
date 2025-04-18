@@ -11,9 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 @EnableScheduling
 @SpringBootApplication
 public class WantItAuctionApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(WantItAuctionApplication.class, args);
     }
-
 }

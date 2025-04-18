@@ -8,7 +8,9 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import io.dcns.wantitauction.global.utils.MultiPartUtils;
+
 import java.io.File;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -18,17 +20,17 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @Slf4j
 public class S3Repository {
-
     private final AmazonS3 amazonS3;
     private final String bucketName = "wantit-bucket";
 
-    public String store(String fullPath, MultipartFile file) {
+    public String store(String fullPath,
+                        MultipartFile file) {
         File localFile = new File(MultiPartUtils.getLocalHomeDirectory(), fullPath);
 
         try {
             file.transferTo(localFile);
             amazonS3.putObject(new PutObjectRequest(bucketName, fullPath, localFile)
-                .withCannedAcl(CannedAccessControlList.PublicRead));
+                    .withCannedAcl(CannedAccessControlList.PublicRead));
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new IllegalArgumentException("Failed to store file");
@@ -51,7 +53,7 @@ public class S3Repository {
     public void delete(String fileUrl) {
         try {
             String key = fileUrl.replace("https://wantit-bucket.s3.ap-northeast-2.amazonaws.com/",
-                "");
+                    "");
             try {
                 amazonS3.deleteObject(new DeleteObjectRequest(bucketName, key));
             } catch (AmazonServiceException e) {

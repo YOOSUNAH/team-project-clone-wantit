@@ -7,7 +7,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class FinishedItemPageableResponseDto {
-
     private final List<FinishedItemResponseDto> responseDtoList;
     private final int pageSize;
     private final int currentPage;

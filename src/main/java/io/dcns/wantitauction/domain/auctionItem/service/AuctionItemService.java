@@ -21,77 +21,76 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuctionItemService {
-
     private final AuctionItemRepository auctionItemRepository;
     private final AuctionItemQueryRepository auctionItemQueryRepository;
 
     public AuctionItemResponseDto getAuctionItem(Long auctionItemId) {
         AuctionItem auctionItem = auctionItemRepository.findById(auctionItemId).orElseThrow(
-            () -> new IllegalArgumentException("존재하지 않는 경매상품 입니다.")
+                () -> new IllegalArgumentException("존재하지 않는 경매상품 입니다.")
         );
-
         return new AuctionItemResponseDto(auctionItem);
     }
 
     @Cacheable(value = "auctionItemCache", cacheManager = "redisCacheManager")
-    public AuctionItemPageableResponseDto getAuctionItems(int page, int size){
+    public AuctionItemPageableResponseDto getAuctionItems(
+            int page,
+            int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<AuctionItemResponseDto> responseDtoPage =
-            auctionItemQueryRepository.findAll(pageable);
+                auctionItemQueryRepository.findAll(pageable);
         int totalPage = responseDtoPage.getTotalPages();
-
         return new AuctionItemPageableResponseDto(
-            responseDtoPage.getContent(), size, page + 1, totalPage
+                responseDtoPage.getContent(), size, page + 1, totalPage
         );
     }
 
-    public FinishedItemPageableResponseDto getFinishedAuctionItems(int page, int size) {
+    public FinishedItemPageableResponseDto getFinishedAuctionItems(
+            int page,
+            int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<FinishedItemResponseDto> responseDtoPage =
-            auctionItemQueryRepository.findAllByFinished(pageable);
-
+                auctionItemQueryRepository.findAllByFinished(pageable);
         int totalPage = responseDtoPage.getTotalPages();
-
         return new FinishedItemPageableResponseDto(
-            responseDtoPage.getContent(), size, page + 1, totalPage
+                responseDtoPage.getContent(), size, page + 1, totalPage
         );
     }
 
     public FinishedItemResponseDto getFinishedAuctionItem(Long auctionItemId) {
         return auctionItemQueryRepository.findByIdAndFinished(auctionItemId)
-            .orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 상품 ID 입니다.")
-            );
+                .orElseThrow(
+                        () -> new IllegalArgumentException("존재하지 않는 상품 ID 입니다.")
+                );
     }
 
     public AuctionItem findById(Long auctionItemId) {
         return auctionItemRepository.findById(auctionItemId).orElseThrow(
-            () -> new IllegalArgumentException("해당 상품을 찾을 수 없습니다.")
+                () -> new IllegalArgumentException("해당 상품을 찾을 수 없습니다.")
         );
     }
 
-    public ReadyItemPageableResponseDto getReadyAuctionItems(int page, int size) {
+    public ReadyItemPageableResponseDto getReadyAuctionItems(
+            int page,
+            int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<ReadyItemResponseDto> responseDtoPage =
-            auctionItemQueryRepository.findAllByReady(pageable);
-
+                auctionItemQueryRepository.findAllByReady(pageable);
         int totalPage = responseDtoPage.getTotalPages();
-
         return new ReadyItemPageableResponseDto(
-            responseDtoPage.getContent(), size, page + 1, totalPage
+                responseDtoPage.getContent(), size, page + 1, totalPage
         );
     }
 
-    public InProgressItemPageableResponseDto getInProgressAuctionItems(int page, int size,
-        String category) {
+    public InProgressItemPageableResponseDto getInProgressAuctionItems(
+            int page,
+            int size,
+            String category) {
         Pageable pageable = PageRequest.of(page, size);
         Page<InProgressItemResponseDto> responseDtoPage =
-            auctionItemQueryRepository.findAllByInProgress(pageable, category);
-
+                auctionItemQueryRepository.findAllByInProgress(pageable, category);
         int totalPage = responseDtoPage.getTotalPages();
-
         return new InProgressItemPageableResponseDto(
-            responseDtoPage.getContent(), size, page + 1, totalPage
+                responseDtoPage.getContent(), size, page + 1, totalPage
         );
     }
 }

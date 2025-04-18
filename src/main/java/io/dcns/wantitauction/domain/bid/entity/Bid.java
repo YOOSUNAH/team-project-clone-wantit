@@ -24,11 +24,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Table(name = "bids")
 public class Bid extends Timestamped {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bidId;
-
 
     @Column(nullable = false)
     private Long userId;
@@ -40,7 +38,10 @@ public class Bid extends Timestamped {
     @JoinColumn(name = "auction_item_id")
     private AuctionItem auctionItem;
 
-    public Bid(User user, BidRequestDto bidRequestDto, AuctionItem auctionItem) {
+    public Bid(
+            User user,
+            BidRequestDto bidRequestDto,
+            AuctionItem auctionItem) {
         this.userId = user.getUserId();
         this.bidPrice = bidRequestDto.getBidPrice();
         this.auctionItem = auctionItem;

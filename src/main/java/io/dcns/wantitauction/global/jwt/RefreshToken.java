@@ -14,7 +14,6 @@ import org.springframework.data.redis.core.index.Indexed;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RefreshToken {
-
         @Id
         @Indexed
         private Long userId;

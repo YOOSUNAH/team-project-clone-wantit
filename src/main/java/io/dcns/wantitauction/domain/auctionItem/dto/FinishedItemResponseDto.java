@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class FinishedItemResponseDto {
-
     private Long auctionItemId;
     private Long userId;
     private Long winnerId;

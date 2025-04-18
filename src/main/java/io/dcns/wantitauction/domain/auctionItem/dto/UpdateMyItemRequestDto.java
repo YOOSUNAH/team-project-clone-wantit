@@ -7,7 +7,6 @@ import lombok.Getter;
 @Getter
 @Builder
 public class UpdateMyItemRequestDto {
-
     private String itemName;
     private String itemDescription;
     private Long minPrice;

@@ -5,11 +5,8 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AuctionItemRepository extends JpaRepository<AuctionItem, Long> {
-
     Optional<AuctionItem> findByAuctionItemIdAndUserId(Long auctionItemId, Long userId);
-
     boolean existsByAuctionItemIdAndUserId(Long auctionItemId, Long userId);
-
     boolean existsByAuctionItemId(Long auctionItemId);
 }
 

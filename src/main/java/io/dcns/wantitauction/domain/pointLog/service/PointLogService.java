@@ -13,16 +13,17 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class PointLogService {
-
     private final PointLogQueryRepository pointLogQueryRepository;
 
-    public PointLogPageableResponseDto getPointLogs(User user, int page, int size, String status) {
+    public PointLogPageableResponseDto getPointLogs(
+            User user,
+            int page,
+            int size,
+            String status) {
         Pageable pageable = PageRequest.of(page, size);
         Page<PointLogResponseDto> pointLogResponseDtoList = pointLogQueryRepository
-            .findAllPointLogsPageable(user, pageable, status);
+                .findAllPointLogsPageable(user, pageable, status);
         int totalPage = pointLogResponseDtoList.getTotalPages();
-        return new PointLogPageableResponseDto(
-            pointLogResponseDtoList.getContent(), size, page + 1, totalPage
-        );
+        return new PointLogPageableResponseDto(pointLogResponseDtoList.getContent(), size, page + 1, totalPage);
     }
 }

@@ -9,8 +9,10 @@ import io.dcns.wantitauction.domain.user.entity.User;
 import io.dcns.wantitauction.domain.user.entity.UserRoleEnum;
 import io.dcns.wantitauction.domain.user.repository.UserRepository;
 import io.dcns.wantitauction.global.jwt.JwtUtil;
+
 import java.net.URI;
 import java.util.UUID;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +30,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Service
 @RequiredArgsConstructor
 public class KakaoService {
-
     private final RestTemplate restTemplate;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -49,7 +50,7 @@ public class KakaoService {
         KakaoUserInfoDto kakaoUserInfo = getKakaoUserInfo(accessToken);
         User kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
         String createToken = jwtUtil.generateAccessAndRefreshToken(kakaoUser.getUserId(),
-            UserRoleEnum.USER);
+                UserRoleEnum.USER);
 
         return createToken;
     }
@@ -67,11 +68,11 @@ public class KakaoService {
         body.add("code", code);
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity.post(uri)
-            .headers(headers).body(body);
+                .headers(headers).body(body);
         ResponseEntity<String> response = restTemplate.exchange(requestEntity, String.class);
 
         JsonNode jsonNode = new ObjectMapper().readTree(
-            response.getBody());  // 발급받아온 엑세스 토큰이 body에 들어있다.
+                response.getBody());  // 발급받아온 엑세스 토큰이 body에 들어있다.
         return jsonNode.get("access_token").asText();
     }
 
@@ -79,14 +80,14 @@ public class KakaoService {
         log.info("인가코드 (accessToken): " + accessToken);
 
         URI uri = UriComponentsBuilder.fromUriString("https://kapi.kakao.com").path("/v2/user/me")
-            .encode().build().toUri();
+                .encode().build().toUri();
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + accessToken);
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity.post(uri)
-            .headers(headers).body(new LinkedMultiValueMap<>());
+                .headers(headers).body(new LinkedMultiValueMap<>());
 
         ResponseEntity<String> response = restTemplate.exchange(requestEntity, String.class);
 
@@ -116,7 +117,7 @@ public class KakaoService {
 
                 String email = kakaoUserInfo.getEmail();
                 kakaoUser = new User(email, encodedPassword, kakaoUserInfo.getNickname(),
-                    kakaoUserInfo.getNickname(), UserRoleEnum.USER, kakaoId);
+                        kakaoUserInfo.getNickname(), UserRoleEnum.USER, kakaoId);
             }
             userRepository.save(kakaoUser);
         }

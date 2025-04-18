@@ -6,8 +6,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class PointRequestDto {
-
     private Long changedPoint;
-
     private String details;
 }

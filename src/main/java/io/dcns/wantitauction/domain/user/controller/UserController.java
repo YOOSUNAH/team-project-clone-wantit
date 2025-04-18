@@ -29,59 +29,54 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/v1/users")
 public class UserController {
-
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<ResponseDto<Void>> signup(
-        @Valid @RequestBody SignupRequestDto signupRequestDto) {
+    public ResponseEntity<ResponseDto<Void>> signup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
         userService.signup(signupRequestDto);
         return ResponseDto.of(HttpStatus.OK, null);
     }
 
     @PostMapping("/login")
     public ResponseEntity<ResponseDto<Void>> login(
-        @Valid @RequestBody LoginRequestDto request, HttpServletResponse response
-    ) {
+            @Valid @RequestBody LoginRequestDto request,
+            HttpServletResponse response) {
         String accessToken = userService.login(request);
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, accessToken);
         return ResponseDto.of(HttpStatus.OK, null);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<ResponseDto<Void>> logout(
-        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<ResponseDto<Void>> logout(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         userService.logout(userDetails.getUser().getUserId());
         return ResponseDto.of(HttpStatus.OK, null);
     }
 
     @PutMapping
     public ResponseEntity<ResponseDto<UserUpdateResponseDto>> updateProfile(
-        @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @RequestBody UserRequestDto userRequestDto) {
-        UserUpdateResponseDto userUpdateResponseDto = userService.updateUser(userDetails,
-            userRequestDto);
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestBody UserRequestDto userRequestDto) {
+        UserUpdateResponseDto userUpdateResponseDto = userService.updateUser(userDetails, userRequestDto);
         return ResponseDto.of(HttpStatus.OK, userUpdateResponseDto);
     }
 
     @PatchMapping("/password")
     public ResponseEntity<ResponseDto<Void>> updatePassword(
-        @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @RequestBody PasswordRequestDto passwordRequestDto) {
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestBody PasswordRequestDto passwordRequestDto) {
         userService.updatePassword(userDetails, passwordRequestDto);
         return ResponseDto.of(HttpStatus.OK, null);
     }
 
     @PatchMapping
-    public ResponseEntity<ResponseDto<Void>> deleteUser(
-        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<ResponseDto<Void>> deleteUser(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         userService.deleteUser(userDetails.getUser().getUserId());
         return ResponseDto.of(HttpStatus.OK, null);
     }
 
     @GetMapping
     public ResponseEntity<ResponseDto<UserUpdateResponseDto>> getOneUser(
-        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         UserUpdateResponseDto user = userService.getUser(userDetails);
         return ResponseDto.of(HttpStatus.OK, user);
     }

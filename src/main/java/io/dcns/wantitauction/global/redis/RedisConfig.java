@@ -4,9 +4,11 @@ package io.dcns.wantitauction.global.redis;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.dcns.wantitauction.domain.auctionItem.dto.AuctionItemPageableResponseDto;
+
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,13 +31,11 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 @EnableRedisRepositories
 public class RedisConfig {
-
     @Value("${spring.data.redis.host}")
     private String redisHost;
 
     @Value("${spring.data.redis.port}")
     private int redisPort;
-
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
@@ -60,7 +60,7 @@ public class RedisConfig {
         redisTemplate.setKeySerializer(new StringRedisSerializer());
 
         Jackson2JsonRedisSerializer<AuctionItemPageableResponseDto> serializer
-            = new Jackson2JsonRedisSerializer<>(AuctionItemPageableResponseDto.class);
+                = new Jackson2JsonRedisSerializer<>(AuctionItemPageableResponseDto.class);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         serializer.setObjectMapper(objectMapper);
@@ -73,32 +73,32 @@ public class RedisConfig {
     @Bean
     @Qualifier("redisTemplate")
     public ValueOperations<String, String> valueOperations(
-        RedisTemplate<String, String> redisTemplate) {
+            RedisTemplate<String, String> redisTemplate) {
         return redisTemplate.opsForValue();
     }
 
     @Bean
     public RedisCacheManager redisCacheManager(
-        @Qualifier("auctionItemRedisTemplate") RedisTemplate<String, AuctionItemPageableResponseDto> auctionItemRedisTemplate
+            @Qualifier("auctionItemRedisTemplate") RedisTemplate<String, AuctionItemPageableResponseDto> auctionItemRedisTemplate
     ) {
         RedisSerializer<?> valueSerializer = auctionItemRedisTemplate.getValueSerializer();
         RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration
-            .defaultCacheConfig()
-            .serializeKeysWith(SerializationPair.fromSerializer(new StringRedisSerializer()))
-            .serializeValuesWith(SerializationPair.fromSerializer(valueSerializer))
-            .entryTtl(Duration.ofMinutes(30L));
+                .defaultCacheConfig()
+                .serializeKeysWith(SerializationPair.fromSerializer(new StringRedisSerializer()))
+                .serializeValuesWith(SerializationPair.fromSerializer(valueSerializer))
+                .entryTtl(Duration.ofMinutes(30L));
 
         Map<String, RedisCacheConfiguration> redisCacheConfigurationMap = new HashMap<>();
         redisCacheConfigurationMap.put(
-            "auctionItemCache",
-            redisCacheConfiguration.entryTtl(Duration.ofMinutes(5))
+                "auctionItemCache",
+                redisCacheConfiguration.entryTtl(Duration.ofMinutes(5))
         );
         log.info("레디스 캐싱 로그" + "Redis Cache Configuration: {}", redisCacheConfigurationMap);
 
         return RedisCacheManagerBuilder
-            .fromConnectionFactory(redisConnectionFactory())
-            .withInitialCacheConfigurations(redisCacheConfigurationMap)
-            .cacheDefaults(redisCacheConfiguration)
-            .build();
+                .fromConnectionFactory(redisConnectionFactory())
+                .withInitialCacheConfigurations(redisCacheConfigurationMap)
+                .cacheDefaults(redisCacheConfiguration)
+                .build();
     }
 }

@@ -7,6 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class PointQueryRepository {
-
     private final JPAQueryFactory jpaQueryFactory;
 }

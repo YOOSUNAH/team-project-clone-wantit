@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class MyAuctionItemsResponseDto {
-
     private Long auctionItemId;
     private Long userId;
     private String itemName;

@@ -23,12 +23,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "point_logs", indexes = {
-    @Index(columnList = "status")
-})
+@Table(name = "point_logs", indexes = {@Index(columnList = "status")})
 @EntityListeners(AuditingEntityListener.class)
 public class PointLog extends Timestamped {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long pointLogId;
@@ -50,7 +47,10 @@ public class PointLog extends Timestamped {
     @Column
     private Long auctionItemId;
 
-    public PointLog(Point point, PointRequestDto pointRequestDto, PointLogStatus pointLogStatus) {
+    public PointLog(
+            Point point,
+            PointRequestDto pointRequestDto,
+            PointLogStatus pointLogStatus) {
         this.changedPoint = pointRequestDto.getChangedPoint();
         this.details = pointRequestDto.getDetails();
         this.status = pointLogStatus;
@@ -58,8 +58,11 @@ public class PointLog extends Timestamped {
     }
 
     public PointLog(
-        Long changedPoint, PointLogStatus status, String details, Point point, Long auctionItemId
-    ) {
+            Long changedPoint,
+            PointLogStatus status,
+            String details,
+            Point point,
+            Long auctionItemId) {
         this.changedPoint = changedPoint;
         this.status = status;
         this.details = details;

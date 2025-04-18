@@ -18,14 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/v1/admin")
 public class AdminController {
-
     private final AdminService adminService;
 
     @GetMapping("/users")
     public ResponseEntity<ResponseDto<UserPageableResponseDto>> getUsers(
-        @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @RequestParam("page") int page,
-        @RequestParam("size") int size) {
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam("page") int page,
+            @RequestParam("size") int size) {
         UserPageableResponseDto userList = adminService.getUsers(userDetails, page, size);
         return ResponseDto.of(HttpStatus.OK, userList);
     }

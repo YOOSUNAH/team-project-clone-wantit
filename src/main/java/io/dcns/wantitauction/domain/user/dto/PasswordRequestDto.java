@@ -7,7 +7,6 @@ import lombok.Getter;
 @Getter
 @Builder
 public class PasswordRequestDto {
-
     @NotBlank
     private String password;
 
@@ -16,6 +15,4 @@ public class PasswordRequestDto {
 
     @NotBlank
     private String checkPassword;
-
-
 }

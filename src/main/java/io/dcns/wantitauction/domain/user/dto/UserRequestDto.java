@@ -8,9 +8,7 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class UserRequestDto {
-
     private String nickname;
     private String phoneNumber;
     private String address;
-
 }

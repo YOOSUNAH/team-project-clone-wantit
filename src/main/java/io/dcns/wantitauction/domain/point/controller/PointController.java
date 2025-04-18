@@ -20,38 +20,29 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/v1/points")
 public class PointController {
-
     private final PointService pointService;
 
     @PostMapping("/charge")
     public ResponseEntity<ResponseDto<PointChangedResponseDto>> putPoint(
-        @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @RequestBody PointRequestDto pointRequestDto
-    ) {
-        PointChangedResponseDto pointRecordResponseDto = pointService
-            .putPoint(userDetails.getUser(), pointRequestDto);
-
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestBody PointRequestDto pointRequestDto) {
+        PointChangedResponseDto pointRecordResponseDto = pointService.putPoint(userDetails.getUser(), pointRequestDto);
         return ResponseDto.of(HttpStatus.OK, pointRecordResponseDto);
     }
 
     @PostMapping("/withdrawal")
     public ResponseEntity<ResponseDto<PointChangedResponseDto>> withdrawPoint(
-        @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @RequestBody PointRequestDto pointRequestDto
-    ) {
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestBody PointRequestDto pointRequestDto) {
         PointChangedResponseDto pointChangedResponseDto = pointService
-            .withdrawPoint(userDetails.getUser(), pointRequestDto);
-
+                .withdrawPoint(userDetails.getUser(), pointRequestDto);
         return ResponseDto.of(HttpStatus.OK, pointChangedResponseDto);
     }
 
     @GetMapping
     public ResponseEntity<ResponseDto<PointResponseDto>> getPoint(
-        @AuthenticationPrincipal UserDetailsImpl userDetails
-    ) {
-        PointResponseDto pointResponseDto = pointService
-            .getPoint(userDetails.getUser());
-
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        PointResponseDto pointResponseDto = pointService.getPoint(userDetails.getUser());
         return ResponseDto.of(HttpStatus.OK, pointResponseDto);
     }
 }

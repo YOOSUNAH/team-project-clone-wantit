@@ -10,7 +10,6 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class SignupRequestDto {
-
     @NotBlank
     @Email(message = "이메일 형식을 지켜주세요.")
     private String email;
@@ -35,5 +34,4 @@ public class SignupRequestDto {
     public void setRole(String role) {
         this.role = role != null ? role.toUpperCase() : "USER";
     }
-
 }

@@ -1,6 +1,7 @@
 package io.dcns.wantitauction.global.aop.Lock;
 
 import java.util.concurrent.TimeUnit;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -15,11 +16,11 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 @Slf4j(topic = "LockAspect")
 public class LockAspect {
-
     private final RedissonClient redissonClient;
 
     @Around("@annotation(lockable)")
-    public Object applyLock(ProceedingJoinPoint joinPoint, Lockable lockable) throws Throwable {
+    public Object applyLock(ProceedingJoinPoint joinPoint,
+                            Lockable lockable) throws Throwable {
         RLock lock = redissonClient.getFairLock(lockable.value());
         try {
             // 락 획득 시도

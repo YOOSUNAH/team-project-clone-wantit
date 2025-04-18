@@ -9,21 +9,24 @@ import io.dcns.wantitauction.domain.like.repository.LikeQueryRepository;
 import io.dcns.wantitauction.domain.like.repository.LikeRepository;
 import io.dcns.wantitauction.domain.user.entity.User;
 import jakarta.transaction.Transactional;
+
 import java.util.List;
 import java.util.NoSuchElementException;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class LikeService {
-
     private final LikeRepository likeRepository;
     private final AuctionItemRepository auctionItemRepository;
     private final LikeQueryRepository likeQueryRepository;
 
     @Transactional
-    public LikeResponseDto likeAuctionItem(Long auctionItemId, User user) {
+    public LikeResponseDto likeAuctionItem(
+            Long auctionItemId,
+            User user) {
         validateAuctionItem(auctionItemId);
         Like like = findByAuctionItemIdAndUserId(auctionItemId, user.getUserId());
 
@@ -40,14 +43,14 @@ public class LikeService {
         List<LikeResponseDto> likedItems = likeQueryRepository.findAllLikedByUserId(userId);
 
         List<Long> auctionItemIds = likedItems.stream()
-            .map(LikeResponseDto::getAuctionItemId)
-            .toList();
+                .map(LikeResponseDto::getAuctionItemId)
+                .toList();
 
         List<AuctionItem> auctionItems = auctionItemRepository.findAllById(auctionItemIds);
 
         return auctionItems.stream()
-            .map(this::mapToDto)
-            .toList();
+                .map(this::mapToDto)
+                .toList();
     }
 
     private void validateAuctionItem(Long auctionItemId) {
@@ -56,18 +59,20 @@ public class LikeService {
         }
     }
 
-    private Like findByAuctionItemIdAndUserId(Long auctionItemId, Long userId) {
+    private Like findByAuctionItemIdAndUserId(
+            Long auctionItemId,
+            Long userId) {
         return likeRepository.findByAuctionItemIdAndUserId(auctionItemId, userId);
     }
 
     private LikeAuctionItemResponseDto mapToDto(AuctionItem auctionItem) {
         return new LikeAuctionItemResponseDto(
-            auctionItem.getAuctionItemId(),
-            auctionItem.getItemName(),
-            auctionItem.getItemDescription(),
-            auctionItem.getStartDate(),
-            auctionItem.getEndDate(),
-            auctionItem.getImageUrl()
+                auctionItem.getAuctionItemId(),
+                auctionItem.getItemName(),
+                auctionItem.getItemDescription(),
+                auctionItem.getStartDate(),
+                auctionItem.getEndDate(),
+                auctionItem.getImageUrl()
         );
     }
 }

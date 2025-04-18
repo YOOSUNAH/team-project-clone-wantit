@@ -5,37 +5,39 @@ import static io.dcns.wantitauction.domain.like.entity.QLike.like;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.dcns.wantitauction.domain.like.dto.LikeResponseDto;
+
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
 public class LikeQueryRepository {
-
     private final JPAQueryFactory jpaQueryFactory;
 
     public List<LikeResponseDto> findAllLikedByUserId(Long userId) {
         return jpaQueryFactory
-            .select(Projections.fields(LikeResponseDto.class,
-                like.userId,
-                like.auctionItemId,
-                like.liked))
-            .from(like)
-            .where(like.userId.eq(userId)
-                .and(like.liked.isTrue()))
-            .fetch();
+                .select(Projections.fields(LikeResponseDto.class,
+                        like.userId,
+                        like.auctionItemId,
+                        like.liked))
+                .from(like)
+                .where(like.userId.eq(userId)
+                        .and(like.liked.isTrue()))
+                .fetch();
     }
+
     public List<LikeResponseDto> findAllDisLikedByUserId(Long userId) {
         return jpaQueryFactory
-            .select(Projections.fields(LikeResponseDto.class,
-                like.userId,
-                like.auctionItemId,
-                like.liked))
-            .from(like)
-            .where(like.userId.eq(userId)
-                .and(like.liked.isFalse()))
-            .fetch();
+                .select(Projections.fields(LikeResponseDto.class,
+                        like.userId,
+                        like.auctionItemId,
+                        like.liked))
+                .from(like)
+                .where(like.userId.eq(userId)
+                        .and(like.liked.isFalse()))
+                .fetch();
     }
 }
 

@@ -6,7 +6,9 @@ import io.dcns.wantitauction.domain.bid.entity.Bid;
 import io.dcns.wantitauction.domain.bid.repository.BidRepository;
 import io.dcns.wantitauction.global.event.StartAuctionEvent;
 import io.dcns.wantitauction.global.event.WinningBidEvent;
+
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -18,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @RequiredArgsConstructor
 public class Scheduler {
-
     private final ApplicationEventPublisher eventPublisher;
     private final AuctionItemQueryRepository auctionItemQueryRepository;
     private final BidRepository bidRepository;
@@ -49,10 +50,10 @@ public class Scheduler {
             }
             auctionItem.finishAuction(winBid.getUserId(), winBid.getBidPrice());
             eventPublisher.publishEvent(
-                new WinningBidEvent(
-                    auctionItem.getAuctionItemId(), auctionItem.getItemName(),
-                    winBid.getUserId(), winBid.getBidPrice()
-                ));
+                    new WinningBidEvent(
+                            auctionItem.getAuctionItemId(), auctionItem.getItemName(),
+                            winBid.getUserId(), winBid.getBidPrice()
+                    ));
         }
         log.info("경매 낙찰 로직 종료");
     }

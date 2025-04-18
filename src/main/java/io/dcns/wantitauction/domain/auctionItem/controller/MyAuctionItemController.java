@@ -30,87 +30,77 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @RequestMapping("/v1/my/auction-items")
 public class MyAuctionItemController {
-
     private final MyAuctionItemService myAuctionItemService;
     private final S3Service s3Service;
 
     @PostMapping
     public ResponseEntity<ResponseDto<Void>> createAuctionItem(
-        @RequestPart("file") MultipartFile file,
-        @Valid @RequestPart("requestBody") CreateProductRequestDto request,
-        @AuthenticationPrincipal UserDetailsImpl userDetails
-    ) {
+            @RequestPart("file") MultipartFile file,
+            @Valid @RequestPart("requestBody") CreateProductRequestDto request,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         String imageUrl = s3Service.uploadFile(file);
-
         myAuctionItemService.createAuctionItem(request, imageUrl, userDetails.getUser());
         return ResponseDto.of(HttpStatus.CREATED, null);
     }
 
     @GetMapping
     public ResponseEntity<ResponseDto<MyAuctionItemPageableResponseDto>> getAuctionItems(
-        @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @RequestParam("page") int page,
-        @RequestParam("size") int size
-    ) {
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam("page") int page,
+            @RequestParam("size") int size) {
         MyAuctionItemPageableResponseDto pageableResponseDto = myAuctionItemService.getAuctionItems(
-            userDetails.getUser().getUserId(), page - 1, size);
+                userDetails.getUser().getUserId(), page - 1, size);
         return ResponseDto.of(HttpStatus.OK, pageableResponseDto);
     }
 
     @GetMapping("/{auctionItemId}")
     public ResponseEntity<ResponseDto<MyAuctionItemsResponseDto>> getAuctionItem(
-        @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @PathVariable Long auctionItemId
-    ) {
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable Long auctionItemId) {
         MyAuctionItemsResponseDto auctionItem = myAuctionItemService.getAuctionItem(
-            auctionItemId, userDetails.getUser().getUserId());
+                auctionItemId, userDetails.getUser().getUserId());
         return ResponseDto.of(HttpStatus.OK, auctionItem);
     }
 
     @PutMapping("/{auctionItemId}")
     public ResponseEntity<ResponseDto<MyAuctionItemsResponseDto>> updateAuctionItem(
-        @RequestPart("file") MultipartFile file,
-        @Valid @RequestPart("requestBody") UpdateMyItemRequestDto request,
-        @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @PathVariable Long auctionItemId
-    ) {
+            @RequestPart("file") MultipartFile file,
+            @Valid @RequestPart("requestBody") UpdateMyItemRequestDto request,
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable Long auctionItemId) {
         String imageUrl = s3Service.uploadFile(file); // Todo : 기존 사진 지우는 과정 추가
-
         MyAuctionItemsResponseDto updateItem = myAuctionItemService.updateAuctionItem(
-            request, imageUrl, auctionItemId, userDetails.getUser().getUserId());
+                request, imageUrl, auctionItemId, userDetails.getUser().getUserId());
         return ResponseDto.of(HttpStatus.OK, updateItem);
     }
 
     @DeleteMapping("/{auctionItemId}")
     public ResponseEntity<ResponseDto<Void>> deleteAuctionItem(
-        @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @PathVariable Long auctionItemId
-    ) {
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable Long auctionItemId) {
         myAuctionItemService.deleteAuctionItem(auctionItemId, userDetails.getUser().getUserId());
         return ResponseDto.of(HttpStatus.OK, null);
     }
 
     @GetMapping("/finished")
     public ResponseEntity<ResponseDto<FinishedItemPageableResponseDto>> getWinningAuctionItems(
-        @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @RequestParam("page") int page,
-        @RequestParam("size") int size
-    ) {
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam("page") int page,
+            @RequestParam("size") int size) {
         FinishedItemPageableResponseDto pageableResponseDto = myAuctionItemService
-            .getWinningAuctionItems(
-                userDetails.getUser().getUserId(), page - 1, size
-            );
+                .getWinningAuctionItems(
+                        userDetails.getUser().getUserId(), page - 1, size
+                );
 
         return ResponseDto.of(HttpStatus.OK, pageableResponseDto);
     }
 
     @GetMapping("/{auctionItemId}/finished")
     public ResponseEntity<ResponseDto<FinishedItemResponseDto>> getWinningAuctionItem(
-        @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @PathVariable Long auctionItemId
-    ) {
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable Long auctionItemId) {
         FinishedItemResponseDto finishedAuction = myAuctionItemService
-            .getWinningAuctionItem(auctionItemId, userDetails.getUser().getUserId());
+                .getWinningAuctionItem(auctionItemId, userDetails.getUser().getUserId());
         return ResponseDto.of(HttpStatus.OK, finishedAuction);
     }
 }

@@ -23,78 +23,90 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class MyAuctionItemService {
-
     private final AuctionItemRepository auctionItemRepository;
     private final AuctionItemQueryRepository auctionItemQueryRepository;
 
     @Transactional
     @ForbiddenKeyword
-    public void createAuctionItem(CreateProductRequestDto request, String imageUrl, User user) {
+    public void createAuctionItem(
+            CreateProductRequestDto request,
+            String imageUrl,
+            User user) {
         auctionItemRepository.save(new AuctionItem(request, imageUrl, user));
     }
 
-    public MyAuctionItemPageableResponseDto getAuctionItems(Long userId, int page, int size) {
+    public MyAuctionItemPageableResponseDto getAuctionItems(
+            Long userId,
+            int page,
+            int size) {
         Pageable pageable = PageRequest.of(page, size);
-
         Page<MyAuctionItemsResponseDto> responseDtoPage = auctionItemQueryRepository
-            .findAllMyAuctionItems(userId, pageable);
-
+                .findAllMyAuctionItems(userId, pageable);
         int totalPage = responseDtoPage.getTotalPages();
 
         return new MyAuctionItemPageableResponseDto(
-            responseDtoPage.getContent(), size, page + 1, totalPage
+                responseDtoPage.getContent(), size, page + 1, totalPage
         );
     }
 
-    public MyAuctionItemsResponseDto getAuctionItem(Long auctionItemId, Long userId) {
-
+    public MyAuctionItemsResponseDto getAuctionItem(
+            Long auctionItemId,
+            Long userId) {
         AuctionItem auctionItem = getItem(auctionItemId, userId);
         return new MyAuctionItemsResponseDto(auctionItem);
     }
 
     @Transactional
     public MyAuctionItemsResponseDto updateAuctionItem(
-        UpdateMyItemRequestDto request, String imageUrl, Long auctionItemId, Long userId
-    ) {
+            UpdateMyItemRequestDto request,
+            String imageUrl,
+            Long auctionItemId,
+            Long userId) {
         AuctionItem auctionItem = getItem(auctionItemId, userId);
         auctionItem.update(request, imageUrl);
         return new MyAuctionItemsResponseDto(auctionItem);
     }
 
-    public void deleteAuctionItem(Long auctionItemId, Long userId) {
-
+    public void deleteAuctionItem(
+            Long auctionItemId,
+            Long userId) {
         AuctionItem auctionItem = getItem(auctionItemId, userId);
         auctionItemRepository.deleteById(auctionItem.getAuctionItemId());
         //Todo : S3에서 이미지 지우는 과정
     }
 
-    public FinishedItemPageableResponseDto getWinningAuctionItems(Long userId, int page, int size) {
+    public FinishedItemPageableResponseDto getWinningAuctionItems(
+            Long userId,
+            int page,
+            int size) {
         Pageable pageable = PageRequest.of(page, size);
-
         Page<FinishedItemResponseDto> responseDtoPage = auctionItemQueryRepository
-            .findWinningAuctionItems(userId, pageable);
-
+                .findWinningAuctionItems(userId, pageable);
         int totalPage = responseDtoPage.getTotalPages();
-
         return new FinishedItemPageableResponseDto(
-            responseDtoPage.getContent(), size, page + 1, totalPage
+                responseDtoPage.getContent(), size, page + 1, totalPage
         );
     }
 
-    public FinishedItemResponseDto getWinningAuctionItem(Long auctionItemId, Long userId) {
-
+    public FinishedItemResponseDto getWinningAuctionItem(
+            Long auctionItemId,
+            Long userId) {
         validateItem(auctionItemId, userId);
         return auctionItemQueryRepository.findWinningAuctionItem(auctionItemId, userId);
     }
 
-    private void validateItem(Long auctionItemId, Long userId) {
+    private void validateItem(
+            Long auctionItemId,
+            Long userId) {
         if (!auctionItemRepository.existsByAuctionItemIdAndUserId(auctionItemId, userId)) {
             throw new EntityNotFoundException("해당 경매 상품이 존재하지 않습니다.");
         }
     }
 
-    private AuctionItem getItem(Long auctionItemId, Long userId) {
+    private AuctionItem getItem(
+            Long auctionItemId,
+            Long userId) {
         return auctionItemRepository.findByAuctionItemIdAndUserId(auctionItemId, userId)
-            .orElseThrow(() -> new EntityNotFoundException("해당 경매 상품이 존재하지 않습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("해당 경매 상품이 존재하지 않습니다."));
     }
 }

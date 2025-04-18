@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class ForbiddenKeywordAOP {
-
     @Pointcut("@annotation(io.dcns.wantitauction.global.aop.ForbiddenKeyword)")
     private void forbiddenKeywordPoint() {
     }
@@ -21,12 +20,11 @@ public class ForbiddenKeywordAOP {
         Object[] args = joinPoint.getArgs();
         for (Object arg : args) {
             if (arg instanceof CreateProductRequestDto) {
-                String itemDescription = ((CreateProductRequestDto) arg).getItemDescription()
-                    .toLowerCase(); // 영문은 소문자로 변환하여 검열
+                String itemDescription = ((CreateProductRequestDto) arg).getItemDescription().toLowerCase(); // 영문은 소문자로 변환하여 검열
                 ForbiddenKeywords[] forbiddenKeywords = ForbiddenKeywords.values();
                 for (ForbiddenKeywords forbiddenKeyword : forbiddenKeywords) {
                     if (itemDescription.contains(forbiddenKeyword.getKorean())
-                        || itemDescription.contains(forbiddenKeyword.getEnglish())
+                            || itemDescription.contains(forbiddenKeyword.getEnglish())
                     ) {
                         throw new IllegalArgumentException("금지 품목 키워드가 포함되어 있습니다.");
                     }
@@ -34,5 +32,4 @@ public class ForbiddenKeywordAOP {
             }
         }
     }
-
 }

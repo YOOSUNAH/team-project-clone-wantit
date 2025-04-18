@@ -10,13 +10,11 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @RequiredArgsConstructor
 public class S3Service {
-
     private final S3Repository s3Repository;
 
     public String uploadFile(MultipartFile file) {
         verifiedFile(file);
         String fullPath = MultiPartUtils.createPath(file);
-
         return s3Repository.store(fullPath, file);
     }
 
@@ -29,7 +27,7 @@ public class S3Service {
         assert contentType != null;
 
         if (ObjectUtils.isEmpty(contentType) |
-            (!contentType.contains("image/jpeg") && !contentType.contains("image/png"))) {
+                (!contentType.contains("image/jpeg") && !contentType.contains("image/png"))) {
             throw new IllegalArgumentException("File is empty");
         }
     }
